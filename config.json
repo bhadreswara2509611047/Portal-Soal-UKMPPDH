@@ -1,0 +1,7 @@
+{
+  "owner": "USERNAME_GITHUB_ANDA",
+  "repo": "NAMA_REPO_ANDA",
+  "branch": "main",
+  "manifestPath": "data/manifest.json",
+  "packagesDir": "data/packages"
+}
