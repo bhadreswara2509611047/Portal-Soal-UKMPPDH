@@ -157,6 +157,14 @@
             border-color: rgba(16, 185, 129, 0.35) !important;
             color: #6ee7b7 !important;
         }
+
+        /* Kartu paket */
+        .pkg-card { transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
+        .pkg-card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 8px 24px -12px rgba(15,23,42,.25); }
+        .pkg-accent { height: 4px; background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899); }
+        .pkg-card.is-done .pkg-accent { background: linear-gradient(90deg, #10b981, #34d399); }
+        .pkg-arrow { transition: transform .15s ease; }
+        .pkg-card:hover .pkg-arrow { transform: translateX(3px); }
     </style>
 </head>
 <body class="antialiased min-h-[100dvh] flex flex-col">
@@ -164,7 +172,7 @@
     <!-- ==================== DATA SOAL TERTANAM ==================== -->
     <script id="embedded-builtin-meta" type="application/json">[{"id": "ub", "code": "UB", "name": "Universitas Brawijaya", "title": "Kompilasi TO Nasional PPDH UB 2026", "file": "simulasi_cbt_kompilasi_to_ppdh_ub_2026.html", "questions": 120, "duration": "120 Menit", "hasOsce": false, "badgeColor": "bg-blue-100 text-blue-800", "accent": "from-blue-700 to-indigo-800", "highlights": "Filter bidang, statistik skor per kategori, ulangi soal salah, auto-save."}, {"id": "unair", "code": "UNAIR", "name": "Universitas Airlangga", "title": "Try Out Nasional CBT UNAIR 2026", "file": "simulasi_cbt_unair_2026_kedokteran_hewan.html", "questions": 111, "duration": "120 Menit", "hasOsce": false, "badgeColor": "bg-amber-100 text-amber-800", "accent": "from-amber-600 to-blue-900", "highlights": "Pilihan durasi fleksibel, mode ujian & latihan, auto-save progres."}, {"id": "uwks", "code": "UWKS", "name": "Universitas Wijaya Kusuma Surabaya", "title": "TO CBT PPDH UWKS — Nov 2026", "file": "simulasi_to_cbt_ppdh_uwks_periode_november_2026.html", "questions": 111, "duration": "120 Menit", "hasOsce": false, "badgeColor": "bg-teal-100 text-teal-800", "accent": "from-teal-700 to-sky-900", "highlights": "111 soal lengkap, passing grade 65, opsi acak soal, review pembahasan."}, {"id": "unud", "code": "UNUD", "name": "Universitas Udayana", "title": "TO Nasional PPDH UNUD 2026", "file": "simulasi_cbt_to_nasional_ppdh_unud_2026.html", "questions": 96, "duration": "100 Menit", "hasOsce": false, "badgeColor": "bg-indigo-100 text-indigo-800", "accent": "from-slate-800 to-teal-900", "highlights": "Bisa pilih Paket 1–3 (32 soal/paket), ilustrasi SVG & tabel, jeda timer."}, {"id": "unhas", "code": "UNHAS", "name": "Universitas Hasanuddin", "title": "TO UNHAS Kedokteran Hewan", "file": "simulasi_cbt_to_unhas_kedokteran_hewan_95_soal.html", "questions": 95, "duration": "100 Menit", "hasOsce": false, "badgeColor": "bg-rose-100 text-rose-800", "accent": "from-rose-700 to-red-900", "highlights": "95 soal bertopik (Nutrisi, Klinik, dll.), pencarian pembahasan, auto-save."}, {"id": "usk", "code": "USK", "name": "Universitas Syiah Kuala", "title": "Tryout UKMPPDH FKH USK Periode II", "file": "tryout_ukmppdh_fkh_usk_periode_ii_2026.html", "questions": 95, "duration": "95 Menit", "hasOsce": false, "badgeColor": "bg-emerald-100 text-emerald-800", "accent": "from-emerald-700 to-teal-900", "highlights": "95 soal Periode II 2026 lengkap dengan kunci jawaban dan pembahasan."}, {"id": "fikkia", "code": "FIKKIA", "name": "FIKKIA UNAIR Banyuwangi", "title": "TO Nasional FIKKIA Gel III", "file": "simulasi_cbt_to_nasional_fikkia_gel_iii.html", "questions": 69, "duration": "90 Menit", "hasOsce": false, "badgeColor": "bg-sky-100 text-sky-800", "accent": "from-blue-600 to-indigo-700", "highlights": "Pilih per bidang (Reproduksi, Kesmavet, Patologi, Akuatik, Satwa Liar, dll.)."}, {"id": "undana", "code": "UNDANA", "name": "Universitas Nusa Cendana", "title": "CBT & OSCE UKM PPDH UNDANA 2026", "file": "simulasi_cbt_osce_ukm_ppdh_undana_2026.html", "questions": 67, "duration": "90 Menit", "hasOsce": true, "badgeColor": "bg-purple-100 text-purple-800", "accent": "from-purple-700 to-indigo-900", "highlights": "Gabungan 67 soal CBT + latihan checklist OSCE klinis interaktif."}, {"id": "undikma", "code": "UNDIKMA", "name": "Universitas Pendidikan Mandalika", "title": "TO CBT UNDIKMA — 14 Nov 2026", "file": "simulasi_to_cbt_undikma_14_november_2026.html", "questions": 55, "duration": "60 Menit", "hasOsce": false, "badgeColor": "bg-cyan-100 text-cyan-800", "accent": "from-teal-700 to-slate-900", "highlights": "55 soal ringkas untuk latihan cepat 60 menit dengan mode ujian & latihan."}]</script>
     <script id="embedded-builtin-blobs" type="application/json">{}</script>
-    <script id="embedded-extra-html-meta" type="application/json">[{"id":"extra_html_mwwav94x_6pfzx","code":"IPB","name":"Paket HTML Tambahan","title":"Simulasi CBT TO Nasional UKMPPDH — SKHB IPB University (14 November 2026)","fileName":"simulasi_cbt_to_nasional_ukmppdh_ipb_university_2026.html","questions":97,"duration":"120 Menit","hasOsce":true,"highlights":"Paket simulasi HTML (97 soal) tertanam mandiri di portal."},{"id":"extra_html_mwwat7dt_w5okd","code":"UGM","name":"Paket HTML Tambahan","title":"Simulasi CBT UKMPPDH — Rekap Soal UGM (Sesi 1 & 2)","fileName":"simulasi_cbt_ukmppdh_rekap_soal_ugm_sesi_1_2.html","questions":185,"duration":"100 Menit","hasOsce":true,"highlights":"Paket simulasi HTML (185 soal) tertanam mandiri di portal."}]</script>
+    <script id="embedded-extra-html-meta" type="application/json">[{"id":"extra_html_mwwav94x_6pfzx","code":"IPB","name":"Paket HTML Tambahan","title":"Simulasi CBT TO Nasional UKMPPDH — SKHB IPB University (14 November 2026)","fileName":"simulasi_cbt_to_nasional_ukmppdh_ipb_university_2026.html","questions":97,"duration":"120 Menit","hasOsce":true,"highlights":""},{"id":"extra_html_mwwat7dt_w5okd","code":"UGM","name":"Paket HTML Tambahan","title":"Simulasi CBT UKMPPDH — Rekap Soal UGM (Sesi 1 & 2)","fileName":"simulasi_cbt_ukmppdh_rekap_soal_ugm_sesi_1_2.html","questions":185,"duration":"100 Menit","hasOsce":true,"highlights":""}]</script>
     <script id="embedded-extra-html-blobs" type="application/json">{}</script>
     <script id="embedded-admin-config" type="application/json">{"adminPin":"admin2026"}</script>
 
@@ -929,15 +937,19 @@
                 const isLast = progress.lastOpened === p.id;
 
                 const card = document.createElement('div');
-                card.className = 'surface border rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-4 transition-colors hover:border-slate-400 dark:hover:border-zinc-600';
+                card.className = 'pkg-card surface border rounded-2xl overflow-hidden flex flex-col fade-in' + (isDone ? ' is-done' : '');
+
+                const iconDoc = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
+                const iconClock = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
                 card.innerHTML = `
-                    <div class="space-y-2.5">
+                    <div class="pkg-accent"></div>
+                    <div class="p-4 sm:p-5 flex flex-col gap-4 flex-1">
                         <div class="flex items-center justify-between gap-2">
                             <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="badge-pastel px-2.5 py-0.5 rounded-md text-xs font-bold ${p.badgeColor}">${escapeHtml(p.code)}</span>
-                                ${p.hasOsce ? '<span class="badge-osce px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-800">+ OSCE</span>' : ''}
-                                ${isLast ? '<span class="subtle border px-2 py-0.5 rounded-md text-[11px] font-medium text-sub">Terakhir</span>' : ''}
+                                <span class="badge-pastel px-2.5 py-1 rounded-lg text-xs font-extrabold tracking-wide ${p.badgeColor}">${escapeHtml(p.code)}</span>
+                                ${p.hasOsce ? '<span class="badge-osce px-2 py-1 rounded-lg text-[11px] font-bold bg-purple-100 text-purple-800">+ OSCE</span>' : ''}
+                                ${isLast ? '<span class="subtle border px-2 py-1 rounded-lg text-[11px] font-medium text-sub">Terakhir</span>' : ''}
                             </div>
                             <button type="button" onclick="toggleDone('${escapeHtml(p.id)}')" title="Tandai selesai"
                                 class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition shrink-0 ${isDone ? 'badge-done bg-emerald-50 border-emerald-200 text-emerald-700' : 'btn-secondary text-mute'}">
@@ -945,24 +957,26 @@
                             </button>
                         </div>
 
-                        <div>
-                            <h2 class="text-[15px] sm:text-base font-bold text-main leading-snug">${escapeHtml(p.title)}</h2>
-                            <p class="text-xs text-mute mt-0.5">${escapeHtml(p.name)}</p>
+                        <div class="flex-1">
+                            <h2 class="text-[15px] sm:text-base font-bold text-main leading-snug line-clamp-3">${escapeHtml(p.title)}</h2>
+                            <p class="text-xs text-mute mt-1.5 truncate">${escapeHtml(p.name)}</p>
                         </div>
 
-                        <p class="text-xs text-sub leading-relaxed line-clamp-2">${escapeHtml(p.highlights)}</p>
-                    </div>
-
-                    <div class="space-y-3 pt-3 border-t" style="border-color: var(--border-color);">
-                        <div class="flex items-center justify-between text-xs font-medium text-sub">
-                            <span>${p.questions} Soal</span>
-                            <span>${escapeHtml(p.duration)}</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2 text-sub">
+                                ${iconDoc}
+                                <span class="text-xs font-semibold text-main">${p.questions} Soal</span>
+                            </div>
+                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2 text-sub">
+                                ${iconClock}
+                                <span class="text-xs font-semibold text-main truncate">${escapeHtml(p.duration || '-')}</span>
+                            </div>
                         </div>
 
                         <button type="button" onclick="openExam('${escapeHtml(p.id)}')"
-                            class="btn-primary w-full min-h-[42px] px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
-                            <span>Mulai Simulasi</span>
-                            <span>→</span>
+                            class="btn-primary w-full min-h-[44px] px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                            <span>${isDone ? 'Ulangi Simulasi' : 'Mulai Simulasi'}</span>
+                            <span class="pkg-arrow">→</span>
                         </button>
                     </div>
                 `;
