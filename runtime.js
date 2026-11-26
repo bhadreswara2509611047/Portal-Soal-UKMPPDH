@@ -1,5 +1,5 @@
 /* Stabilitas & tampilan saat paket dikerjakan: konfirmasi keluar, tombol Back HP,
- * perbaikan header di layar sempit, dan pendaftaran cache offline. */
+ * perbaikan header di layar sempit, anti-flash tema, dan pendaftaran cache offline. */
 (function () {
   'use strict';
 
@@ -65,7 +65,6 @@
 
   // Entri sisa dari muat ulang saat ujian terbuka.
   if (history.state && history.state.exam) history.replaceState(null, '');
-
 
   /** Timer paket menghitung dengan mengurangi 1 detik per tick. Saat tab di latar belakang, layar HP mati,
    *  atau browser menahan timer, tick terlewat dan waktu "berhenti". Di sini tick yang terlewat dikejar
@@ -138,10 +137,27 @@
       return next;
     },
 
-    /** Font eksternal tidak boleh menahan tampilnya soal saat jaringan lambat. */
+    /** Font eksternal tidak menahan tampilnya soal & tema dasar diterapkan sejak awal (anti-flash). */
     prepareHtml(html) {
-      return html.replace(/<link(?![^>]*\bmedia=)([^>]*fonts\.googleapis\.com\/css2[^>]*?)\s*\/?>/g,
-        '<link$1 media="print" onload="this.media=\'all\'">');
+      const isDark = document.documentElement.classList.contains('dark');
+      const themeClass = isDark ? 'portal-dark dark' : 'portal-light';
+      const baseBg = isDark ? '#0b1120' : '#f3f6fb';
+      const baseText = isDark ? '#e2e8f0' : '#1e293b';
+
+      let out = html.replace(
+        /<link(?![^>]*\bmedia=)([^>]*fonts\.googleapis\.com\/css2[^>]*?)\s*\/?>/g,
+        '<link$1 media="print" onload="this.media=\'all\'">'
+      );
+
+      out = out.replace(/<html(\b[^>]*)>/i, (m, attrs) => {
+        if (/\bclass="/i.test(attrs)) {
+          return `<html${attrs.replace(/\bclass="/i, `class="${themeClass} `)}>`;
+        }
+        return `<html class="${themeClass}"${attrs}>`;
+      });
+
+      const preloadStyle = `<style id="portal-preload-bg">html,body{background-color:${baseBg};color:${baseText};}</style>`;
+      return out.replace(/<\/head>/i, `${preloadStyle}</head>`);
     },
 
     /** Dipanggil setelah iframe paket selesai dimuat (sesudah PortalHistory.attach). */

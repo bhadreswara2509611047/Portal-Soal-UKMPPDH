@@ -49,19 +49,19 @@
 
         html.dark {
             color-scheme: dark;
-            --bg-app: #09090b;
-            --bg-surface: #121215;
-            --bg-subtle: #18181b;
-            --bg-hover: #27272a;
-            --border-color: #27272a;
-            --border-strong: #3f3f46;
-            --text-primary: #f4f4f5;
-            --text-secondary: #a1a1aa;
-            --text-muted: #71717a;
-            --accent-bg: #f4f4f5;
-            --accent-hover: #e4e4e7;
-            --accent-text: #09090b;
-            --ring-color: rgba(244, 244, 245, 0.16);
+            --bg-app: #0b1120;
+            --bg-surface: #111827;
+            --bg-subtle: #172033;
+            --bg-hover: #243247;
+            --border-color: #263449;
+            --border-strong: #3b4c66;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-bg: #e2e8f0;
+            --accent-hover: #f8fafc;
+            --accent-text: #0b1120;
+            --ring-color: rgba(148, 163, 184, 0.22);
         }
 
         * {
@@ -444,7 +444,7 @@
             </div>
         </div>
 
-        <iframe id="exam-frame" class="w-full flex-1 border-0 bg-white" title="Simulasi CBT"></iframe>
+        <iframe id="exam-frame" class="w-full flex-1 border-0" style="background-color: var(--bg-app);" title="Simulasi CBT"></iframe>
     </div>
 
     <!-- ==================== 3. MODAL PENGATURAN PIN ADMIN ==================== -->
@@ -1144,59 +1144,7 @@
     </script>
 
     <!-- Pengontrol Tema Gelap / Terang & Sinkronisasi Iframe -->
-    <script>
-        (function () {
-            const THEME_STORAGE_KEY = 'portal_ukmppdh_theme';
-
-            function updateAllThemeButtons(isDark) {
-                document.querySelectorAll('.theme-toggle-btn, [onclick="togglePortalTheme()"]').forEach((btn) => {
-                    const sun = btn.querySelector('.theme-icon-sun');
-                    const moon = btn.querySelector('.theme-icon-moon');
-                    const txt = btn.querySelector('.theme-toggle-text');
-                    if (sun) sun.classList.toggle('hidden', !isDark);
-                    if (moon) moon.classList.toggle('hidden', isDark);
-                    if (txt) txt.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
-                });
-            }
-
-            // Filter dipasang pada elemen iframe (bukan di dalam dokumennya) agar header/modal
-            // "fixed" di paket tetap pada posisinya.
-            function syncExamFrameTheme(isDark) {
-                ['exam-frame', 'gh-runner-frame'].forEach((id) => {
-                    const frame = document.getElementById(id);
-                    if (!frame) return;
-                    frame.style.filter = isDark ? 'invert(0.92) hue-rotate(180deg)' : '';
-                    try {
-                        const doc = frame.contentDocument;
-                        let styleEl = doc.getElementById('portal-injected-dark-theme');
-                        if (isDark && !styleEl) {
-                            styleEl = doc.createElement('style');
-                            styleEl.id = 'portal-injected-dark-theme';
-                            styleEl.textContent = 'img, svg, video, canvas, picture { filter: invert(1) hue-rotate(180deg); }';
-                            doc.head.appendChild(styleEl);
-                        } else if (!isDark && styleEl) {
-                            styleEl.remove();
-                        }
-                    } catch (e) {}
-                });
-            }
-            window.syncExamTheme = () => syncExamFrameTheme(document.documentElement.classList.contains('dark'));
-
-            window.togglePortalTheme = function () {
-                const isDark = document.documentElement.classList.toggle('dark');
-                try {
-                    localStorage.setItem(THEME_STORAGE_KEY, isDark ? 'dark' : 'light');
-                } catch (e) {}
-                updateAllThemeButtons(isDark);
-                syncExamFrameTheme(isDark);
-            };
-
-            window.addEventListener('DOMContentLoaded', () => {
-                const isDark = document.documentElement.classList.contains('dark');
-                updateAllThemeButtons(isDark);
-            });
-        })();
-    </script>
+    <script src="./exam-theme.js"></script>
     <script src="./runtime.js"></script>
     <script src="./history.js"></script>
     <script src="./progress.js"></script>
