@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulasi CBT VETUP SIGAP — Volume 1: OSCE Veteriner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            vet: {
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0f766e',
+              800: '#115e59',
+              900: '#134e4a',
+              950: '#042f2e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar untuk panel navigasi soal */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    @keyframes urgentBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.65; }
+    }
+    .timer-urgent {
+      animation: urgentBlink 1s infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-teal-200 selection:text-teal-950">
+
+  <!-- ==================== 1. HALAMAN BERANDA / PEMILIHAN MODE ==================== -->
+  <div id="view-home" class="flex-1 flex flex-col">
+    <!-- Hero Header -->
+    <header class="bg-gradient-to-br from-slate-900 via-teal-950 to-emerald-900 text-white shadow-lg border-b border-teal-800/50">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-11">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div class="space-y-3 max-w-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-200 text-xs font-semibold tracking-wide uppercase">
+              <svg class="w-4 h-4 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              VETUP SIGAP • Persiapan OSCE Kedokteran Hewan
+            </div>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
+              Simulasi CBT VETUP SIGAP — Volume 1: OSCE Veteriner
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+              Latihan interaktif berbasis modul <strong>Diagnosa Dasar &amp; Komunikasi Klien Veteriner</strong> — menguji kerangka berpikir klinis, empat pilar OSCE, nilai rujukan TPR, protokol komunikasi klinis, hingga bedah skenario stasiun.
+            </p>
+          </div>
+
+          <!-- Summary Spec Card -->
+          <div class="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5 shrink-0 lg:w-72">
+            <div class="flex items-center justify-between border-b border-white/15 pb-3">
+              <div>
+                <div class="text-[11px] uppercase tracking-wider text-teal-300 font-semibold">Volume 1</div>
+                <div class="text-xl font-extrabold text-white">50 Soal CBT</div>
+              </div>
+              <div class="px-3 py-1.5 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-xs font-bold">
+                PG ≥ 75%
+              </div>
+            </div>
+            <div class="mt-3 space-y-1.5 text-xs text-slate-200">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-300">Format Soal:</span>
+                <span class="font-semibold">Pilihan Ganda (A–E)</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-300">Cakupan Modul:</span>
+                <span class="font-semibold">4 Topik Utama OSCE</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-300">Waktu CBT:</span>
+                <span class="font-semibold">1 Menit / Soal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Configuration Content -->
+    <main class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-6">
+
+      <!-- Ringkasan 4 Modul Utama OSCE -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-extrabold text-sm mb-2.5">01</div>
+          <h3 class="font-bold text-slate-900 text-sm">Aturan Main &amp; Rubrik</h3>
+          <p class="text-xs text-slate-500 mt-1 leading-relaxed">Empat pilar OSCE, anatomi stasiun 20 menit, GRS 1–5, &amp; critical error.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center font-extrabold text-sm mb-2.5">02</div>
+          <h3 class="font-bold text-slate-900 text-sm">Alur Diagnosa &amp; TPR</h3>
+          <p class="text-xs text-slate-500 mt-1 leading-relaxed">7 langkah klinis, KRISPI, 12 urutan pemeriksaan fisik, TPR, DAMNIT-V, &amp; SOAP.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-cyan-50 text-cyan-700 border border-cyan-200 flex items-center justify-center font-extrabold text-sm mb-2.5">03</div>
+          <h3 class="font-bold text-slate-900 text-sm">Komunikasi Klien</h3>
+          <p class="text-xs text-slate-500 mt-1 leading-relaxed">Calgary-Cambridge, NURSE, SPIKES, 8 komponen informed consent, &amp; situasi sulit.</p>
+        </div>
+        <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs">
+          <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center font-extrabold text-sm mb-2.5">04</div>
+          <h3 class="font-bold text-slate-900 text-sm">Bedah Skenario</h3>
+          <p class="text-xs text-slate-500 mt-1 leading-relaxed">Simulasi stasiun Parvovirus, FLUTD, Rabies, Breaking Bad News, &amp; Mastitis Sapi.</p>
+        </div>
+      </div>
+
+      <!-- Card Konfigurasi Simulasi -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden">
+        <div class="p-6 sm:p-8 space-y-8">
+
+          <!-- Langkah 1: Pilih Mode Pengerjaan -->
+          <div>
+            <div class="flex items-center gap-2.5 mb-4">
+              <span class="w-7 h-7 rounded-lg bg-teal-700 text-white text-sm font-bold flex items-center justify-center">1</span>
+              <h2 class="text-lg font-bold text-slate-900">Pilih Mode Pengerjaan</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Mode A: Simulasi Ujian CBT -->
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="examMode" value="cbt" class="peer sr-only" checked onchange="updateHomeSummary()" />
+                <div class="h-full p-5 rounded-2xl border-2 border-slate-200 bg-white peer-checked:border-teal-700 peer-checked:bg-teal-50/40 transition-all hover:border-teal-300">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center shrink-0">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-100 text-teal-800">Timer 1 Mnt / Soal</span>
+                  </div>
+                  <h3 class="mt-4 text-base font-bold text-slate-900">Mode Simulasi Ujian CBT</h3>
+                  <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                    Timer berjalan mundur otomatis (1 menit per soal). Dilengkapi panel navigasi nomor soal dan tombol <strong>Tandai Ragu-ragu</strong>. Kunci jawaban &amp; pembahasan muncul setelah klik <strong>Selesai &amp; Lihat Skor</strong>.
+                  </p>
+                </div>
+              </label>
+
+              <!-- Mode B: Belajar Interaktif -->
+              <label class="relative cursor-pointer group">
+                <input type="radio" name="examMode" value="study" class="peer sr-only" onchange="updateHomeSummary()" />
+                <div class="h-full p-5 rounded-2xl border-2 border-slate-200 bg-white peer-checked:border-emerald-600 peer-checked:bg-emerald-50/40 transition-all hover:border-emerald-300">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">Langsung Pembahasan</span>
+                  </div>
+                  <h3 class="mt-4 text-base font-bold text-slate-900">Mode Belajar Interaktif</h3>
+                  <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                    Tanpa tekanan batas waktu. Begitu Anda memilih opsi jawaban (A–E), sistem langsung menampilkan status <strong>Benar/Salah</strong>, Kunci Jawaban, dan Pembahasan mendalam beserta tombol lanjut.
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Langkah 2: Filter Kategori Materi -->
+          <div>
+            <div class="flex items-center gap-2.5 mb-4">
+              <span class="w-7 h-7 rounded-lg bg-teal-700 text-white text-sm font-bold flex items-center justify-center">2</span>
+              <h2 class="text-lg font-bold text-slate-900">Pilih Kategori Materi OSCE</h2>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="category-options-grid">
+              <label class="cursor-pointer">
+                <input type="radio" name="categoryFilter" value="ALL" class="peer sr-only" checked onchange="updateHomeSummary()" />
+                <div class="h-full p-4 rounded-xl border-2 border-slate-200 peer-checked:border-teal-700 peer-checked:bg-teal-50/60 transition-all hover:border-slate-300">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold text-slate-900 text-sm">Semua Modul OSCE</span>
+                    <span id="cat-count-all" class="px-2 py-0.5 rounded-full text-xs font-bold bg-teal-100 text-teal-800">50 Soal</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-1.5">Paket komprehensif seluruh 4 modul VETUP SIGAP Vol. 1</p>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="categoryFilter" value="Aturan Main & Rubrik OSCE" class="peer sr-only" onchange="updateHomeSummary()" />
+                <div class="h-full p-4 rounded-xl border-2 border-slate-200 peer-checked:border-teal-700 peer-checked:bg-teal-50/60 transition-all hover:border-slate-300">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold text-slate-900 text-sm">Aturan Main &amp; Rubrik OSCE</span>
+                    <span id="cat-count-aturan" class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">9 Soal</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-1.5">Pilar OSCE, GRS, manajemen waktu 20 menit, &amp; critical error</p>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="categoryFilter" value="Alur Diagnosa Dasar & TPR" class="peer sr-only" onchange="updateHomeSummary()" />
+                <div class="h-full p-4 rounded-xl border-2 border-slate-200 peer-checked:border-teal-700 peer-checked:bg-teal-50/60 transition-all hover:border-slate-300">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold text-slate-900 text-sm">Alur Diagnosa Dasar &amp; TPR</span>
+                    <span id="cat-count-diagnosa" class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">22 Soal</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-1.5">7 langkah diagnosa, KRISPI, TPR spesies, DAMNIT-V, &amp; SOAP</p>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="categoryFilter" value="Komunikasi Klien & Etika" class="peer sr-only" onchange="updateHomeSummary()" />
+                <div class="h-full p-4 rounded-xl border-2 border-slate-200 peer-checked:border-teal-700 peer-checked:bg-teal-50/60 transition-all hover:border-slate-300">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold text-slate-900 text-sm">Komunikasi Klien &amp; Etika</span>
+                    <span id="cat-count-komunikasi" class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">14 Soal</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-1.5">Calgary-Cambridge, NURSE, SPIKES, informed consent, &amp; eutanasia</p>
+                </div>
+              </label>
+
+              <label class="cursor-pointer">
+                <input type="radio" name="categoryFilter" value="Bedah Skenario Stasiun" class="peer sr-only" onchange="updateHomeSummary()" />
+                <div class="h-full p-4 rounded-xl border-2 border-slate-200 peer-checked:border-teal-700 peer-checked:bg-teal-50/60 transition-all hover:border-slate-300">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-bold text-slate-900 text-sm">Bedah Skenario Stasiun</span>
+                    <span id="cat-count-skenario" class="px-2 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">5 Soal</span>
+                  </div>
+                  <p class="text-xs text-slate-500 mt-1.5">Kasus Bruno, Oyen, Rabies, Kayla, &amp; Mastitis Sapi Perah</p>
+                </div>
+              </label>
+            </div>
+
+            <!-- Opsi Acak Urutan Soal -->
+            <div class="mt-4 flex items-center gap-2.5">
+              <input type="checkbox" id="shuffle-toggle" class="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 cursor-pointer" />
+              <label for="shuffle-toggle" class="text-sm text-slate-600 cursor-pointer select-none">
+                Acak urutan soal saat memulai sesi latihan
+              </label>
+            </div>
+          </div>
+
+          <!-- Footer Action Bar -->
+          <div class="pt-5 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div id="home-session-preview" class="text-sm font-semibold text-slate-800">
+                Paket terpilih: Semua Modul OSCE (50 Soal • Durasi 50 Menit)
+              </div>
+              <p class="text-xs text-slate-500">
+                Pintasan keyboard: <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700 font-mono">A</kbd>–<kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700 font-mono">E</kbd> pilih opsi • <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700 font-mono">←</kbd> <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700 font-mono">→</kbd> navigasi • <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-slate-700 font-mono">R</kbd> tandai ragu-ragu
+              </p>
+            </div>
+            <button onclick="startExam()" class="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-gradient-to-r from-teal-700 to-emerald-600 hover:from-teal-600 hover:to-emerald-500 text-white font-bold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0">
+              <span>Mulai Simulasi</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== 2. HALAMAN PENGERJAAN CBT ==================== -->
+  <div id="view-exam" class="hidden flex-1 flex flex-col min-h-screen">
+    <!-- Top Header -->
+    <header class="sticky top-0 z-30 bg-slate-900 text-white shadow-md border-b border-slate-800">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
+        <!-- Left: Back to Home & Title -->
+        <div class="flex items-center gap-3 min-w-0">
+          <button onclick="openExitModal()" title="Kembali ke Beranda" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors shrink-0 cursor-pointer">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+          </button>
+          <div class="truncate">
+            <div class="font-bold text-sm sm:text-base truncate">VETUP SIGAP Vol. 1 — OSCE Veteriner</div>
+            <div id="exam-mode-badge" class="text-[11px] text-teal-300 font-medium truncate">Mode Simulasi Ujian CBT</div>
+          </div>
+        </div>
+
+        <!-- Right Controls: Font Size, Progress, Timer, Mobile Drawer, Finish -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <!-- Font Size Adjuster -->
+          <div class="hidden md:flex items-center bg-slate-800 rounded-xl p-1 border border-slate-700">
+            <button onclick="setFontSize('normal')" id="btn-font-normal" class="px-2 py-1 text-xs font-bold rounded-lg bg-teal-600 text-white cursor-pointer" title="Ukuran Huruf Normal">A</button>
+            <button onclick="setFontSize('large')" id="btn-font-large" class="px-2 py-1 text-sm font-bold rounded-lg text-slate-300 hover:text-white cursor-pointer" title="Ukuran Huruf Besar">A+</button>
+          </div>
+
+          <!-- Progress Counter -->
+          <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span id="exam-progress-text">Terjawab 0 / 50</span>
+          </div>
+
+          <!-- Timer Box -->
+          <div id="exam-timer-box" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 font-mono text-sm sm:text-base font-bold text-teal-300">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="exam-timer-display">50:00</span>
+          </div>
+
+          <!-- Mobile Nav Grid Button -->
+          <button onclick="toggleMobileNav(true)" class="lg:hidden p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white relative cursor-pointer" aria-label="Daftar Nomor Soal">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+          </button>
+
+          <!-- Finish Exam Button -->
+          <button onclick="openFinishModal()" class="px-3 sm:px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow transition-colors flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-4 h-4 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>Selesai<span class="hidden md:inline"> Ujian</span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Split Layout -->
+    <div class="max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+      <!-- Area Soal Utama (8 Kolom) -->
+      <section class="lg:col-span-8 flex flex-col gap-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden">
+          <!-- Question Meta Header -->
+          <div class="px-5 sm:px-7 py-4 bg-slate-50 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="q-number-badge" class="px-3 py-1 rounded-lg bg-slate-900 text-white font-bold text-sm">
+                Soal No. 1 / 50
+              </span>
+              <span id="q-category-badge" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
+                Aturan Main &amp; Rubrik OSCE
+              </span>
+            </div>
+            <div>
+              <span id="q-status-pill" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200 text-slate-600">
+                Belum Dijawab
+              </span>
+            </div>
+          </div>
+
+          <!-- Question Body -->
+          <div class="p-5 sm:p-7">
+            <div id="q-text" class="text-slate-800 text-base sm:text-lg leading-relaxed font-medium">
+              <!-- Teks soal dirender via JS -->
+            </div>
+
+            <!-- Options A-E -->
+            <div id="q-options" class="mt-6 space-y-3">
+              <!-- Pilihan jawaban dirender via JS -->
+            </div>
+
+            <!-- Kotak Pembahasan Langsung (Khusus Mode Belajar Interaktif) -->
+            <div id="study-feedback-box" class="hidden mt-6 rounded-2xl border-2 overflow-hidden transition-all">
+              <!-- Konten pembahasan dirender via JS -->
+            </div>
+          </div>
+
+          <!-- Bottom Navigation Bar -->
+          <div class="px-5 sm:px-7 py-4 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between gap-2 sm:gap-4">
+            <button id="btn-prev" onclick="prevQuestion()" class="px-3.5 sm:px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 font-semibold text-sm flex items-center gap-1.5 transition-colors cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              <span>Sebelumnya</span>
+            </button>
+
+            <button id="btn-flag" onclick="toggleFlag()" class="px-3.5 sm:px-5 py-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-sm flex items-center gap-2 transition-all cursor-pointer">
+              <input type="checkbox" id="flag-checkbox" class="pointer-events-none w-4 h-4 rounded text-amber-500 border-amber-400" />
+              <span>Tandai Ragu-ragu</span>
+            </button>
+
+            <button id="btn-next" onclick="nextQuestion()" class="px-3.5 sm:px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white font-semibold text-sm flex items-center gap-1.5 transition-colors cursor-pointer">
+              <span id="btn-next-label">Berikutnya</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sidebar Navigasi Nomor Soal (4 Kolom Desktop) -->
+      <aside class="hidden lg:block lg:col-span-4 sticky top-20">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-5">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <h3 class="font-bold text-slate-900 text-sm">Navigasi Nomor Soal</h3>
+            <span id="sidebar-summary-badge" class="text-xs font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-full border border-teal-200">
+              0 / 50
+            </span>
+          </div>
+
+          <!-- Legend Kode Warna -->
+          <div id="desktop-legend" class="grid grid-cols-2 gap-2 py-3 text-[11px] text-slate-600 border-b border-slate-100">
+            <!-- Legend dirender dinamis sesuai mode -->
+          </div>
+
+          <!-- Grid Nomor Soal -->
+          <div id="desktop-nav-grid" class="mt-3.5 grid grid-cols-5 gap-2 max-h-[55vh] overflow-y-auto pr-1">
+            <!-- Tombol nomor dirender via JS -->
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Drawer -->
+  <div id="mobile-nav-drawer" class="fixed inset-0 z-50 hidden lg:hidden">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="toggleMobileNav(false)"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-80 max-w-[88vw] bg-white shadow-2xl flex flex-col">
+      <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+        <div>
+          <h3 class="font-bold text-sm">Navigasi Nomor Soal</h3>
+          <p id="mobile-drawer-progress" class="text-xs text-teal-300 mt-0.5">Terjawab 0 / 50</p>
+        </div>
+        <button onclick="toggleMobileNav(false)" class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="mobile-legend" class="p-3 bg-slate-50 border-b border-slate-200 grid grid-cols-2 gap-1.5 text-[11px] text-slate-600">
+        <!-- Legend mobile dirender dinamis -->
+      </div>
+      <div id="mobile-nav-grid" class="p-4 grid grid-cols-5 gap-2 overflow-y-auto flex-1 content-start">
+        <!-- Tombol nomor mobile dirender via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 3. HALAMAN HASIL, SKOR & PEMBAHASAN ==================== -->
+  <div id="view-result" class="hidden flex-1 flex flex-col">
+    <!-- Top Header Result -->
+    <header class="bg-slate-900 text-white shadow-md">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-wider text-teal-300">Laporan Evaluasi OSCE Veteriner</span>
+          <h1 class="text-xl sm:text-2xl font-extrabold">Hasil Simulasi CBT VETUP SIGAP — Volume 1</h1>
+        </div>
+        <button onclick="returnToMenu()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-semibold transition-colors cursor-pointer">
+          ← Menu Utama
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 flex-1">
+      <!-- Score & Overview Card -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden">
+        <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <!-- Score Box -->
+          <div class="md:col-span-4 flex flex-col items-center justify-center p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-teal-950 to-emerald-900 text-white text-center">
+            <span class="text-xs font-semibold uppercase tracking-widest text-teal-300">Skor Akhir</span>
+            <div id="res-score" class="text-5xl sm:text-6xl font-black mt-2 tracking-tight">0</div>
+            <div id="res-percentage" class="text-xs text-slate-300 mt-1">Ketepatan 0% (0/50 soal)</div>
+            <div id="res-pass-badge" class="mt-4 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-rose-500/20 text-rose-200 border border-rose-400/40">
+              Belum Mencapai Passing Grade (75%)
+            </div>
+          </div>
+
+          <!-- Breakdown Metrics & Action Buttons -->
+          <div class="md:col-span-8 space-y-5">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                <div class="text-xs font-semibold text-emerald-700">Benar</div>
+                <div id="res-correct" class="text-2xl font-extrabold text-emerald-800 mt-0.5">0</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
+                <div class="text-xs font-semibold text-rose-700">Salah</div>
+                <div id="res-wrong" class="text-2xl font-extrabold text-rose-800 mt-0.5">0</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-slate-100 border border-slate-200">
+                <div class="text-xs font-semibold text-slate-600">Kosong</div>
+                <div id="res-blank" class="text-2xl font-extrabold text-slate-800 mt-0.5">0</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-teal-50 border border-teal-200">
+                <div class="text-xs font-semibold text-teal-700">Waktu</div>
+                <div id="res-duration" class="text-lg sm:text-xl font-extrabold text-teal-900 mt-1">00m 00d</div>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-600 flex items-center justify-between">
+              <span>Standar Kelulusan Simulasi OSCE (Passing Grade)</span>
+              <span class="font-bold text-slate-900">≥ 75.00 (75%)</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-3 pt-1">
+              <button onclick="retrySameSession()" class="px-4 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white text-sm font-bold shadow-xs transition-colors flex items-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Ulangi Simulasi</span>
+              </button>
+
+              <button id="btn-retry-wrong" onclick="retryWrongQuestions()" class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold shadow-xs transition-colors flex items-center gap-2 cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>Latih Ulang Soal Salah (<span id="retry-wrong-count">0</span>)</span>
+              </button>
+
+              <button onclick="returnToMenu()" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold transition-colors cursor-pointer">
+                Kembali ke Menu Utama
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analisis Performa per Kategori Modul -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-5 sm:p-6">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h2 class="font-bold text-slate-900 text-base">Analisis Penguasaan per Kategori Modul OSCE</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Persentase ketepatan jawaban pada setiap topik ujian (target minimal 75%)</p>
+          </div>
+        </div>
+        <div id="category-analytics-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Progress bar analisis kategori dirender via JS -->
+        </div>
+      </div>
+
+      <!-- Filter Tabs Tinjauan Pembahasan -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 class="font-bold text-slate-900 text-base">Tinjauan Kunci Jawaban &amp; Pembahasan</h2>
+        <div class="flex flex-wrap gap-2" id="review-filters">
+          <button onclick="filterReview('all')" data-filter="all" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition-colors cursor-pointer">
+            Semua Soal (<span id="filter-count-all">0</span>)
+          </button>
+          <button onclick="filterReview('wrong')" data-filter="wrong" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer">
+            Jawaban Salah (<span id="filter-count-wrong">0</span>)
+          </button>
+          <button onclick="filterReview('correct')" data-filter="correct" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+            Jawaban Benar (<span id="filter-count-correct">0</span>)
+          </button>
+          <button onclick="filterReview('flagged')" data-filter="flagged" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-amber-50 hover:text-amber-700 transition-colors cursor-pointer">
+            Ditandai Ragu-ragu (<span id="filter-count-flagged">0</span>)
+          </button>
+          <button onclick="filterReview('blank')" data-filter="blank" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer">
+            Kosong (<span id="filter-count-blank">0</span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- Review Cards Container -->
+      <div id="review-list" class="space-y-5">
+        <!-- Kartu pembahasan dirender via JS -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== MODALS (KONFIRMASI CUSTOM TANPA ALERT/CONFIRM) ==================== -->
+  <!-- Modal Konfirmasi Selesai Ujian -->
+  <div id="modal-finish" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeFinishModal()"></div>
+    <div class="relative bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-700 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-extrabold text-slate-900">Akhiri Simulasi &amp; Lihat Skor?</h3>
+        <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+          Pastikan Anda telah memeriksa kembali jawaban Anda sebelum mengakhiri sesi latihan ini.
+        </p>
+      </div>
+      <div id="modal-finish-stats" class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1.5">
+        <!-- Ringkasan status dijawab/kosong/ragu -->
+      </div>
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button onclick="closeFinishModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 cursor-pointer">
+          Lanjutkan Mengerjakan
+        </button>
+        <button onclick="finishExam()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow cursor-pointer">
+          Selesai &amp; Lihat Skor
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Konfirmasi Keluar ke Menu Utama -->
+  <div id="modal-exit" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs" onclick="closeExitModal()"></div>
+    <div class="relative bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-extrabold text-slate-900">Kembali ke Menu Utama?</h3>
+        <p class="text-sm text-slate-600 mt-1.5 leading-relaxed">
+          Progres pengerjaan saat ini tidak akan disimpan apabila Anda kembali ke menu utama.
+        </p>
+      </div>
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button onclick="closeExitModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 cursor-pointer">
+          Batal
+        </button>
+        <button onclick="confirmExitToMenu()" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm shadow cursor-pointer">
+          Ya, Keluar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Waktu Habis -->
+  <div id="modal-timeout" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/75 backdrop-blur-xs"></div>
+    <div class="relative bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 text-center space-y-4">
+      <div class="w-14 h-14 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-xl font-extrabold text-slate-900">Waktu Ujian Telah Habis!</h3>
+        <p class="text-sm text-slate-600 mt-1.5">
+          Sistem secara otomatis menyimpan seluruh jawaban Anda. Silakan lihat hasil skor, analisis per modul, dan pembahasan lengkap.
+        </p>
+      </div>
+      <button onclick="finishExam()" class="w-full py-3 rounded-xl bg-teal-700 hover:bg-teal-600 text-white font-bold text-sm shadow cursor-pointer">
+        Lihat Skor &amp; Pembahasan
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // DATA LENGKAP 50 SOAL VETUP SIGAP — VOLUME 1: OSCE VETERINER
+    // =========================================================================
+    const QUESTIONS_DATA = [
+      {
+        id: 1,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Dalam pelaksanaan ujian OSCE Kedokteran Hewan, penguji menilai peserta berdasarkan daftar tindakan spesifik yang tercantum pada lembar checklist, bukan berdasarkan kesan subjektif. Apabila seorang peserta sebenarnya memahami langkah pemeriksaan tetapi lupa mengucapkan atau mempraktikkannya di hadapan penguji, ia tidak memperoleh poin. Prinsip dasar OSCE manakah yang tercermin dari aturan ini?",
+        opts: ["A. Objective", "B. Structured", "C. Clinical", "D. Examination", "E. Standardized"],
+        ans: 0,
+        exp: "Pilar pertama OSCE adalah Objective (Objektif), yang berarti penilaian sepenuhnya memakai lembar checklist terstandar, bukan kesan subjektif penguji. Apa yang tidak diucapkan secara lantang atau tidak dilakukan secara nyata oleh peserta tidak akan mendapatkan poin.",
+        ref: "VETUP SIGAP Vol. 1 — Empat Pilar OSCE (Halaman 4)."
+      },
+      {
+        id: 2,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Saat berada di stasiun pemeriksaan fisik anjing, seorang mahasiswa hanya berkata kepada penguji, \"Saya akan memeriksa Capillary Refill Time (CRT) dan turgor kulit pada pasien ini,\" tanpa benar-benar menyentuh mukosa gusi maupun kulit hewan tersebut. Penguji tidak memberikan poin untuk item tersebut. Hal ini sesuai dengan pilar OSCE yaitu...",
+        opts: [
+          "A. Objective — karena penguji tidak mendengar dengan jelas",
+          "B. Structured — karena urutan pemeriksaan tidak sesuai",
+          "C. Clinical — karena yang diuji adalah keterampilan nyata, bukan sekadar teori",
+          "D. Examination — karena waktu stasiun telah habis",
+          "E. Holistic — karena komunikasi dengan klien terlewat"
+        ],
+        ans: 2,
+        exp: "Pilar Clinical (Klinis) menegaskan bahwa OSCE menguji keterampilan klinis nyata, bukan sekadar hafalan teori. Menyebutkan \"saya akan periksa CRT\" tanpa benar-benar mempraktikkannya pada pasien/manekin sering kali tidak dihitung sebagai tindakan yang dilakukan.",
+        ref: "VETUP SIGAP Vol. 1 — Empat Pilar OSCE (Halaman 4)."
+      },
+      {
+        id: 3,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Dalam anatomi sebuah stasiun OSCE (Komunikasi–Diagnosa–Reseptir), peserta diberikan waktu 2 menit di luar pintu sebelum memasuki ruang ujian. Strategi paling efektif yang harus dilakukan peserta pada 2 menit tersebut adalah...",
+        opts: [
+          "A. Menghafal seluruh dosis obat emergensi di luar kepala",
+          "B. Membaca instruksi peserta dua kali dan menggarisbawahi kata kerja perintahnya",
+          "C. Langsung mengetuk pintu agar mendapat tambahan waktu di dalam ruangan",
+          "D. Bertanya kepada penguji mengenai diagnosa kerja kasus",
+          "E. Menulis kerangka rekam medis SOAP di kertas buram sebelum masuk"
+        ],
+        ans: 1,
+        exp: "Instruksi peserta ditempel di pintu dan dibaca selama 2 menit sebelum masuk. Peserta disarankan membaca instruksi tersebut dua kali serta menggarisbawahi kata kerja perintahnya (misalnya: lakukan anamnesis, jelaskan diagnosa banding, minta informed consent) agar tidak keluar dari fokus penilaian dan tidak kehabisan waktu.",
+        ref: "VETUP SIGAP Vol. 1 — Anatomi Sebuah Stasiun & Manajemen Waktu (Halaman 5 & 8)."
+      },
+      {
+        id: 4,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Selain menggunakan checklist item (dilakukan / tidak dilakukan / dilakukan tidak lengkap), penguji OSCE juga memberikan penilaian menyeluruh melalui Global Rating Scale (GRS) berskala 1 hingga 5. Peserta yang dinilai \"aman dalam menangani pasien dan klien, namun alur kerjanya kurang sistematis\" berada pada kategori skor GRS...",
+        opts: [
+          "A. Skor 5 — Sangat baik",
+          "B. Skor 4 — Lulus",
+          "C. Skor 3 — Borderline lulus",
+          "D. Skor 2 — Borderline tidak lulus",
+          "E. Skor 1 — Tidak lulus"
+        ],
+        ans: 2,
+        exp: "Pada Global Rating Scale (GRS): Skor 5 = Sangat baik (lancar, percaya diri, klien merasa dipahami); Skor 4 = Lulus (sistematis, aman, komunikatif); Skor 3 = Borderline lulus (aman tetapi tidak sistematis); Skor 2 = Borderline tidak lulus (banyak langkah kunci terlewat); Skor 1 = Tidak lulus (membahayakan pasien atau klien).",
+        ref: "VETUP SIGAP Vol. 1 — Bagaimana Penguji Memberi Nilai (Halaman 6)."
+      },
+      {
+        id: 5,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Di sebuah stasiun OSCE, seorang peserta berhasil memenuhi hampir seluruh item checklist anamnesis dan komunikasi dengan sangat baik. Namun, ketika klien bertanya apakah anjingnya yang terdiagnosis parvovirus berat pasti sembuh, peserta menjawab, \"Tenang Bu, anjingnya pasti sembuh total besok.\" Mengapa peserta tersebut berisiko gugur pada stasiun ini?",
+        opts: [
+          "A. Termasuk kekurangan minor pada bagian penutup konsultasi",
+          "B. Termasuk Critical Error yang dapat membatalkan nilai seluruh stasiun",
+          "C. Hanya mengurangi 1 poin pada skala Global Rating Scale",
+          "D. Diperbolehkan selama bertujuan menenangkan emosi klien",
+          "E. Tidak memengaruhi nilai apabila klien menyetujui rawat inap"
+        ],
+        ans: 1,
+        exp: "Menjanjikan kesembuhan atau memberikan diagnosis pasti tanpa dasar termasuk dalam daftar Critical Error pada OSCE. Kesalahan kritis dapat langsung membatalkan kelulusan seluruh stasiun meskipun item checklist lainnya terpenuhi.",
+        ref: "VETUP SIGAP Vol. 1 — Critical Error: Menggugurkan Seluruh Stasiun (Halaman 7)."
+      },
+      {
+        id: 6,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Manakah di antara tindakan berikut yang BUKAN termasuk kategori Critical Error dalam stasiun OSCE Kedokteran Hewan?",
+        opts: [
+          "A. Tidak mencuci tangan atau tidak memakai APD pada stasiun kasus zoonosis",
+          "B. Melakukan teknik restraint yang kasar hingga menyakiti hewan",
+          "C. Melakukan tindakan bedah/invasif tanpa persetujuan klien (informed consent)",
+          "D. Memberikan obat yang dikontraindikasikan pada spesies pasien",
+          "E. Lupa menanyakan merek pakan yang dikonsumsi hewan pada tahap awal anamnesis"
+        ],
+        ans: 4,
+        exp: "Lupa menanyakan merek pakan hanya menyebabkan kehilangan poin pada item checklist anamnesis intake, bukan Critical Error. Sebaliknya, tidak memakai APD pada kasus zoonosis, restraint yang menyakiti hewan, salah dosis/kontraindikasi obat, menjanjikan kesembuhan, tindakan invasif tanpa persetujuan klien, dan pelanggaran kode etik/kerahasiaan adalah Critical Error yang menggugurkan stasiun.",
+        ref: "VETUP SIGAP Vol. 1 — Critical Error: Menggugurkan Seluruh Stasiun (Halaman 7)."
+      },
+      {
+        id: 7,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Pada stasiun OSCE berdurasi total 20 menit (termasuk membaca soal di luar pintu), pembagian alokasi waktu yang ideal agar seluruh tahapan selesai tepat waktu adalah...",
+        opts: [
+          "A. 5 menit di luar pintu, 10 menit inti, 5 menit penutup",
+          "B. 2 menit di luar pintu, 15 menit sesi konsultasi/tindakan inti, 3 menit penutup (ambulator/resep)",
+          "C. 1 menit di luar pintu, 18 menit anamnesis & pemeriksaan fisik, 1 menit penutup",
+          "D. 2 menit di luar pintu, 10 menit inti, 8 menit menulis rekam medis",
+          "E. 3 menit di luar pintu, 12 menit inti, 5 menit diskusi dengan penguji"
+        ],
+        ans: 1,
+        exp: "Manajemen waktu stasiun 20 menit dibagi menjadi: 2 menit di luar pintu (membaca instruksi dua kali & menggarisbawahi kata kerja perintah), 15 menit di dalam ruangan untuk Pembuka, Inti Bagian 1, Inti Bagian 2, dan Konsolidasi, serta 3 menit Penutup untuk kelengkapan penulisan ambulator/resep dan ucapan terima kasih.",
+        ref: "VETUP SIGAP Vol. 1 — Manajemen Waktu dalam Stasiun 20 Menit (Halaman 8)."
+      },
+      {
+        id: 8,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Dalam kerangka berpikir klinis OSCE, penguji menilai proses penalaran peserta secara berurutan tanpa melompat langsung ke kesimpulan. Urutan tujuh langkah alur diagnosa dasar yang benar adalah...",
+        opts: [
+          "A. Anamnesis → Sinyalemen → Pemeriksaan fisik → Uji penunjang → Daftar masalah → Diagnosa banding → Diagnosa kerja",
+          "B. Sinyalemen → Anamnesis → Pemeriksaan fisik → Daftar masalah → Diagnosa banding → Uji penunjang → Diagnosa kerja",
+          "C. Sinyalemen → Pemeriksaan fisik → Anamnesis → Diagnosa banding → Daftar masalah → Uji penunjang → Diagnosa kerja",
+          "D. Anamnesis → Pemeriksaan fisik → Sinyalemen → Diagnosa kerja → Diagnosa banding → Uji penunjang → Daftar masalah",
+          "E. Sinyalemen → Anamnesis → Daftar masalah → Pemeriksaan fisik → Uji penunjang → Diagnosa banding → Diagnosa kerja"
+        ],
+        ans: 1,
+        exp: "Tujuh langkah kerangka diagnosa dasar harus berjalan sistematis: (1) Sinyalemen (siapa pasiennya?), (2) Anamnesis (apa ceritanya?), (3) Pemeriksaan fisik (apa temuannya?), (4) Daftar masalah (apa yang abnormal?), (5) Diagnosa banding (apa saja kemungkinannya?), (6) Uji penunjang (bagaimana menyaringnya?), dan (7) Diagnosa kerja (apa kesimpulan & rencananya?).",
+        ref: "VETUP SIGAP Vol. 1 — Kerangka Besar: Tujuh Langkah (Halaman 10)."
+      },
+      {
+        id: 9,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Pada 30 detik pertama konsultasi, peserta harus mengonfirmasi sinyalemen lengkap pasien. Jika sinyalemen menunjukkan seekor anjing betina utuh (belum steril), berusia 8 tahun, dengan riwayat baru saja selesai siklus estrus beberapa minggu lalu, kecurigaan klinis yang langsung meningkat adalah...",
+        opts: [
+          "A. Gastric Dilatation-Volvulus (GDV) dan hipoglikemia",
+          "B. Piometra, tumor mamae, dan diabetes melitus",
+          "C. Canine Parvovirus dan koksidiosis",
+          "D. Obstruksi uretra (FLUTD) dan urolitiasis",
+          "E. Hipertiroidisme dan malabsorpsi"
+        ],
+        ans: 1,
+        exp: "Anjing betina utuh berusia > 6 tahun pada periode pasca-estrus (diestrus) memiliki pengaruh hormon progesteron yang tinggi, sehingga langsung meningkatkan kecurigaan klinis terhadap piometra, tumor kelenjar mamae, serta diabetes melitus.",
+        ref: "VETUP SIGAP Vol. 1 — Sinyalemen: 30 Detik yang Sering Dilupakan (Halaman 11)."
+      },
+      {
+        id: 10,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Seekor kucing ras domestik berusia 13 tahun (geriatri) dibawa ke klinik dengan sinyalemen dan keluhan tubuh semakin kurus meskipun nafsu makannya sangat besar (polifagia). Berdasarkan profil sinyalemen tersebut, tiga kecurigaan penyakit utama yang langsung naik adalah...",
+        opts: [
+          "A. Hipertiroidisme, diabetes melitus, dan malabsorpsi",
+          "B. Feline Panleukopenia, otitis eksterna, dan scabiosis",
+          "C. Piometra, mastitis, dan distokia",
+          "D. Ketosis, displasia abomasum, dan milk fever",
+          "E. Gastric Dilatation-Volvulus, intususepsi, dan megakolon"
+        ],
+        ans: 0,
+        exp: "Kucing geriatri yang mengalami penurunan berat badan (kurus) namun nafsu makannya meningkat tajam (polifagia) merupakan gambaran klasik yang langsung meningkatkan kecurigaan terhadap hipertiroidisme, diabetes melitus, dan gangguan malabsorpsi.",
+        ref: "VETUP SIGAP Vol. 1 — Sinyalemen: 30 Detik yang Sering Dilupakan (Halaman 11)."
+      },
+      {
+        id: 11,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Seekor sapi perah laktasi berumur 4 tahun dilaporkan mengalami penurunan kondisi pada 2 minggu pasca-partus. Berdasarkan sinyalemen hewan produksi tersebut, daftar kecurigaan penyakit metabolik dan reproduksi yang langsung meningkat adalah...",
+        opts: [
+          "A. Anthrax, Surra, dan Brucellosis",
+          "B. Ketosis, displasia abomasum, metritis, dan milk fever",
+          "C. Foot and Mouth Disease (FMD) dan Lumpy Skin Disease (LSD)",
+          "D. Tympani primer, actinobacillosis, dan tetanus",
+          "E. Thelaziasis, fasciolosis, dan babesiosis"
+        ],
+        ans: 1,
+        exp: "Sapi perah pada periode transisi 1–3 minggu pasca-partus sangat rentan mengalami gangguan metabolik dan infeksi uterus pascamelahirkan, yaitu ketosis, displasia abomasum (LDA/RDA), metritis, dan hipokalsemia (*milk fever*).",
+        ref: "VETUP SIGAP Vol. 1 — Sinyalemen: 30 Detik yang Sering Dilupakan (Halaman 11)."
+      },
+      {
+        id: 12,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Dalam teknik anamnesis model \"struktur corong\" (*funnel structure*), kesalahan fatal yang paling sering dilakukan dokter hewan menurut penelitian komunikasi klinis adalah...",
+        opts: [
+          "A. Menggunakan bahasa sehari-hari saat bertanya kepada pemilik hewan",
+          "B. Menyela pembicaraan klien dalam belasan detik pertama sebelum klien selesai bercerita",
+          "C. Mengajukan pertanyaan tertutup pada akhir sesi anamnesis",
+          "D. Mencatat riwayat vaksinasi dan obat cacing secara spesifik",
+          "E. Memberikan kesempatan klien menjelaskan kronologi keluhan utama"
+        ],
+        ans: 1,
+        exp: "Anamnesis struktur corong dimulai dengan pertanyaan terbuka dan membiarkan klien berbicara tanpa dipotong minimal selama 30–60 detik, kemudian dilanjutkan pertanyaan penggali (\"Bisa dijelaskan lebih detail?\"), dan diakhiri pertanyaan tertutup. Penelitian komunikasi klinis mencatat dokter cenderung menyela klien dalam belasan detik pertama sehingga informasi penting terlewat.",
+        ref: "VETUP SIGAP Vol. 1 — Anamnesis: Struktur Corong (Halaman 12)."
+      },
+      {
+        id: 13,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Untuk memastikan tidak ada aspek anamnesis yang terlewat selama stasiun OSCE, digunakan jembatan keledai (mnemonic) **KRISPI**. Huruf **S** dan **P** dalam mnemonic KRISPI secara berurutan merujuk pada...",
+        opts: [
+          "A. Sinyalemen hewan dan Pemeriksaan fisik",
+          "B. Status preventif (vaksin, obat cacing, kontrol kutu, riwayat obat/alergi) dan Pemeliharaan & lingkungan",
+          "C. Sistem pencernaan dan Sistem pernapasan",
+          "D. Suhu tubuh dan Pulsus arteri",
+          "E. Sanitasi kandang dan Pengobatan sebelumnya"
+        ],
+        ans: 1,
+        exp: "Mnemonic KRISPI terdiri atas: K = Keluhan utama; R = Riwayat penyakit sekarang (onset, durasi, progresi, frekuensi); I = Intake pakan & minum; S = Status preventif (vaksinasi, obat cacing, kontrol kutu, riwayat obat & alergi); P = Pemeliharaan & lingkungan (indoor/outdoor, kontak hewan lain, perjalanan, benda asing); I = Ihwal seluruh sistem tubuh.",
+        ref: "VETUP SIGAP Vol. 1 — Isi Anamnesis: Mnemonic KRISPI (Halaman 13)."
+      },
+      {
+        id: 14,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Seorang pemilik anjing melaporkan hewannya \"muntah\" setiap kali selesai makan. Untuk membedakan apakah gejala tersebut benar-benar muntah (*vomiting*) atau regurgitasi, pertanyaan anamnesis paling tepat yang harus diajukan dokter hewan adalah...",
+        opts: [
+          "A. Apakah warna pakan yang keluar masih sama dengan warna pakan aslinya?",
+          "B. Apakah kejadiannya didahului kontraksi perut dan suara mual, atau makanan keluar begitu saja saat kepala menunduk?",
+          "C. Berapa kali anjing diberikan makan dalam satu hari?",
+          "D. Apakah anjing tetap mau memakan kembali makanan yang sudah dikeluarkan?",
+          "E. Apakah anjing sudah diberikan obat cacing bulan ini?"
+        ],
+        ans: 1,
+        exp: "Muntah merupakan proses aktif yang didahului fase prodromal (mual, hipersalivasi) dan kontraksi otot abdomen (*retching*), sedangkan regurgitasi merupakan pengeluaran isi esofagus secara pasif tanpa kontraksi perut (sering terjadi saat hewan menundukkan kepala).",
+        ref: "VETUP SIGAP Vol. 1 — Membedakan Istilah yang Sering Rancu (Halaman 14)."
+      },
+      {
+        id: 15,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Pemilik kucing mengeluhkan hewannya mengalami diare sejak dua hari lalu. Dari hasil anamnesis diketahui feses keluar dalam volume sedikit-sedikit, frekuensinya sangat sering, kucing tampak mengejan kuat (*tenesmus*), serta disertai lendir dan bercak darah segar. Karakteristik tersebut mengarahkan lokasi gangguan pada...",
+        opts: [
+          "A. Lambung (gastritis akut)",
+          "B. Usus halus (small bowel diarrhea)",
+          "C. Usus besar (large bowel diarrhea / kolitis)",
+          "D. Pankreas eksokrin (insufisiensi pankreas)",
+          "E. Esofagus distal"
+        ],
+        ans: 2,
+        exp: "Diare usus halus ditandai volume feses banyak dengan frekuensi normal atau sedikit meningkat tanpa tenesmus; sedangkan diare usus besar ditandai volume feses sedikit, frekuensi sangat sering, mengejan (tenesmus), berlendir, atau disertai darah segar (hematochezia).",
+        ref: "VETUP SIGAP Vol. 1 — Membedakan Istilah yang Sering Rancu (Halaman 14)."
+      },
+      {
+        id: 16,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Seorang pemilik kucing melapor bahwa kucingnya \"sering mengejan di kotak pasir\". Agar tidak salah membedakan antara disuria (gangguan urinasi) dan konstipasi (gangguan defekasi), pertanyaan klarifikasi yang paling tepat dan mudah dipahami klien adalah...",
+        opts: [
+          "A. Apakah kucing menunjukkan tanda-tanda stranguria atau tenesmus?",
+          "B. Saat mengejan di kotak pasir, yang sedang ditunggu keluar itu pipis atau pup?",
+          "C. Bagaimana konsistensi feses kucing dalam tiga hari terakhir?",
+          "D. Apakah kucing minum lebih banyak air dari biasanya?",
+          "E. Sejak kapan kucing menggunakan merek pasir kucing tersebut?"
+        ],
+        ans: 1,
+        exp: "Klien sering kali menyamakan postur jongkok mengejan akibat sumbatan saluran kemih (disuria/stranguria) dengan sembelit (konstipasi). Pertanyaan langsung menggunakan bahasa awam: \"Saat mengejan, yang ditunggu keluar itu pipis atau pup?\" sangat efektif untuk membedakan keduanya secara cepat.",
+        ref: "VETUP SIGAP Vol. 1 — Membedakan Istilah yang Sering Rancu (Halaman 14)."
+      },
+      {
+        id: 17,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Klien membawa anjingnya dengan keluhan \"tiba-tiba jatuh pingsan di rumah\". Untuk membedakan apakah kejadian tersebut merupakan episode kejang (*seizure*) atau pingsan akibat gangguan kardiovaskular (*sinkop*), indikator klinis yang perlu digali adalah...",
+        opts: [
+          "A. Apakah kejadiannya terjadi pada siang atau malam hari",
+          "B. Adakah fase pre-iktal dan post-iktal (linglung setelah sadar), salivasi berlebih, atau urinasi saat kejadian",
+          "C. Apakah anjing langsung mau makan setelah bangun",
+          "D. Berapa berat badan anjing saat ditimbang terakhir kali",
+          "E. Apakah anjing dipelihara di dalam atau di luar rumah"
+        ],
+        ans: 1,
+        exp: "Kejang (*seizure*) umumnya memiliki fase aura/pre-iktal, gerakan tonik-klonik disertai aktivitas otonom (hipersalivasi, urinasi/defekasi tidak sadar), serta fase post-iktal (kebingungan/linglung sementara), sedangkan sinkop terjadi mendadak akibat hipoperfusi serebral sesaat dan hewan segera sadar penuh tanpa fase post-iktal.",
+        ref: "VETUP SIGAP Vol. 1 — Membedakan Istilah yang Sering Rancu (Halaman 14)."
+      },
+      {
+        id: 18,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Dalam urutan 12 langkah pemeriksaan fisik sistematik pada stasiun OSCE, tindakan paling pertama yang harus dilakukan peserta sebelum menyentuh hewan adalah...",
+        opts: [
+          "A. Mengukur suhu rektal dengan termometer digital",
+          "B. Melakukan auskultasi jantung pada empat titik katup",
+          "C. Melakukan observasi jarak jauh (menilai sikap, kesadaran, gait, dan pola napas)",
+          "D. Melakukan palpasi limfonodus submandibularis dan poplitea",
+          "E. Memeriksa warna mukosa oral dan Capillary Refill Time (CRT)"
+        ],
+        ans: 2,
+        exp: "Langkah ke-1 pemeriksaan fisik sistematik adalah observasi jarak jauh (*hands-off observation*) untuk menilai sikap berdiri/berbaring, tingkat kesadaran, gaya berjalan (*gait*), dan pola pernapasan sebelum hewan mengalami stres akibat penanganan fisik, diikuti langkah ke-2 yaitu keamanan (cuci tangan, izin klien, *restraint* tepat).",
+        ref: "VETUP SIGAP Vol. 1 — Pemeriksaan Fisik: Urutan Tetap, Narasi Lantang (Halaman 15)."
+      },
+      {
+        id: 19,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Seorang mahasiswa memeriksa seekor kucing dewasa di stasiun OSCE dan mencatat hasil TPR: suhu rektal $38,6^\\circ\\text{C}$, frekuensi nadi $180\\text{ x/menit}$, dan frekuensi napas $24\\text{ x/menit}$. Berdasarkan nilai rujukan fisiologis kucing, interpretasi yang tepat adalah...",
+        opts: [
+          "A. Hipotermia, takikardia, dan takipnea",
+          "B. Suhu normal, nadi normal, dan napas normal",
+          "C. Demam ringan, bradikardia, dan dispnea",
+          "D. Suhu normal, takikardia, dan napas normal",
+          "E. Hipertermia, nadi normal, dan takipnea"
+        ],
+        ans: 1,
+        exp: "Nilai rujukan fisiologis normal pada kucing adalah: suhu rektal $38,0–39,2^\\circ\\text{C}$, frekuensi nadi $140–220\\text{ x/menit}$, dan frekuensi napas $20–30\\text{ x/menit}$. Dengan demikian, hasil $38,6^\\circ\\text{C}$, nadi $180\\text{ x/menit}$, dan napas $24\\text{ x/menit}$ seluruhnya berada dalam rentang normal.",
+        ref: "VETUP SIGAP Vol. 1 — Nilai Rujukan TPR (Halaman 16)."
+      },
+      {
+        id: 20,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Dalam pemeriksaan fisik sapi perah dewasa, selain mengukur suhu rektal ($38,0–39,0^\\circ\\text{C}$), nadi ($60–80\\text{ x/menit}$), dan napas ($15–35\\text{ x/menit}$), peserta OSCE juga memeriksa motilitas rumen pada fossa paralumbalis kiri. Frekuensi gerak rumen normal pada sapi adalah...",
+        opts: [
+          "A. 1–3 kontraksi per 2 menit",
+          "B. 5–8 kontraksi per 1 menit",
+          "C. 10–12 kontraksi per 2 menit",
+          "D. 1 kontraksi setiap 5 menit",
+          "E. 15–20 kontraksi per 2 menit"
+        ],
+        ans: 0,
+        exp: "Nilai rujukan fisiologis tambahan untuk pemeriksaan klinis ruminansia besar (sapi) adalah gerak rumen normal sebanyak 1–3 kontraksi per 2 menit, CRT < 2 detik, dan BCS ideal 3 (skala 1–5) atau 4–5 (skala 1–9).",
+        ref: "VETUP SIGAP Vol. 1 — Nilai Rujukan TPR & Tambahan Penting (Halaman 16)."
+      },
+      {
+        id: 21,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Manakah pasangan nilai rujukan suhu rektal dan frekuensi nadi normal yang tepat untuk **kuda** dan **ayam** secara berurutan?",
+        opts: [
+          "A. Kuda: suhu $37,2–38,3^\\circ\\text{C}$, nadi $28–44\\text{ x/menit}$; Ayam: suhu $40,5–42,0^\\circ\\text{C}$, nadi $250–350\\text{ x/menit}$",
+          "B. Kuda: suhu $38,0–39,5^\\circ\\text{C}$, nadi $60–90\\text{ x/menit}$; Ayam: suhu $38,5–40,0^\\circ\\text{C}$, nadi $130–200\\text{ x/menit}$",
+          "C. Kuda: suhu $36,5–37,5^\\circ\\text{C}$, nadi $50–70\\text{ x/menit}$; Ayam: suhu $39,0–40,0^\\circ\\text{C}$, nadi $180–220\\text{ x/menit}$",
+          "D. Kuda: suhu $37,5–39,2^\\circ\\text{C}$, nadi $70–120\\text{ x/menit}$; Ayam: suhu $40,0–41,0^\\circ\\text{C}$, nadi $140–220\\text{ x/menit}$",
+          "E. Kuda: suhu $38,5–40,0^\\circ\\text{C}$, nadi $60–90\\text{ x/menit}$; Ayam: suhu $41,5–43,0^\\circ\\text{C}$, nadi $350–450\\text{ x/menit}$"
+        ],
+        ans: 0,
+        exp: "Kuda memiliki suhu rektal normal $37,2–38,3^\\circ\\text{C}$ dan nadi $28–44\\text{ x/menit}$ (napas $8–16\\text{ x/menit}$), sedangkan unggas (ayam) memiliki suhu tubuh lebih tinggi yaitu $40,5–42,0^\\circ\\text{C}$ dan nadi $250–350\\text{ x/menit}$ (napas $15–30\\text{ x/menit}$).",
+        ref: "VETUP SIGAP Vol. 1 — Nilai Rujukan TPR (Halaman 16)."
+      },
+      {
+        id: 22,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Pada langkah ke-4 alur diagnosa dasar (menyusun Daftar Masalah / *Problem List*), cara penyajian yang dinilai benar dan sistematis oleh penguji OSCE adalah...",
+        opts: [
+          "A. Langsung menuliskan 'Anjing ini menderita gastroenteritis hemoragika'",
+          "B. Mendaftar setiap temuan klinis abnormal secara faktual (misal: muntah akut 2 hari, diare berdarah, dehidrasi 7%, demam $39,8^\\circ\\text{C}$)",
+          "C. Hanya menuliskan keluhan utama yang disampaikan pemilik saat datang",
+          "D. Menggabungkan seluruh temuan pemeriksaan fisik ke dalam satu nama penyakit pasti",
+          "E. Langsung menuliskan resep antibiotik dan antiemetik tanpa mengelompokkan masalah"
+        ],
+        ans: 1,
+        exp: "Menyusun daftar masalah harus berbasis fakta klinis abnormal dari anamnesis dan pemeriksaan fisik (seperti muntah akut 2 hari, diare berdarah, dehidrasi ±7%, demam $39,8^\\circ\\text{C}$, vaksinasi tidak lengkap), bukan langsung melompat menyimpulkan nama diagnosis penyakit (\"gastroenteritis\").",
+        ref: "VETUP SIGAP Vol. 1 — Ubah Temuan Menjadi Daftar Masalah (Halaman 17)."
+      },
+      {
+        id: 23,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Dalam menyusun diagnosa banding (*differential diagnosis*), digunakan kerangka **DAMNIT-V**. Apabila seekor anjing mengalami gangguan pencernaan akibat perubahan pakan mendadak atau tertelan racun tikus, masing-masing etiologi tersebut masuk ke dalam kategori huruf...",
+        opts: [
+          "A. D (Degeneratif) dan A (Anomali)",
+          "B. M (Metabolik) dan V (Vaskular)",
+          "C. N (Neoplasia & Nutrisi) dan T (Trauma & Toksik)",
+          "D. I (Infeksi/Inflamasi) dan D (Degeneratif)",
+          "E. A (Anomali) dan M (Metabolik)"
+        ],
+        ans: 2,
+        exp: "Dalam DAMNIT-V: D = Degeneratif; A = Anomali; M = Metabolik; N = Neoplasia & Nutrisi (termasuk perubahan pakan mendadak); I = Infeksi, Inflamasi, Imun, Idiopatik, Iatrogenik; T = Trauma & Toksik (termasuk benda asing, intususepsi, racun tikus, NSAID); V = Vaskular. Diagnosa banding harus diurutkan berdasarkan apa yang paling mungkin DAN apa yang paling mematikan jika terlewat.",
+        ref: "VETUP SIGAP Vol. 1 — Menyusun Diagnosa Banding: DAMNIT-V (Halaman 18)."
+      },
+      {
+        id: 24,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Dalam menyusun rencana diagnostik bertingkat agar efisien dan rasional di hadapan penguji, pemeriksaan yang termasuk dalam kelompok **Tahap 1 (Minimum Database)** adalah...",
+        opts: [
+          "A. CT-Scan, MRI, dan endoskopi saluran cerna",
+          "B. Ulas darah, pemeriksaan feses natif dan apung, serta urinalisis",
+          "C. Kultur bakteri, uji sensitivitas antibiotik, dan histopatologi",
+          "D. Ekokardiografi Doppler dan radiografi kontras barium",
+          "E. Biopsi sumsum tulang dan PCR spesifik"
+        ],
+        ans: 1,
+        exp: "Rencana diagnostik bertingkat dimulai dari: (1) Minimum database (ulas darah, feses natif & apung, urinalisis); (2) Lanjutan (hematologi lengkap, kimia darah, rapid test antigen, sitologi); (3) Pencitraan (radiografi polos/kontras, USG abdomen, ekokardiografi); serta (4) Rujukan (kultur & sensitivitas, histopatologi, endoskopi, CT).",
+        ref: "VETUP SIGAP Vol. 1 — Rencana Diagnostik Bertingkat (Halaman 19)."
+      },
+      {
+        id: 25,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Dalam penulisan rekam medis format **SOAP** yang bersifat dokumen legal, penempatan informasi \"Daftar masalah, diagnosa banding yang diprioritaskan, dan diagnosa kerja\" dicatat pada bagian...",
+        opts: [
+          "A. S (Subjective)",
+          "B. O (Objective)",
+          "C. A (Assessment)",
+          "D. P (Plan)",
+          "E. Bagian Header Identitas"
+        ],
+        ans: 2,
+        exp: "Dalam SOAP: S (Subjective) = anamnesis & kekhawatiran klien; O (Objective) = sinyalemen, TPR, temuan pemeriksaan fisik, dan hasil lab; A (Assessment) = daftar masalah, diagnosa banding terprioritas, dan diagnosa kerja; P (Plan) = rencana diagnostik, terapi (obat & dosis), serta edukasi klien.",
+        ref: "VETUP SIGAP Vol. 1 — Menulis Rekam Medis SOAP (Halaman 20)."
+      },
+      {
+        id: 26,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Pada latihan kasus kilat: seekor kucing domestik jantan, 3 tahun, belum steril, dipelihara *indoor* dengan pakan kering, dilaporkan bolak-balik ke *litter box*, jongkok lama tanpa keluar urin, dan semalam menjerit kesakitan. Tindakan pemeriksaan fisik yang **wajib segera dilakukan** pertama kali saat mengevaluasi kasus ini adalah...",
+        opts: [
+          "A. Pemeriksaan otoskopi pada kedua saluran telinga",
+          "B. Palpasi abdomen kaudal untuk mengevaluasi ukuran, kekerasan, dan nyeri pada vesika urinaria",
+          "C. Pemeriksaan refleks pupil dan saraf kranial",
+          "D. Uji apung feses untuk mendeteksi telur cacing",
+          "E. Pengukuran lingkar dada dan panjang tulang femur"
+        ],
+        ans: 1,
+        exp: "Kucing jantan muda-dewasa, *indoor*, pakan kering dengan gejala stranguria/disuria dan vokalisasi nyeri merupakan tanda klasik obstruksi uretra (FLUTD). Tindakan pemeriksaan fisik yang wajib segera dilakukan adalah palpasi abdomen kaudal (secara lembut agar tidak ruptur) untuk memastikan apakah vesika urinaria mengalami distensi dan mengeras.",
+        ref: "VETUP SIGAP Vol. 1 — Latihan Kilat 5 Menit (Halaman 21)."
+      },
+      {
+        id: 27,
+        cat: "Komunikasi Klien & Etika",
+        q: "Mengapa komunikasi dalam praktik kedokteran hewan disebut sebagai **komunikasi triadik** (*triadic communication*)?",
+        opts: [
+          "A. Karena melibatkan tiga dokter hewan spesialis dalam satu ruang konsultasi",
+          "B. Karena pasien (hewan) tidak dapat berbicara, klien yang memutuskan dan membayar, sementara dokter hewan wajib tetap mengadvokasi kesejahteraan hewan",
+          "C. Karena menggunakan tiga bahasa sekaligus: medis, lokal, dan internasional",
+          "D. Karena dilakukan dalam tiga tahap: sebelum, saat, dan sesudah operasi",
+          "E. Karena melibatkan penguji, aktor klien, dan panitia ujian"
+        ],
+        ans: 1,
+        exp: "Komunikasi veteriner bersifat triadik antara dokter hewan, klien (pemilik), dan pasien (hewan). Pasien tidak dapat menyampaikan keluhannya secara verbal, klien memegang kendali keputusan finansial dan persetujuan tindakan, sedangkan dokter hewan memiliki tanggung jawab moral dan profesional untuk tetap mengadvokasi kesejahteraan hewan (*animal welfare*).",
+        ref: "VETUP SIGAP Vol. 1 — Mengapa Komunikasi Dinilai Seberat Ini (Halaman 23)."
+      },
+      {
+        id: 28,
+        cat: "Komunikasi Klien & Etika",
+        q: "Dalam kerangka konsultasi **Calgary-Cambridge versi veteriner**, pada tahap ke-5 (**Menutup sesi**), dokter hewan wajib menyampaikan *safety netting*. Apa yang dimaksud dengan *safety netting* dalam komunikasi klinis?",
+        opts: [
+          "A. Memasang jaring pengaman pada kandang rawat inap agar hewan tidak kabur",
+          "B. Menjelaskan tanda-tanda bahaya atau perburukan gejala yang mengharuskan klien segera membawa hewannya kembali sebelum jadwal kontrol",
+          "C. Meminta pembayaran uang muka sebelum tindakan medis dilakukan",
+          "D. Menutup sesi dengan memberikan kartu nama klinik tanpa penjelasan tambahan",
+          "E. Meminta klien menandatangani surat pembebasan tuntutan hukum"
+        ],
+        ans: 1,
+        exp: "Tahap menutup sesi pada kerangka Calgary-Cambridge meliputi: meringkas rencana perawatan, *safety netting* (memberi tahu tanda bahaya/red flags kapan harus segera kembali ke klinik), menjadwalkan kontrol ulang, dan memberi kesempatan bertanya terakhir.",
+        ref: "VETUP SIGAP Vol. 1 — Kerangka Calgary-Cambridge Versi Veteriner (Halaman 24)."
+      },
+      {
+        id: 29,
+        cat: "Komunikasi Klien & Etika",
+        q: "Ketika menjelaskan rencana terapi yang cukup panjang kepada klien, dokter hewan meminta klien mengulangi kembali instruksi pemberian obat dan perawatan di rumah menggunakan kata-kata klien sendiri untuk memastikan tidak ada salah paham. Teknik komunikasi ini disebut...",
+        opts: [
+          "A. Signposting",
+          "B. Ask-Tell-Ask",
+          "C. Teach-back",
+          "D. Chunk and check",
+          "E. Funnel questioning"
+        ],
+        ans: 2,
+        exp: "Empat teknik menjelaskan yang wajib dikuasai: (1) Signposting = memberi rambu sebelum berpindah topik; (2) Chunk and check = menyampaikan informasi sepotong demi sepotong lalu mengecek pemahaman; (3) Ask-Tell-Ask = menanyakan dulu apa yang sudah diketahui klien sebelum menjelaskan; (4) Teach-back = meminta klien mengulang kembali dengan kata-katanya sendiri.",
+        ref: "VETUP SIGAP Vol. 1 — Empat Teknik Menjelaskan yang Wajib Dikuasai (Halaman 25)."
+      },
+      {
+        id: 30,
+        cat: "Komunikasi Klien & Etika",
+        q: "Salah satu kesalahan paling umum peserta OSCE adalah menggunakan jargon medis tanpa menerjemahkannya. Padanan kalimat bahasa awam yang paling tepat untuk menerjemahkan istilah **\"Kemungkinan obstruksi uretra dengan hiperkalemia\"** kepada klien adalah...",
+        opts: [
+          "A. Kucing Bapak mengalami penyumbatan saluran kemih yang memicu peningkatan kalium darah sehingga berisiko aritmia jantung",
+          "B. Saluran kencingnya tersumbat, dan itu bisa mengganggu kerja jantungnya",
+          "C. Terjadi retensi urin pada vesika urinaria akibat kristal struvit yang menyebabkan azotemia",
+          "D. Ginjalnya gagal menyaring elektrolit sehingga terjadi asidosis metabolik berat",
+          "E. Kucing ini harus segera dikateterisasi karena uretra penisnya mengalami spasme"
+        ],
+        ans: 1,
+        exp: "Menerjemahkan jargon medis harus menggunakan bahasa sehari-hari yang langsung dipahami klien tanpa istilah teknis yang membingungkan: \"Kemungkinan obstruksi uretra dengan hiperkalemia\" diterjemahkan menjadi \"Saluran kencingnya tersumbat, dan itu bisa mengganggu kerja jantungnya.\"",
+        ref: "VETUP SIGAP Vol. 1 — Terjemahkan Jargon Anda (Halaman 26)."
+      },
+      {
+        id: 31,
+        cat: "Komunikasi Klien & Etika",
+        q: "Dalam model empati **NURSE**, seorang dokter hewan berkata kepada klien yang menangis: *\"Saya salut Ibu langsung membawanya ke klinik begitu melihat ada perubahan perilaku pada Luna.\"* Pernyataan tersebut menerapkan komponen...",
+        opts: [
+          "A. N — Naming (menamai emosi)",
+          "B. U — Understanding (menunjukkan pemahaman)",
+          "C. R — Respecting (menghargai upaya klien)",
+          "D. S — Supporting (menyatakan dukungan)",
+          "E. E — Exploring (menggali lebih dalam)"
+        ],
+        ans: 2,
+        exp: "Model NURSE terdiri dari: Naming (\"Sepertinya Ibu sangat cemas...\"), Understanding (\"Wajar sekali, Luna sudah 12 tahun bersama keluarga Ibu\"), Respecting (\"Saya salut Ibu langsung membawanya begitu melihat ada yang aneh\"), Supporting (\"Apa pun keputusan Ibu nanti, saya akan bantu sampai selesai\"), dan Exploring (\"Boleh cerita apa yang paling Ibu khawatirkan?\").",
+        ref: "VETUP SIGAP Vol. 1 — Empati yang Terlihat: Model NURSE (Halaman 27)."
+      },
+      {
+        id: 32,
+        cat: "Komunikasi Klien & Etika",
+        q: "Persetujuan tindakan medik (*Informed Consent*) merupakan dokumen legal dan etik yang wajib dipenuhi sebelum tindakan invasif/anestesi. Terdapat delapan komponen wajib dalam *informed consent*, salah satunya adalah menjelaskan **konsekuensi**. Yang dimaksud dengan komponen konsekuensi adalah...",
+        opts: [
+          "A. Rincian estimasi biaya rawat inap dan kemungkinan biaya tambahan",
+          "B. Efek samping obat anestesi yang mungkin terjadi selama operasi",
+          "C. Apa yang akan terjadi pada hewan apabila tidak dilakukan tindakan medis apa pun",
+          "D. Pilihan terapi lain yang lebih konservatif",
+          "E. Persentase peluang kesembuhan hewan pascaoperasi"
+        ],
+        ans: 2,
+        exp: "Delapan komponen wajib *informed consent* meliputi: (1) Kondisi hewan/diagnosis kerja, (2) Tindakan yang diusulkan & tujuannya, (3) Risiko & komplikasi, (4) Alternatif tindakan, (5) Konsekuensi bila tidak dilakukan apa-apa, (6) Prognosis realistis, (7) Estimasi biaya, dan (8) Kesempatan bertanya serta persetujuan tertulis/tanda tangan.",
+        ref: "VETUP SIGAP Vol. 1 — Informed Consent: Delapan Komponen Wajib (Halaman 28)."
+      },
+      {
+        id: 33,
+        cat: "Komunikasi Klien & Etika",
+        q: "Ketika menyampaikan berita buruk (*breaking bad news*) menggunakan protokol **SPIKES**, setelah memberikan peringatan awal (*warning shot*) dan menyampaikan inti berita buruk secara singkat dan jelas pada tahap **Knowledge**, langkah krusial berikutnya yang harus dilakukan dokter hewan adalah...",
+        opts: [
+          "A. Langsung membacakan rincian biaya operasi dan rawat inap",
+          "B. Diam selama 5–10 detik untuk memberi jeda emosional bagi klien sebelum merespons emosinya dengan NURSE",
+          "C. Menjelaskan seluruh patofisiologi penyakit secara mendetail agar klien tidak bertanya lagi",
+          "D. Meminta klien segera menandatangani surat persetujuan eutanasia",
+          "E. Mengalihkan pembicaraan ke topik perawatan hewan lain di rumah"
+        ],
+        ans: 1,
+        exp: "Pada tahap Knowledge (K) dalam protokol SPIKES, dokter memberi *warning shot*, menyampaikan berita secara singkat dan jelas, lalu **diam selama 5–10 detik** untuk memberi ruang klien mencerna kabar tersebut, dilanjutkan tahap Emotion (E) yaitu merespons emosi klien dengan teknik NURSE sebelum masuk ke tahap Strategy (S).",
+        ref: "VETUP SIGAP Vol. 1 — Menyampaikan Berita Buruk: Protokol SPIKES (Halaman 29 & 37)."
+      },
+      {
+        id: 34,
+        cat: "Komunikasi Klien & Etika",
+        q: "Dalam diskusi eutanasia bersama klien, pendekatan komunikasi yang paling etis dan dianjurkan dalam OSCE veteriner adalah...",
+        opts: [
+          "A. Menggunakan kata halus/eufemisme seperti 'ditidurkan sebentar' atau 'diistirahatkan' agar klien tidak sedih",
+          "B. Menggunakan kata yang jelas ('eutanasia' atau 'menidurkan untuk selamanya'), membingkai sebagai keputusan kesejahteraan hewan dengan kriteria kualitas hidup objektif, dan menormalkan rasa bersalah klien",
+          "C. Mendesak klien agar segera menyetujui eutanasia hari itu juga demi efisiensi kandang",
+          "D. Menolak menjelaskan prosedur suntikan agar klien tidak merasa takut",
+          "E. Menyatakan bahwa memilih eutanasia berarti pemilik menyerah merawat hewannya"
+        ],
+        ans: 1,
+        exp: "Dalam diskusi eutanasia, dokter hewan harus menggunakan kata yang jelas (eutanasia / menidurkan untuk selamanya) dan menghindari eufemisme yang membingungkan, membingkainya sebagai keputusan kesejahteraan hewan (bukan menyerah) menggunakan kriteria kualitas hidup objektif (nafsu makan, mobilitas, nyeri, kebersihan diri, interaksi, hari baik vs buruk), menormalkan rasa bersalah, serta tidak menekan klien.",
+        ref: "VETUP SIGAP Vol. 1 — Diskusi Eutanasia (Halaman 30)."
+      },
+      {
+        id: 35,
+        cat: "Komunikasi Klien & Etika",
+        q: "Seorang klien memiliki keterbatasan biaya untuk membiayai perawatan standar emas (*gold standard*) bagi kucingnya yang mengalami dehidrasi berat dan obstruksi saluran kemih. Respon komunikasi paling tepat yang mencerminkan keseimbangan empati dan advokasi kesejahteraan hewan adalah...",
+        opts: [
+          "A. Menyembunyikan pilihan perawatan standar emas agar klien tidak merasa malu",
+          "B. Memarahi klien karena memelihara hewan tanpa menyiapkan dana darurat",
+          "C. Menyampaikan standar ideal, menawarkan alternatif yang masih layak secara medis, serta menetapkan batas tegas di mana pilihan menjadi tidak manusiawi bagi hewan",
+          "D. Memulangkan kucing tanpa terapi apa pun karena klien tidak mampu membayar penuh",
+          "E. Memberikan obat oral seadanya meskipun berisiko menyebabkan ruptur kandung kemih"
+        ],
+        ans: 2,
+        exp: "Saat menghadapi klien dengan keterbatasan biaya, dokter hewan tidak boleh menghakimi maupun menyembunyikan standar emas. Dokter wajib menyampaikan standar ideal, alternatif yang masih layak medis, lalu menegaskan batas di mana pilihan menjadi tidak manusiawi (contoh: \"Yang tidak bisa saya sarankan adalah membiarkannya tanpa cairan sama sekali, karena itu akan menyakitkan bagi Mochi\").",
+        ref: "VETUP SIGAP Vol. 1 — Tiga Situasi Sulit yang Sering Diujikan (Halaman 31)."
+      },
+      {
+        id: 36,
+        cat: "Komunikasi Klien & Etika",
+        q: "Klien datang dalam keadaan sangat marah karena merasa waktu tunggu di klinik terlalu lama dan kondisi hewannya memburuk. Langkah pertama dan prinsip utama dalam menangani klien marah pada stasiun OSCE adalah...",
+        opts: [
+          "A. Segera memotong pembicaraan klien untuk menjelaskan bahwa bagian administrasi yang bersalah",
+          "B. Membiarkan klien berbicara sampai selesai tanpa memotong, mengakui perasaannya, mengklarifikasi fakta tanpa menyalahkan pihak lain, dan menawarkan tindak lanjut konkret",
+          "C. Meminta maaf sambil mengakui bahwa klinik telah melakukan malpraktik medis",
+          "D. Menunjukkan nada suara yang lebih tinggi agar klien menghormati otoritas dokter",
+          "E. Meminta klien mencari klinik hewan lain jika tidak puas dengan pelayanan"
+        ],
+        ans: 1,
+        exp: "Dalam menangani klien marah: biarkan klien bicara sampai selesai tanpa memotong, akui perasaannya (\"Saya bisa memahami kenapa Bapak kecewa\"), klarifikasi fakta tanpa menyalahkan rekan/pihak lain, minta maaf atas dampaknya (yang bukan pengakuan malpraktik), serta tawarkan langkah konkret dan tindak lanjut yang dapat diverifikasi.",
+        ref: "VETUP SIGAP Vol. 1 — Tiga Situasi Sulit yang Sering Diujikan (Halaman 31)."
+      },
+      {
+        id: 37,
+        cat: "Komunikasi Klien & Etika",
+        q: "Pada stasiun dengan kasus penyakit berpotensi zoonosis, selain menjelaskan cara penularan dan pencegahan konkret secara jujur tanpa menakut-nakuti berlebihan, hal spesifik yang wajib disebutkan dokter hewan kepada klien adalah...",
+        opts: [
+          "A. Menyebutkan kelompok rentan di rumah (anak-anak, lansia, ibu hamil, imunokompromais), kapan harus ke dokter/puskesmas, dan kewajiban pelaporan bila termasuk PHMS",
+          "B. Menyarankan agar seluruh hewan peliharaan di rumah langsung dieutanasia",
+          "C. Menyembunyikan risiko penularan ke manusia agar klien tidak panik",
+          "D. Meresepkan antibiotik manusia untuk diminum seluruh anggota keluarga",
+          "E. Melarang klien memeriksakan diri ke puskesmas sebelum hasil kultur hewan keluar"
+        ],
+        ans: 0,
+        exp: "Dalam komunikasi risiko zoonosis, dokter hewan harus bersikap jujur tanpa menakut-nakuti berlebihan, menyebutkan siapa saja yang berisiko tinggi (anak, lansia, ibu hamil, imunokompromais), menjelaskan cara penularan & pencegahan konkret, kapan klien harus ke dokter/puskesmas, serta kewajiban pelaporan bila termasuk Penyakit Hewan Menular Strategis (PHMS).",
+        ref: "VETUP SIGAP Vol. 1 — Tiga Situasi Sulit yang Sering Diujikan (Halaman 31)."
+      },
+      {
+        id: 38,
+        cat: "Komunikasi Klien & Etika",
+        q: "Manakah di antara kalimat berikut yang merupakan bagian dari **\"Bank Kalimat Siap Pakai\"** untuk menyampaikan kejujuran atas ketidakpastian klinis di hadapan klien dan penguji OSCE?",
+        opts: [
+          "A. 'Tenang Bu, dari gejala ini saya pastikan 100% ini infeksi bakteri biasa dan pasti sembuh.'",
+          "B. 'Terus terang, dari pemeriksaan saat ini saya belum bisa memastikan. Yang paling mungkin adalah..., tapi untuk memastikannya saya perlu pemeriksaan penunjang...'",
+          "C. 'Saya tidak tahu penyakitnya apa, kita coba saja obat ini dulu selama seminggu.'",
+          "D. 'Kalau Ibu tidak mau cek darah hari ini, saya tidak bisa bertanggung jawab atas nyawanya.'",
+          "E. 'Semua dokter hewan juga pasti bingung kalau gejalanya seperti ini.'"
+        ],
+        ans: 1,
+        exp: "Menyampaikan ketidakpastian klinis secara jujur dan profesional adalah keterampilan kunci OSCE: \"Terus terang, dari pemeriksaan saat ini saya belum bisa memastikan. Yang paling mungkin adalah..., tapi untuk memastikannya saya perlu...\" Peserta tidak boleh pernah menjanjikan kesembuhan pasti.",
+        ref: "VETUP SIGAP Vol. 1 — Bank Kalimat Siap Pakai (Halaman 32)."
+      },
+      {
+        id: 39,
+        cat: "Bedah Skenario Stasiun",
+        q: "**Skenario Stasiun 1 (Bruno)**: Klien membawa anak anjing lokal campuran jantan usia 3 bulan, diadopsi 10 hari lalu dari pasar, vaksin baru 1x umur 6 minggu, belum pernah diberi obat cacing, mengalami diare berdarah berbau amis menyengat selama 2 hari dan muntah 4x/hari. Klien bertanya dengan cemas, *\"Anak saya umur 5 tahun sering main sama Bruno, apa penyakitnya bisa menular ke anak saya?\"* Jawaban edukasi yang paling tepat adalah...",
+        opts: [
+          "A. 'Parvovirus anjing sangat menular ke anak kecil dan menyebabkan diare berdarah pada manusia.'",
+          "B. 'Penyakit parvovirus anjing tidak menular ke manusia, namun karena Bruno belum pernah diberi obat cacing, infeksi cacing tetap berpotensi menular ke anak-anak sehingga wajib menjaga kebersihan dan rutin mencuci tangan.'",
+          "C. 'Aman sekali Bu, penyakit pada anak anjing tidak ada satu pun yang bisa menular ke manusia.'",
+          "D. 'Sebaiknya anak Ibu langsung minum obat cacing hewan hari ini untuk pencegahan.'",
+          "E. 'Tidak perlu dikhawatirkan, cukup mandikan Bruno setiap hari dengan sampo biasa.'"
+        ],
+        ans: 1,
+        exp: "Pada skenario Bruno, sinyalemen dan gejala mengarah kuat ke Canine Parvovirus dengan diagnosa banding cacingan/koksidiosis. Parvovirus anjing bersifat spesifik spesies (tidak menular ke manusia), namun riwayat belum pernah obat cacing membuat infestasi cacing (seperti Toxocara/Ancylostoma) berpotensi zoonosis pada anak usia 5 tahun, sehingga edukasi cuci tangan, isolasi, dan desinfeksi sangat krusial.",
+        ref: "VETUP SIGAP Vol. 1 — Bedah Skenario: Anak Anjing Diare Berdarah (Halaman 34)."
+      },
+      {
+        id: 40,
+        cat: "Bedah Skenario Stasiun",
+        q: "**Skenario Stasiun 2 (Kucing Oyen)**: Kucing jantan Oyen dibawa karena bolak-balik ke *litter box*. Hasil pemeriksaan fisik menunjukkan vesika urinaria teraba keras sebesar bola tenis dan sangat nyeri, suhu rektal $37,1^\\circ\\text{C}$, serta kucing tampak lesu. Pemilik awalnya mengira Oyen hanya sembelit dan bertanya mengapa harus dirawat inap serta khawatir soal biaya. Urutan komunikasi paling tepat yang dinilai pada checklist stasiun ini adalah...",
+        opts: [
+          "A. Menjelaskan patofisiologi hiperkalemia dan asidosis tubular ginjal secara rinci terlebih dahulu",
+          "B. Menyatakan secara tegas bahwa ini adalah kondisi darurat yang mengancam nyawa dalam hitungan jam, menjelaskan mekanismenya dengan bahasa sederhana, baru merinci rencana stabilisasi dan opsi biaya",
+          "C. Langsung menyodorkan formulir persetujuan operasi uretrostomi permanen tanpa menjelaskan kateterisasi",
+          "D. Menyetujui permintaan klien untuk memberikan obat minum saja agar tidak membebani biaya",
+          "E. Memaksa klien membayar penuh di muka dengan menakut-nakuti bahwa kucing akan mati dalam 10 menit"
+        ],
+        ans: 1,
+        exp: "Kesalahan yang sering muncul pada skenario obstruksi uretra adalah peserta sibuk menjelaskan patofisiologi hiperkalemia dengan istilah teknis sehingga klien tidak menangkap urgensinya. Urutan yang benar: sampaikan urgensi darurat (mengancam nyawa hitungan jam) terlebih dahulu, jelaskan mekanisme penyumbatan saluran kencing dengan bahasa awam, lalu sampaikan rencana tindakan (stabilisasi, sedasi, kateterisasi, cairan, analgesia), risiko, serta opsi biaya secara jujur dan empatik.",
+        ref: "VETUP SIGAP Vol. 1 — Bedah Skenario: Kegawatdaruratan & Biaya Kucing Jantan (Halaman 35)."
+      },
+      {
+        id: 41,
+        cat: "Bedah Skenario Stasiun",
+        q: "**Skenario Stasiun 3 (Kesmavet — Gigitan Anjing di Daerah Endemis Rabies)**: Seorang klien melaporkan anjingnya (umur 2 tahun, sering dilepas, status vaksinasi rabies tidak diketahui) baru saja menggigit tetangga sore tadi di wilayah endemis rabies. Klien panik takut anjingnya langsung dibunuh petugas dan bertanya, *\"Anjing saya terlihat sehat kok, Dok. Berarti aman kan?\"* Tindakan komunikasi dan kesmavet yang paling tepat adalah...",
+        opts: [
+          "A. Menenangkan klien dengan mengatakan bahwa jika anjing tampak sehat saat menggigit, berarti dipastikan aman dari rabies",
+          "B. Memastikan korban segera mencuci luka dengan sabun dan air mengalir selama 15 menit lalu ke fasilitas kesehatan, menjelaskan bahwa anjing dikandangkan untuk observasi 14 hari (tidak dibunuh) di bawah pemantauan petugas, serta melapor ke dinas/puskeswan",
+          "C. Menyarankan klien langsung membunuh anjingnya dan mengirim kepalanya ke laboratorium hari itu juga",
+          "D. Meminta klien memberikan vaksin rabies pada anjing sore itu juga agar virusnya hilang",
+          "E. Menyatakan bahwa urusan gigitan tetangga bukan tanggung jawab dokter hewan sehingga klien diminta pulang"
+        ],
+        ans: 1,
+        exp: "Stasiun kesmavet rabies menguji keseimbangan empati kepada pemilik dan tanggung jawab kesehatan masyarakat: (1) pastikan korban segera cuci luka sabun + air mengalir 15 menit dan ke faskes manusia; (2) jelaskan bahwa anjing tidak dibunuh melainkan dikandangkan untuk observasi 14 hari dengan pemantauan petugas; (3) wajib lapor ke dinas/puskeswan; dan (4) jangan pernah memberi jaminan palsu \"pasti tidak rabies\" hanya karena anjing tampak sehat saat menggigit.",
+        ref: "VETUP SIGAP Vol. 1 — Bedah Skenario: Kesmavet Rabies (Halaman 36)."
+      },
+      {
+        id: 42,
+        cat: "Bedah Skenario Stasiun",
+        q: "**Skenario Stasiun 4 (Breaking Bad News — Kayla)**: Anjing Golden Retriever betina steril usia 11 tahun bernama Kayla dibawa karena lemas dan gusi pucat. Hasil USG menunjukkan massa besar pada limpa disertai cairan bebas di rongga abdomen, dan nilai PCV 18%. Klien memiliki Kayla sejak anak-anaknya masih kecil, lalu menangis setelah mendengar hasil pemeriksaan dan bertanya, *\"Apakah dia kesakitan sekarang, Dok? Kalau dioperasi, dia bisa sembuh kan?\"* Sikap profesional dokter hewan yang sesuai checklist adalah...",
+        opts: [
+          "A. Menjawab bahwa operasi pengangkatan limpa pasti menyembuhkan Kayla sepenuhnya",
+          "B. Menjawab pertanyaan nyeri secara jujur dan mengaitkannya dengan kesejahteraan hewan, menjelaskan opsi (bedah & transfusi, paliatif, eutanasia) secara realistis tanpa menjanjikan kesembuhan, serta menawarkan pendampingan apa pun keputusan klien",
+          "C. Memutuskan eutanasia secara sepihak karena usia anjing sudah 11 tahun dan PCV rendah",
+          "D. Menghindari pertanyaan tentang nyeri agar klien tidak semakin menangis",
+          "E. Langsung memindahkan Kayla ke ruang operasi tanpa menunggu persetujuan klien"
+        ],
+        ans: 1,
+        exp: "Pada kasus dugaan hemangiosarkoma limpa dengan hemoabdomen (PCV 18%), dokter hewan harus menerapkan protokol SPIKES dan NURSE: menjawab pertanyaan mengenai rasa nyeri secara jujur dengan mengaitkannya pada kualitas hidup/kesejahteraan hewan, menjelaskan tiga opsi realistis (bedah + transfusi, perawatan paliatif, atau eutanasia) tanpa menjanjikan kesembuhan, memberi ruang keputusan tanpa menekan, serta menawarkan pendampingan.",
+        ref: "VETUP SIGAP Vol. 1 — Bedah Skenario: Breaking Bad News & Diskusi Eutanasia (Halaman 37)."
+      },
+      {
+        id: 43,
+        cat: "Bedah Skenario Stasiun",
+        q: "**Skenario Stasiun 5 (Hewan Besar — Penurunan Produksi Susu Sapi Perah)**: Peternak memiliki 12 ekor sapi laktasi; 3 ekor produksinya turun, dan 1 ekor ambingnya bengkak serta hangat pada kuartir kanan belakang dengan susu menggumpal. Pemerahan dilakukan manual memakai satu kain lap untuk semua sapi dan belum pernah melakukan *teat dipping*. Peternak bertanya, *\"Susunya masih bisa dijual kan, Dok?\"* Item kritis keamanan pangan yang **wajib** disampaikan dokter hewan agar tidak dinilai sebagai kesalahan berat adalah...",
+        opts: [
+          "A. Menyarankan agar susu dari sapi sakit dicampur dengan susu sapi sehat supaya tidak rugi",
+          "B. Menyebutkan larangan mengedarkan/menjual susu dari sapi sakit serta pentingnya mematuhi waktu henti obat (withdrawal time) selama masa pengobatan antibiotik",
+          "C. Menyarankan perebusan susu selama 5 menit agar susu mastitis tetap layak dijual ke koperasi",
+          "D. Meminta peternak memerah sapi yang sakit pada urutan paling pertama setiap pagi",
+          "E. Mengganti seluruh pakan konsentrat dengan jerami kering selama satu bulan"
+        ],
+        ans: 1,
+        exp: "Pada stasiun hewan produksi/sapi perah, item kritis keamanan pangan adalah **menyebutkan waktu henti obat (*withdrawal time*)** dan larangan menjual/mengedarkan susu yang abnormal maupun selama masa terapi antibiotik. Selain itu, peternak diedukasi melakukan uji CMT/strip cup, kultur/sensitivitas, menggunakan kain lap terpisah per sapi, melakukan *teat dipping*, dan memerah sapi yang sakit pada urutan terakhir.",
+        ref: "VETUP SIGAP Vol. 1 — Bedah Skenario: Hewan Besar Sapi Perah (Halaman 38)."
+      },
+      {
+        id: 44,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Dalam daftar sepuluh kesalahan paling umum peserta OSCE, salah satu kesalahan manajemen strategi yang sering membuat peserta gagal menyelesaikan item checklist di bagian akhir adalah...",
+        opts: [
+          "A. Menggarisbawahi kata kerja perintah pada lembar instruksi di pintu",
+          "B. Menjawab atau melakukan tindakan lebih banyak daripada yang diminta instruksi soal sehingga kehabisan waktu",
+          "C. Menggunakan teknik chunk and check saat memberikan edukasi",
+          "D. Memperkenalkan diri dan mengonfirmasi sinyalemen di awal sesi",
+          "E. Menulis dosis obat secara lengkap pada lembar resep"
+        ],
+        ans: 1,
+        exp: "Salah satu dari sepuluh kesalahan paling umum peserta OSCE adalah menjawab atau melakukan tindakan lebih banyak daripada yang diminta soal (misalnya melakukan pemeriksaan fisik lengkap padahal instruksi jelas menyatakan 'Anda tidak perlu melakukan pemeriksaan fisik'), sehingga waktu habis sebelum masuk ke edukasi dan penutup.",
+        ref: "VETUP SIGAP Vol. 1 — Sepuluh Kesalahan Paling Umum Peserta OSCE (Halaman 39)."
+      },
+      {
+        id: 45,
+        cat: "Komunikasi Klien & Etika",
+        q: "Di akhir konsultasi klinis, peserta OSCE sering terburu-buru keluar ruangan begitu selesai memberikan resep. Padahal, penutupan sesi yang lengkap menurut standar OSCE harus mencakup tiga elemen penutup, yaitu...",
+        opts: [
+          "A. Ringkasan rencana, safety netting, dan rencana kontrol ulang",
+          "B. Pengukuran suhu rektal ulang, penimbangan berat badan, dan foto pasien",
+          "C. Penjelasan patofisiologi penyakit, anatomi organ, dan sejarah obat",
+          "D. Pembayaran kasir, pembersihan meja periksa, dan penutupan pintu",
+          "E. Pemberian suplemen gratis, brosur klinik, dan permintaan ulasan"
+        ],
+        ans: 0,
+        exp: "Kesalahan ke-10 yang paling sering dilakukan peserta OSCE adalah menutup stasiun tanpa menyampaikan ringkasan rencana perawatan, *safety netting* (tanda bahaya kapan harus segera kembali), dan jadwal kontrol ulang, serta kesempatan bertanya terakhir.",
+        ref: "VETUP SIGAP Vol. 1 — Sepuluh Kesalahan Paling Umum Peserta OSCE (Halaman 39)."
+      },
+      {
+        id: 46,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Seekor anjing ras Great Dane (ras besar, dada dalam) berumur 4 tahun dibawa ke unit gawat darurat pada malam hari karena gelisah, hipersalivasi, berusaha muntah namun tidak ada yang keluar (*unproductive retching*), dan perut tampak membesar 1 jam setelah makan malam dalam porsi besar. Berdasarkan sinyalemen dan gambaran klinis tersebut, kecurigaan kondisi darurat utama yang langsung naik adalah...",
+        opts: [
+          "A. Canine Distemper",
+          "B. Gastric Dilatation-Volvulus (GDV)",
+          "C. Diabetes Melitus",
+          "D. Hipoadrenokortisisme",
+          "E. Megaesofagus kongenital"
+        ],
+        ans: 1,
+        exp: "Sinyalemen anjing ras besar dengan rongga dada dalam (*deep-chested*) yang menunjukkan gejala akut setelah makan dalam porsi besar langsung mengarahkan kecurigaan tinggi pada *Gastric Dilatation-Volvulus* (GDV), yang merupakan kondisi bedah darurat mengancam nyawa.",
+        ref: "VETUP SIGAP Vol. 1 — Sinyalemen: 30 Detik yang Sering Dilupakan (Halaman 11)."
+      },
+      {
+        id: 47,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Klien mengeluhkan anjingnya \"sering sekali kencing akhir-akhir ini\". Untuk membedakan apakah anjing tersebut mengalami **poliuria** (peningkatan produksi urin, misalnya akibat diabetes melitus atau gagal ginjal) atau **pollakiuria** (peningkatan frekuensi urinasi akibat iritasi saluran kemih bawah/sistitis), pertanyaan anamnesis pembeda yang paling tepat adalah...",
+        opts: [
+          "A. Apakah warna urin anjing berwarna kuning jernih atau kecokelatan?",
+          "B. Setiap kali anjing kencing, apakah volume urin yang keluar banyak sekali atau hanya menetes sedikit-sedikit namun sangat sering?",
+          "C. Apakah anjing kencing di dalam kandang atau di luar rumah?",
+          "D. Apakah anjing sudah disteril sejak kecil?",
+          "E. Berapa usia anjing saat pertama kali divaksin?"
+        ],
+        ans: 1,
+        exp: "Poliuria adalah peningkatan total volume produksi urin (setiap kali urinasi volumenya banyak, sering disertai polidipsia), sedangkan pollakiuria adalah peningkatan frekuensi berkemih dengan volume tiap kali keluar hanya sedikit-sedikit akibat iritasi/inflamasi vesika urinaria atau uretra.",
+        ref: "VETUP SIGAP Vol. 1 — Membedakan Istilah yang Sering Rancu (Halaman 14)."
+      },
+      {
+        id: 48,
+        cat: "Alur Diagnosa Dasar & TPR",
+        q: "Pada pemeriksaan fisik sistemik urutan ke-5 dan ke-6, setelah memeriksa area kepala (mata, telinga, hidung, mukosa oral, CRT, gigi), peserta OSCE melanjutkan pemeriksaan limfonodus superfisial dan status hidrasi. Tiga pasang limfonodus superfisial utama yang wajib dipalpasi secara simetris pada pemeriksaan rutin anjing/kucing adalah...",
+        opts: [
+          "A. Mesenterika, iliaka, dan mediastinalis",
+          "B. Submandibularis, prescapularis, dan poplitea",
+          "C. Retropharyngealis, tracheobronchialis, dan inguinalis",
+          "D. Hepatica, renalis, dan axillaris",
+          "E. Parotidea, colica, dan sacralis"
+        ],
+        ans: 1,
+        exp: "Pada langkah ke-5 pemeriksaan fisik sistematik, limfonodus superfisial utama yang dipalpasi adalah limfonodus **submandibularis, prescapularis, dan poplitea**, dilanjutkan langkah ke-6 mengevaluasi status hidrasi melalui turgor kulit, kelembapan mukosa, dan posisi bola mata.",
+        ref: "VETUP SIGAP Vol. 1 — Pemeriksaan Fisik: Urutan Tetap, Narasi Lantang (Halaman 15)."
+      },
+      {
+        id: 49,
+        cat: "Komunikasi Klien & Etika",
+        q: "Saat akan menjelaskan hasil pemeriksaan fisik dan rencana terapi yang kompleks kepada pemilik hewan, dokter hewan berkata, *\"Baik Bu, sekarang saya akan menjelaskan dua hal: pertama mengenai dugaan penyebab sakitnya Bruno, dan kedua rencana pemeriksaan yang perlu kita lakukan.\"* Teknik komunikasi ini dikenal sebagai...",
+        opts: [
+          "A. Teach-back",
+          "B. Signposting",
+          "C. Funneling",
+          "D. Reflection",
+          "E. Silence"
+        ],
+        ans: 1,
+        exp: "*Signposting* adalah teknik memberi rambu atau penanda transisi kepada klien sebelum berpindah tahap atau menjelaskan topik penting agar klien lebih mudah mengikuti alur pembicaraan dan tidak merasa kewalahan dengan informasi medis.",
+        ref: "VETUP SIGAP Vol. 1 — Empat Teknik Menjelaskan yang Wajib Dikuasai (Halaman 25)."
+      },
+      {
+        id: 50,
+        cat: "Aturan Main & Rubrik OSCE",
+        q: "Berdasarkan pesan kunci penutup materi persiapan OSCE Kedokteran Hewan VETUP SIGAP, hakikat utama yang sebenarnya diuji dalam ujian OSCE bukanlah apakah kandidat merupakan dokter hewan yang sempurna, melainkan apakah kandidat merupakan dokter hewan yang...",
+        opts: [
+          "A. Cepat dalam mendiagnosis tanpa memerlukan pemeriksaan penunjang",
+          "B. Aman, sistematis, dan bisa dipercaya klien",
+          "C. Hafal seluruh nama latin mikroorganisme dan struktur kimia obat",
+          "D. Mampu menyelesaikan seluruh stasiun dalam waktu kurang dari 5 menit",
+          "E. Selalu menyetujui seluruh permintaan klien tanpa pertimbangan medis"
+        ],
+        ans: 1,
+        exp: "Filosofi utama OSCE Veteriner adalah menguji kesiapan praktik klinis dasar: apakah kandidat dokter hewan bekerja secara **aman** (bagi pasien, klien, dan diri sendiri), **sistematis** (mengikuti alur klinis tanpa melompat), dan **bisa dipercaya klien** (komunikatif, empatik, dan etis).",
+        ref: "VETUP SIGAP Vol. 1 — Penutup & Prinsip OSCE Veteriner (Halaman 41)."
+      }
+    ];
+
+    // =========================================================================
+    // STATE MANAGEMENT APLIKASI CBT
+    // =========================================================================
+    const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+    const PASSING_GRADE = 75;
+
+    let state = {
+      view: 'home',              // 'home' | 'exam' | 'result'
+      mode: 'cbt',               // 'cbt' | 'study'
+      categoryFilter: 'ALL',
+      shuffle: false,
+      activeQuestions: [],
+      currentIndex: 0,
+      userAnswers: {},           // { [questionId]: optionIndex (0-4) }
+      flagged: {},               // { [questionId]: boolean }
+      timerInterval: null,
+      remainingSeconds: 3000,
+      elapsedSeconds: 0,
+      fontSize: 'normal',        // 'normal' | 'large'
+      reviewFilter: 'all',
+      lastResultStats: null
+    };
+
+    // =========================================================================
+    // FORMATTER TEKS KLINIS & SANITASI HTML
+    // =========================================================================
+    function formatClinicalHtml(rawStr) {
+      if (!rawStr) return '';
+      // 1. Escape karakter HTML dasar
+      let safe = String(rawStr)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+      // 2. Bersihkan notasi LaTeX klinis ($38,6^\circ\text{C}$, $180\text{ x/menit}$, dll) menjadi teks bersih
+      safe = safe.replace(/\$([^$]+)\$/g, (_, mathContent) => {
+        return mathContent
+          .replace(/\^\s*\\circ\s*\\text\{C\}/g, '°C')
+          .replace(/\^\s*\\circ\s*C/g, '°C')
+          .replace(/\^\s*\\circ/g, '°')
+          .replace(/\\text\{([^}]*)\}/g, '$1')
+          .replace(/\\,/g, ' ');
+      });
+
+      // 3. Render penekanan Markdown **tebal** dan *miring*
+      safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
+      safe = safe.replace(/\*([^*]+)\*/g, '<em class="italic">$1</em>');
+
+      return safe;
+    }
+
+    function cleanOptionText(rawOpt) {
+      return rawOpt.replace(/^[A-E][\.\)]\s*/i, '').trim();
+    }
+
+    function getCategoryBadgeStyle(cat) {
+      switch (cat) {
+        case 'Aturan Main & Rubrik OSCE':
+          return 'bg-teal-50 text-teal-800 border-teal-200';
+        case 'Alur Diagnosa Dasar & TPR':
+          return 'bg-emerald-50 text-emerald-800 border-emerald-200';
+        case 'Komunikasi Klien & Etika':
+          return 'bg-cyan-50 text-cyan-800 border-cyan-200';
+        case 'Bedah Skenario Stasiun':
+          return 'bg-amber-50 text-amber-800 border-amber-200';
+        default:
+          return 'bg-slate-100 text-slate-700 border-slate-200';
+      }
+    }
+
+    // =========================================================================
+    // INISIALISASI BERANDA & PENGATURAN SESI
+    // =========================================================================
+    function initHomeCounts() {
+      const counts = {
+        all: QUESTIONS_DATA.length,
+        aturan: QUESTIONS_DATA.filter(q => q.cat === 'Aturan Main & Rubrik OSCE').length,
+        diagnosa: QUESTIONS_DATA.filter(q => q.cat === 'Alur Diagnosa Dasar & TPR').length,
+        komunikasi: QUESTIONS_DATA.filter(q => q.cat === 'Komunikasi Klien & Etika').length,
+        skenario: QUESTIONS_DATA.filter(q => q.cat === 'Bedah Skenario Stasiun').length,
+      };
+      document.getElementById('cat-count-all').textContent = `${counts.all} Soal`;
+      document.getElementById('cat-count-aturan').textContent = `${counts.aturan} Soal`;
+      document.getElementById('cat-count-diagnosa').textContent = `${counts.diagnosa} Soal`;
+      document.getElementById('cat-count-komunikasi').textContent = `${counts.komunikasi} Soal`;
+      document.getElementById('cat-count-skenario').textContent = `${counts.skenario} Soal`;
+      updateHomeSummary();
+    }
+
+    function updateHomeSummary() {
+      const mode = document.querySelector('input[name="examMode"]:checked').value;
+      const cat = document.querySelector('input[name="categoryFilter"]:checked').value;
+      const filtered = cat === 'ALL' ? QUESTIONS_DATA : QUESTIONS_DATA.filter(q => q.cat === cat);
+      const count = filtered.length;
+      const labelCat = cat === 'ALL' ? 'Semua Modul OSCE' : cat;
+
+      const previewEl = document.getElementById('home-session-preview');
+      if (mode === 'cbt') {
+        previewEl.textContent = `Paket terpilih: ${labelCat} (${count} Soal • Timer ${count} Menit)`;
+      } else {
+        previewEl.textContent = `Paket terpilih: ${labelCat} (${count} Soal • Mode Belajar Tanpa Batas Waktu)`;
+      }
+    }
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function startExam(customQuestions = null) {
+      try {
+        const mode = document.querySelector('input[name="examMode"]:checked').value;
+        const cat = document.querySelector('input[name="categoryFilter"]:checked').value;
+        const shouldShuffle = document.getElementById('shuffle-toggle').checked;
+
+        let questions = [];
+        if (customQuestions && customQuestions.length > 0) {
+          questions = shouldShuffle ? shuffleArray(customQuestions) : [...customQuestions];
+        } else {
+          questions = cat === 'ALL'
+            ? [...QUESTIONS_DATA]
+            : QUESTIONS_DATA.filter(q => q.cat === cat);
+          if (shouldShuffle) {
+            questions = shuffleArray(questions);
+          }
+        }
+
+        state.mode = mode;
+        state.categoryFilter = cat;
+        state.shuffle = shouldShuffle;
+        state.activeQuestions = questions;
+        state.currentIndex = 0;
+        state.userAnswers = {};
+        state.flagged = {};
+        state.elapsedSeconds = 0;
+
+        if (state.timerInterval) clearInterval(state.timerInterval);
+
+        const modeBadge = document.getElementById('exam-mode-badge');
+        const timerBox = document.getElementById('exam-timer-box');
+        const timerDisplay = document.getElementById('exam-timer-display');
+
+        timerBox.classList.remove('bg-rose-900', 'border-rose-600', 'text-rose-200', 'timer-urgent');
+        timerBox.classList.add('bg-slate-800', 'border-slate-700', 'text-teal-300');
+
+        if (mode === 'cbt') {
+          const totalMinutes = questions.length; // 1 menit per soal
+          state.remainingSeconds = totalMinutes * 60;
+          modeBadge.textContent = `Mode Simulasi Ujian CBT (${questions.length} Soal • ${totalMinutes} Menit)`;
+          updateTimerDisplay();
+
+          state.timerInterval = setInterval(() => {
+            state.remainingSeconds--;
+            state.elapsedSeconds++;
+            updateTimerDisplay();
+
+            if (state.remainingSeconds <= 0) {
+              clearInterval(state.timerInterval);
+              openTimeoutModal();
+            }
+          }, 1000);
+        } else {
+          modeBadge.textContent = `Mode Belajar Interaktif — Langsung Pembahasan (${questions.length} Soal)`;
+          timerDisplay.textContent = 'Tanpa Batas Waktu';
+
+          state.timerInterval = setInterval(() => {
+            state.elapsedSeconds++;
+          }, 1000);
+        }
+
+        renderLegends();
+        switchView('exam');
+        renderNavGrids();
+        renderCurrentQuestion();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        console.error('Terjadi kesalahan saat memulai sesi:', err);
+      }
+    }
+
+    function updateTimerDisplay() {
+      const display = document.getElementById('exam-timer-display');
+      const box = document.getElementById('exam-timer-box');
+      const mins = Math.floor(Math.max(0, state.remainingSeconds) / 60);
+      const secs = Math.max(0, state.remainingSeconds) % 60;
+      display.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+      // Peringatan visual jika sisa waktu < 3 menit (atau < 20% waktu)
+      const urgentThreshold = Math.min(180, Math.floor(state.activeQuestions.length * 60 * 0.2));
+      if (state.remainingSeconds <= urgentThreshold) {
+        box.classList.remove('bg-slate-800', 'border-slate-700', 'text-teal-300');
+        box.classList.add('bg-rose-900', 'border-rose-600', 'text-rose-200', 'timer-urgent');
+      }
+    }
+
+    function switchView(target) {
+      state.view = target;
+      document.getElementById('view-home').classList.toggle('hidden', target !== 'home');
+      document.getElementById('view-exam').classList.toggle('hidden', target !== 'exam');
+      document.getElementById('view-result').classList.toggle('hidden', target !== 'result');
+    }
+
+    // =========================================================================
+    // RENDER SOAL & INTERAKSI PENGERJAAN
+    // =========================================================================
+    function setFontSize(size) {
+      state.fontSize = size;
+      const btnNorm = document.getElementById('btn-font-normal');
+      const btnLarge = document.getElementById('btn-font-large');
+
+      if (size === 'large') {
+        btnLarge.classList.add('bg-teal-600', 'text-white');
+        btnLarge.classList.remove('text-slate-300');
+        btnNorm.classList.remove('bg-teal-600', 'text-white');
+        btnNorm.classList.add('text-slate-300');
+      } else {
+        btnNorm.classList.add('bg-teal-600', 'text-white');
+        btnNorm.classList.remove('text-slate-300');
+        btnLarge.classList.remove('bg-teal-600', 'text-white');
+        btnLarge.classList.add('text-slate-300');
+      }
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      const qObj = state.activeQuestions[state.currentIndex];
+      if (!qObj) return;
+
+      const total = state.activeQuestions.length;
+      const userChoice = state.userAnswers[qObj.id];
+      const isFlagged = !!state.flagged[qObj.id];
+      const isAnswered = userChoice !== undefined;
+
+      // Header badges
+      document.getElementById('q-number-badge').textContent = `Soal No. ${state.currentIndex + 1} / ${total}`;
+      const catBadge = document.getElementById('q-category-badge');
+      catBadge.textContent = qObj.cat;
+      catBadge.className = `px-2.5 py-1 rounded-lg text-xs font-bold border ${getCategoryBadgeStyle(qObj.cat)}`;
+
+      const statusPill = document.getElementById('q-status-pill');
+      if (isFlagged) {
+        statusPill.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-300';
+        statusPill.textContent = isAnswered ? `Ragu-ragu (${LETTERS[userChoice]})` : 'Ditandai Ragu-ragu';
+      } else if (isAnswered) {
+        if (state.mode === 'study') {
+          const ok = userChoice === qObj.ans;
+          statusPill.className = ok
+            ? 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300'
+            : 'px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300';
+          statusPill.textContent = ok ? `Benar (${LETTERS[userChoice]})` : `Salah (${LETTERS[userChoice]})`;
+        } else {
+          statusPill.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200';
+          statusPill.textContent = `Terjawab (${LETTERS[userChoice]})`;
+        }
+      } else {
+        statusPill.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-200/80 text-slate-600';
+        statusPill.textContent = 'Belum Dijawab';
+      }
+
+      // Teks Pertanyaan
+      const qTextEl = document.getElementById('q-text');
+      qTextEl.innerHTML = formatClinicalHtml(qObj.q);
+      qTextEl.className = state.fontSize === 'large'
+        ? 'text-slate-800 text-lg sm:text-xl leading-relaxed font-medium'
+        : 'text-slate-800 text-base sm:text-lg leading-relaxed font-medium';
+
+      // Opsi Jawaban A–E
+      const optionsContainer = document.getElementById('q-options');
+      optionsContainer.innerHTML = '';
+
+      qObj.opts.forEach((rawOpt, idx) => {
+        const letter = LETTERS[idx];
+        const cleanText = cleanOptionText(rawOpt);
+        const isSelected = userChoice === idx;
+        const isCorrect = qObj.ans === idx;
+
+        let cardClass = 'border-slate-200 bg-white hover:border-teal-500 hover:bg-teal-50/30';
+        let badgeClass = 'bg-slate-100 text-slate-700 border-slate-300';
+        let rightTag = '';
+
+        if (state.mode === 'study' && isAnswered) {
+          if (isCorrect) {
+            cardClass = 'border-emerald-500 bg-emerald-50/90 ring-1 ring-emerald-500';
+            badgeClass = 'bg-emerald-600 text-white border-emerald-600';
+            rightTag = `<span class="ml-auto px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-600 text-white shrink-0">Kunci Jawaban</span>`;
+          } else if (isSelected && !isCorrect) {
+            cardClass = 'border-rose-500 bg-rose-50/90 ring-1 ring-rose-500';
+            badgeClass = 'bg-rose-600 text-white border-rose-600';
+            rightTag = `<span class="ml-auto px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-600 text-white shrink-0">Pilihan Anda</span>`;
+          } else {
+            cardClass = 'border-slate-200 bg-white opacity-70';
+          }
+        } else if (isSelected) {
+          cardClass = 'border-teal-700 bg-teal-50/80 ring-1 ring-teal-700';
+          badgeClass = 'bg-teal-700 text-white border-teal-700';
+        }
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.onclick = () => selectOption(idx);
+        btn.className = `w-full text-left p-3.5 sm:p-4 rounded-xl border-2 transition-all flex items-start sm:items-center gap-3.5 cursor-pointer ${cardClass}`;
+        btn.innerHTML = `
+          <span class="w-8 h-8 rounded-lg border font-bold text-sm flex items-center justify-center shrink-0 transition-colors ${badgeClass}">
+            ${letter}
+          </span>
+          <span class="${state.fontSize === 'large' ? 'text-base sm:text-lg' : 'text-sm sm:text-base'} text-slate-800 font-medium leading-snug flex-1">
+            ${formatClinicalHtml(cleanText)}
+          </span>
+          ${rightTag}
+        `;
+        optionsContainer.appendChild(btn);
+      });
+
+      // Kotak Pembahasan Langsung (Khusus Mode Belajar Interaktif)
+      const feedbackBox = document.getElementById('study-feedback-box');
+      if (state.mode === 'study' && isAnswered) {
+        const isUserRight = userChoice === qObj.ans;
+        const hasNext = state.currentIndex < total - 1;
+        feedbackBox.classList.remove('hidden', 'border-emerald-300', 'border-rose-300');
+        feedbackBox.classList.add(isUserRight ? 'border-emerald-300' : 'border-rose-300');
+
+        feedbackBox.innerHTML = `
+          <div class="px-5 py-3.5 ${isUserRight ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'} flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2 font-bold text-sm">
+              ${isUserRight
+                ? `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Tepat! Jawaban Anda Benar</span>`
+                : `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><span>Kurang Tepat — Perhatikan Pembahasan</span>`
+              }
+            </div>
+            <div class="text-xs font-bold bg-white/20 px-3 py-1 rounded-full">
+              Kunci Jawaban: ${LETTERS[qObj.ans]}
+            </div>
+          </div>
+          <div class="p-5 bg-white space-y-4">
+            <div>
+              <h4 class="text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">Pembahasan Klinis OSCE</h4>
+              <p class="text-sm text-slate-700 leading-relaxed">${formatClinicalHtml(qObj.exp)}</p>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Rujukan Materi</h4>
+                <p class="text-xs font-medium text-slate-700 mt-0.5">${formatClinicalHtml(qObj.ref)}</p>
+              </div>
+              <button type="button" onclick="nextQuestion()" class="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-600 text-white text-xs font-bold shadow-xs transition-colors flex items-center justify-center gap-1.5 shrink-0 cursor-pointer">
+                <span>${hasNext ? 'Lanjut ke Soal Berikutnya' : 'Selesai & Lihat Rekap Skor'}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      } else {
+        feedbackBox.classList.add('hidden');
+        feedbackBox.innerHTML = '';
+      }
+
+      // Update Tombol Navigasi Bawah
+      document.getElementById('btn-prev').disabled = state.currentIndex === 0;
+      const nextLabel = document.getElementById('btn-next-label');
+      if (state.currentIndex === total - 1) {
+        nextLabel.textContent = 'Selesai';
+      } else {
+        nextLabel.textContent = state.mode === 'study' && isAnswered ? 'Lanjut' : 'Berikutnya';
+      }
+
+      const flagCheckbox = document.getElementById('flag-checkbox');
+      const flagBtn = document.getElementById('btn-flag');
+      flagCheckbox.checked = isFlagged;
+      if (isFlagged) {
+        flagBtn.classList.add('bg-amber-400', 'border-amber-500', 'text-slate-900');
+        flagBtn.classList.remove('bg-amber-50', 'border-amber-300', 'text-amber-800');
+      } else {
+        flagBtn.classList.remove('bg-amber-400', 'border-amber-500', 'text-slate-900');
+        flagBtn.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-800');
+      }
+
+      updateProgressAndNav();
+    }
+
+    function selectOption(optIndex) {
+      const qObj = state.activeQuestions[state.currentIndex];
+      if (!qObj) return;
+      state.userAnswers[qObj.id] = optIndex;
+      renderCurrentQuestion();
+    }
+
+    function toggleFlag() {
+      const qObj = state.activeQuestions[state.currentIndex];
+      if (!qObj) return;
+      state.flagged[qObj.id] = !state.flagged[qObj.id];
+      renderCurrentQuestion();
+    }
+
+    function prevQuestion() {
+      if (state.currentIndex > 0) {
+        state.currentIndex--;
+        renderCurrentQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (state.currentIndex < state.activeQuestions.length - 1) {
+        state.currentIndex++;
+        renderCurrentQuestion();
+      } else {
+        openFinishModal();
+      }
+    }
+
+    function jumpToQuestion(index) {
+      if (index >= 0 && index < state.activeQuestions.length) {
+        state.currentIndex = index;
+        renderCurrentQuestion();
+        toggleMobileNav(false);
+      }
+    }
+
+    // =========================================================================
+    // NAVIGASI NOMOR SOAL & LEGEND DINAMIS
+    // =========================================================================
+    function renderLegends() {
+      const desktopLegend = document.getElementById('desktop-legend');
+      const mobileLegend = document.getElementById('mobile-legend');
+
+      if (state.mode === 'study') {
+        const html = `
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-emerald-500 inline-block"></span><span>Benar</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-rose-500 inline-block"></span><span>Salah</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-amber-400 inline-block"></span><span>Ragu-ragu (<strong id="count-flagged">0</strong>)</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-slate-100 border border-slate-300 inline-block"></span><span>Kosong (<strong id="count-unanswered">0</strong>)</span></div>
+        `;
+        desktopLegend.innerHTML = html;
+        mobileLegend.innerHTML = `
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500"></span> Benar</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-500"></span> Salah</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400"></span> Ragu-ragu</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-white border border-slate-300"></span> Kosong</div>
+        `;
+      } else {
+        const html = `
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-teal-600 inline-block"></span><span>Dijawab (<strong id="count-answered">0</strong>)</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-amber-400 inline-block"></span><span>Ragu-ragu (<strong id="count-flagged">0</strong>)</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded bg-slate-100 border border-slate-300 inline-block"></span><span>Kosong (<strong id="count-unanswered">0</strong>)</span></div>
+          <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded border-2 border-slate-900 inline-block"></span><span>Aktif</span></div>
+        `;
+        desktopLegend.innerHTML = html;
+        mobileLegend.innerHTML = `
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-teal-600"></span> Dijawab</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400"></span> Ragu-ragu</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-white border border-slate-300"></span> Kosong</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border-2 border-slate-900"></span> Aktif</div>
+        `;
+      }
+    }
+
+    function renderNavGrids() {
+      const desktopGrid = document.getElementById('desktop-nav-grid');
+      const mobileGrid = document.getElementById('mobile-nav-grid');
+      desktopGrid.innerHTML = '';
+      mobileGrid.innerHTML = '';
+
+      state.activeQuestions.forEach((qObj, idx) => {
+        desktopGrid.appendChild(createNavButton(idx));
+        mobileGrid.appendChild(createNavButton(idx));
+      });
+
+      updateProgressAndNav();
+    }
+
+    function createNavButton(idx) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.dataset.navIdx = idx;
+      btn.onclick = () => jumpToQuestion(idx);
+      btn.className = 'h-10 rounded-xl text-xs font-bold border transition-all flex items-center justify-center cursor-pointer select-none';
+      btn.textContent = `${idx + 1}`;
+      return btn;
+    }
+
+    function updateProgressAndNav() {
+      const total = state.activeQuestions.length;
+      let answeredCount = 0;
+      let flaggedCount = 0;
+
+      state.activeQuestions.forEach(q => {
+        if (state.userAnswers[q.id] !== undefined) answeredCount++;
+        if (state.flagged[q.id]) flaggedCount++;
+      });
+
+      const unansweredCount = total - answeredCount;
+
+      document.getElementById('exam-progress-text').textContent = `Terjawab ${answeredCount} / ${total}`;
+      document.getElementById('sidebar-summary-badge').textContent = `${answeredCount} / ${total}`;
+      document.getElementById('mobile-drawer-progress').textContent = `Terjawab ${answeredCount} / ${total}`;
+
+      const ansEl = document.getElementById('count-answered');
+      const flagEl = document.getElementById('count-flagged');
+      const unansEl = document.getElementById('count-unanswered');
+      if (ansEl) ansEl.textContent = answeredCount;
+      if (flagEl) flagEl.textContent = flaggedCount;
+      if (unansEl) unansEl.textContent = unansweredCount;
+
+      const allNavBtns = document.querySelectorAll('[data-nav-idx]');
+      allNavBtns.forEach(btn => {
+        const idx = parseInt(btn.dataset.navIdx, 10);
+        const qObj = state.activeQuestions[idx];
+        const ansIdx = state.userAnswers[qObj.id];
+        const isFlag = !!state.flagged[qObj.id];
+        const isCurrent = idx === state.currentIndex;
+
+        btn.textContent = ansIdx !== undefined ? `${idx + 1}.${LETTERS[ansIdx]}` : `${idx + 1}`;
+        btn.className = 'h-10 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer select-none ';
+
+        if (isFlag) {
+          btn.className += 'bg-amber-400 text-slate-900 border border-amber-500 hover:bg-amber-500 ';
+        } else if (ansIdx !== undefined) {
+          if (state.mode === 'study') {
+            if (ansIdx === qObj.ans) {
+              btn.className += 'bg-emerald-500 text-white border border-emerald-600 ';
+            } else {
+              btn.className += 'bg-rose-500 text-white border border-rose-600 ';
+            }
+          } else {
+            btn.className += 'bg-teal-600 text-white border border-teal-700 hover:bg-teal-700 ';
+          }
+        } else {
+          btn.className += 'bg-slate-50 text-slate-700 border border-slate-300 hover:bg-slate-100 ';
+        }
+
+        if (isCurrent) {
+          btn.className += 'ring-2 ring-slate-900 ring-offset-1 scale-105 z-10 ';
+        }
+      });
+    }
+
+    function toggleMobileNav(open) {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      drawer.classList.toggle('hidden', !open);
+    }
+
+    // =========================================================================
+    // MODAL KONTROL
+    // =========================================================================
+    function openFinishModal() {
+      const total = state.activeQuestions.length;
+      let answered = 0;
+      let flagged = 0;
+      state.activeQuestions.forEach(q => {
+        if (state.userAnswers[q.id] !== undefined) answered++;
+        if (state.flagged[q.id]) flagged++;
+      });
+      const blank = total - answered;
+
+      document.getElementById('modal-finish-stats').innerHTML = `
+        <div class="flex justify-between"><span class="text-slate-600">Total Soal:</span><strong>${total} Soal</strong></div>
+        <div class="flex justify-between"><span class="text-teal-700">Sudah Dijawab:</span><strong class="text-teal-700">${answered} Soal</strong></div>
+        <div class="flex justify-between"><span class="text-amber-700">Ditandai Ragu-ragu:</span><strong class="text-amber-700">${flagged} Soal</strong></div>
+        <div class="flex justify-between"><span class="text-rose-700">Belum Dijawab (Kosong):</span><strong class="text-rose-700">${blank} Soal</strong></div>
+      `;
+
+      const modal = document.getElementById('modal-finish');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeFinishModal() {
+      const modal = document.getElementById('modal-finish');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openExitModal() {
+      const modal = document.getElementById('modal-exit');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeExitModal() {
+      const modal = document.getElementById('modal-exit');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmExitToMenu() {
+      closeExitModal();
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      switchView('home');
+    }
+
+    function openTimeoutModal() {
+      closeFinishModal();
+      closeExitModal();
+      const modal = document.getElementById('modal-timeout');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeTimeoutModal() {
+      const modal = document.getElementById('modal-timeout');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // =========================================================================
+    // KALKULASI SKOR, ANALISIS PER KATEGORI & TINJAUAN PEMBAHASAN
+    // =========================================================================
+    function finishExam() {
+      closeFinishModal();
+      closeTimeoutModal();
+      if (state.timerInterval) clearInterval(state.timerInterval);
+
+      const total = state.activeQuestions.length;
+      let correct = 0;
+      let wrong = 0;
+      let blank = 0;
+      let flaggedCount = 0;
+      const wrongOrBlankQuestions = [];
+
+      // Statistik per kategori
+      const catStatsMap = {};
+
+      state.activeQuestions.forEach(q => {
+        if (!catStatsMap[q.cat]) {
+          catStatsMap[q.cat] = { cat: q.cat, total: 0, correct: 0 };
+        }
+        catStatsMap[q.cat].total++;
+
+        if (state.flagged[q.id]) flaggedCount++;
+
+        const ans = state.userAnswers[q.id];
+        if (ans === undefined) {
+          blank++;
+          wrongOrBlankQuestions.push(q);
+        } else if (ans === q.ans) {
+          correct++;
+          catStatsMap[q.cat].correct++;
+        } else {
+          wrong++;
+          wrongOrBlankQuestions.push(q);
+        }
+      });
+
+      const score = total > 0 ? ((correct / total) * 100) : 0;
+      const formattedScore = Number.isInteger(score) ? score.toString() : score.toFixed(2);
+      const isPassed = score >= PASSING_GRADE;
+
+      state.lastResultStats = {
+        total,
+        correct,
+        wrong,
+        blank,
+        flaggedCount,
+        score,
+        wrongOrBlankQuestions
+      };
+
+      // Update UI Ringkasan Skor
+      document.getElementById('res-score').textContent = formattedScore;
+      document.getElementById('res-percentage').textContent = `Ketepatan ${formattedScore}% (${correct} dari ${total} soal)`;
+      document.getElementById('res-correct').textContent = correct;
+      document.getElementById('res-wrong').textContent = wrong;
+      document.getElementById('res-blank').textContent = blank;
+
+      const mins = Math.floor(state.elapsedSeconds / 60);
+      const secs = state.elapsedSeconds % 60;
+      document.getElementById('res-duration').textContent = `${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}d`;
+
+      const passBadge = document.getElementById('res-pass-badge');
+      if (isPassed) {
+        passBadge.className = 'mt-4 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-500/25 text-emerald-200 border border-emerald-400/50';
+        passBadge.textContent = 'LULUS — Memenuhi Passing Grade (≥75%)';
+      } else {
+        passBadge.className = 'mt-4 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide bg-rose-500/25 text-rose-200 border border-rose-400/50';
+        passBadge.textContent = 'BELUM LULUS — Di Bawah Passing Grade (75%)';
+      }
+
+      // Tombol Latih Ulang Soal Salah
+      const retryWrongBtn = document.getElementById('btn-retry-wrong');
+      document.getElementById('retry-wrong-count').textContent = wrongOrBlankQuestions.length;
+      retryWrongBtn.classList.toggle('hidden', wrongOrBlankQuestions.length === 0);
+
+      // Render Analisis Performa per Kategori
+      renderCategoryAnalytics(Object.values(catStatsMap));
+
+      // Update Filter Counts
+      document.getElementById('filter-count-all').textContent = total;
+      document.getElementById('filter-count-wrong').textContent = wrong;
+      document.getElementById('filter-count-correct').textContent = correct;
+      document.getElementById('filter-count-flagged').textContent = flaggedCount;
+      document.getElementById('filter-count-blank').textContent = blank;
+
+      switchView('result');
+      filterReview('all');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderCategoryAnalytics(catStatsList) {
+      const container = document.getElementById('category-analytics-list');
+      container.innerHTML = '';
+
+      catStatsList.forEach(item => {
+        const pct = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0;
+        const passedCat = pct >= PASSING_GRADE;
+        const barColor = passedCat ? 'bg-emerald-500' : (pct >= 50 ? 'bg-amber-500' : 'bg-rose-500');
+        const textColor = passedCat ? 'text-emerald-700' : (pct >= 50 ? 'text-amber-700' : 'text-rose-700');
+
+        const card = document.createElement('div');
+        card.className = 'p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2';
+        card.innerHTML = `
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHtml(item.cat)}</span>
+            <span class="text-xs font-extrabold ${textColor} shrink-0">${pct}% (${item.correct}/${item.total})</span>
+          </div>
+          <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+            <div class="h-full ${barColor} rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function filterReview(filterType) {
+      state.reviewFilter = filterType;
+
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.filter === filterType) {
+          btn.className = 'filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition-colors cursor-pointer';
+        } else {
+          btn.className = 'filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors cursor-pointer';
+        }
+      });
+
+      const listEl = document.getElementById('review-list');
+      listEl.innerHTML = '';
+
+      const filteredItems = state.activeQuestions
+        .map((q, idx) => ({ q, idx }))
+        .filter(({ q }) => {
+          const ans = state.userAnswers[q.id];
+          const isFlag = !!state.flagged[q.id];
+          if (filterType === 'correct') return ans !== undefined && ans === q.ans;
+          if (filterType === 'wrong') return ans !== undefined && ans !== q.ans;
+          if (filterType === 'flagged') return isFlag;
+          if (filterType === 'blank') return ans === undefined;
+          return true;
+        });
+
+      if (filteredItems.length === 0) {
+        listEl.innerHTML = `
+          <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center text-slate-500">
+            <p class="font-bold text-base text-slate-700">Tidak ada soal dalam kategori filter ini.</p>
+            <p class="text-xs mt-1">Silakan pilih tab filter lain di atas untuk melihat tinjauan soal.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filteredItems.forEach(({ q, idx }) => {
+        const userAns = state.userAnswers[q.id];
+        const isBlank = userAns === undefined;
+        const isCorrect = !isBlank && userAns === q.ans;
+        const isFlagged = !!state.flagged[q.id];
+
+        let statusBadge = '';
+        let borderTopClass = '';
+        if (isBlank) {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-200 text-slate-700">Kosong</span>`;
+          borderTopClass = 'border-l-4 border-l-slate-400';
+        } else if (isCorrect) {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Benar</span>`;
+          borderTopClass = 'border-l-4 border-l-emerald-500';
+        } else {
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">Salah</span>`;
+          borderTopClass = 'border-l-4 border-l-rose-500';
+        }
+
+        const flagTag = isFlagged
+          ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">Ragu-ragu</span>`
+          : '';
+
+        const optionsHtml = q.opts.map((rawOpt, optIdx) => {
+          const letter = LETTERS[optIdx];
+          const text = cleanOptionText(rawOpt);
+          const isKey = optIdx === q.ans;
+          const isUserPick = optIdx === userAns;
+
+          let optStyle = 'border-slate-200 bg-slate-50/50 text-slate-700';
+          let badgeStyle = 'bg-white text-slate-600 border-slate-300';
+          let tagHtml = '';
+
+          if (isKey) {
+            optStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold';
+            badgeStyle = 'bg-emerald-600 text-white border-emerald-600';
+            tagHtml = `<span class="ml-auto px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white shrink-0">Kunci Jawaban</span>`;
+          } else if (isUserPick && !isKey) {
+            optStyle = 'border-rose-400 bg-rose-50 text-rose-950 font-medium';
+            badgeStyle = 'bg-rose-600 text-white border-rose-600';
+            tagHtml = `<span class="ml-auto px-2 py-0.5 rounded text-[11px] font-bold bg-rose-600 text-white shrink-0">Jawaban Anda</span>`;
+          }
+
+          return `
+            <div class="p-3 rounded-xl border ${optStyle} flex items-start sm:items-center gap-3 text-sm">
+              <span class="w-7 h-7 rounded-lg border font-bold text-xs flex items-center justify-center shrink-0 ${badgeStyle}">${letter}</span>
+              <span class="flex-1 leading-snug">${formatClinicalHtml(text)}</span>
+              ${tagHtml}
+            </div>
+          `;
+        }).join('');
+
+        const card = document.createElement('article');
+        card.className = `bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden ${borderTopClass}`;
+        card.innerHTML = `
+          <div class="p-5 sm:p-6 space-y-5">
+            <!-- Header Soal -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-xs font-bold">Soal No. ${idx + 1}</span>
+                <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${getCategoryBadgeStyle(q.cat)}">${escapeHtml(q.cat)}</span>
+                <span class="text-xs text-slate-400">#${q.id}</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${isBlank ? 'bg-slate-100 text-slate-600' : (isCorrect ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700')}">
+                  Jawaban Anda: <strong>${isBlank ? '-' : LETTERS[userAns]}</strong>
+                </span>
+                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-800 border border-teal-200">
+                  Kunci: <strong>${LETTERS[q.ans]}</strong>
+                </span>
+                ${flagTag}
+                ${statusBadge}
+              </div>
+            </div>
+
+            <!-- Teks Pertanyaan -->
+            <div class="text-slate-800 font-medium text-sm sm:text-base leading-relaxed">
+              ${formatClinicalHtml(q.q)}
+            </div>
+
+            <!-- Pilihan Jawaban A-E -->
+            <div class="space-y-2">
+              ${optionsHtml}
+            </div>
+
+            <!-- Blok Pembahasan & Referensi Materi -->
+            <div class="rounded-xl bg-slate-50 border border-slate-200/90 p-4 sm:p-5 space-y-3">
+              <div>
+                <div class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">
+                  <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Pembahasan</span>
+                </div>
+                <p class="text-sm text-slate-700 leading-relaxed">${formatClinicalHtml(q.exp)}</p>
+              </div>
+
+              <div class="pt-2.5 border-t border-slate-200/80 flex items-center gap-2 text-xs text-slate-600">
+                <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span><strong>Rujukan:</strong> ${formatClinicalHtml(q.ref)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function retrySameSession() {
+      startExam([...state.activeQuestions]);
+    }
+
+    function retryWrongQuestions() {
+      if (state.lastResultStats && state.lastResultStats.wrongOrBlankQuestions.length > 0) {
+        startExam([...state.lastResultStats.wrongOrBlankQuestions]);
+      }
+    }
+
+    function returnToMenu() {
+      if (state.timerInterval) clearInterval(state.timerInterval);
+      switchView('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // =========================================================================
+    // KEYBOARD SHORTCUTS & UTILITIES
+    // =========================================================================
+    document.addEventListener('keydown', (e) => {
+      if (state.view !== 'exam') return;
+      if (!document.getElementById('modal-finish').classList.contains('hidden')) return;
+      if (!document.getElementById('modal-exit').classList.contains('hidden')) return;
+      if (!document.getElementById('modal-timeout').classList.contains('hidden')) return;
+
+      const key = e.key.toUpperCase();
+      if (key === 'A') selectOption(0);
+      else if (key === 'B') selectOption(1);
+      else if (key === 'C') selectOption(2);
+      else if (key === 'D') selectOption(3);
+      else if (key === 'E') selectOption(4);
+      else if (e.key === 'ArrowLeft') prevQuestion();
+      else if (e.key === 'ArrowRight') nextQuestion();
+      else if (key === 'R') toggleFlag();
+    });
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Jalankan inisialisasi saat halaman siap
+    initHomeCounts();
+  </script>
+</body>
+</html>
