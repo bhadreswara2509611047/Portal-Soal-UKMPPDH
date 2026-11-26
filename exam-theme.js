@@ -463,16 +463,32 @@
     }
 
     /* Perbaikan header & banner gradien terang di Mode Gelap (Sukses 1.0, Batch 47, Batch 49) */
+    html.portal-dark #setupScreen .bg-gradient-to-br,
+    html.portal-dark .bg-gradient-to-br.from-vetnavy-50,
     html.portal-dark .from-vetnavy-50,
     html.portal-dark .via-white,
     html.portal-dark .to-vetteal-50,
     html.portal-dark .from-slate-50,
-    html.portal-dark .to-teal-50\\/50 {
+    html.portal-dark .to-teal-50\\/50,
+    html.portal-dark [class*="from-vetnavy-50"],
+    html.portal-dark [class*="via-white"],
+    html.portal-dark [class*="to-vetteal-50"],
+    html.portal-dark [class*="from-slate-50"][class*="to-teal-50"] {
+      --tw-gradient-from: #132238 !important;
+      --tw-gradient-via: #111827 !important;
+      --tw-gradient-to: #0f292e !important;
+      --tw-gradient-stops: #132238, #111827, #0f292e !important;
+      background: linear-gradient(135deg, #132238 0%, #111827 55%, #0f292e 100%) !important;
       background-image: linear-gradient(135deg, #132238 0%, #111827 55%, #0f292e 100%) !important;
-      background-color: var(--p-elevated) !important;
+      background-color: #111827 !important;
     }
     html.portal-dark .from-amber-50,
-    html.portal-dark .to-orange-50 {
+    html.portal-dark .to-orange-50,
+    html.portal-dark [class*="from-amber-50"][class*="to-orange-50"] {
+      --tw-gradient-from: rgba(245, 158, 11, 0.18) !important;
+      --tw-gradient-to: rgba(234, 88, 12, 0.14) !important;
+      --tw-gradient-stops: rgba(245, 158, 11, 0.18), rgba(234, 88, 12, 0.14) !important;
+      background: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(234, 88, 12, 0.14)) !important;
       background-image: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(234, 88, 12, 0.14)) !important;
       background-color: var(--p-elevated) !important;
     }
@@ -481,8 +497,28 @@
       background-image: linear-gradient(90deg, #0a1e3a 0%, #102d54 50%, #0f766e 100%) !important;
       background-color: #0a1e3a !important;
     }
-    html.portal-dark .bg-vetnavy-50\\/40 {
+    html.portal-dark .bg-vetnavy-50,
+    html.portal-dark .bg-vetnavy-50\\/40,
+    html.portal-dark .bg-vetnavy-50\\/50,
+    html.portal-dark .bg-vetnavy-50\\/70,
+    html.portal-dark .bg-vetnavy-100 {
       background-color: rgba(59, 130, 246, 0.16) !important;
+    }
+    html.portal-dark .bg-vetteal-50,
+    html.portal-dark .bg-vetteal-100 {
+      background-color: rgba(20, 184, 166, 0.16) !important;
+    }
+    html.portal-dark .text-vetnavy-900,
+    html.portal-dark .text-vetnavy-800 {
+      color: #f1f5f9 !important;
+    }
+    html.portal-dark .text-vetnavy-700,
+    html.portal-dark .text-vetnavy-600 {
+      color: #93c5fd !important;
+    }
+    html.portal-dark .text-vetteal-700,
+    html.portal-dark .text-vetteal-600 {
+      color: #5eead4 !important;
     }
     html.portal-dark .ring-offset-1 {
       --tw-ring-offset-color: #111827 !important;
@@ -569,7 +605,18 @@
           styleEl = doc.createElement('style');
           styleEl.id = 'portal-adaptive-exam-theme';
           styleEl.textContent = EXAM_THEME_CSS;
-          doc.head.appendChild(styleEl);
+        }
+        // Selalu tempatkan di akhir <head> agar menang atas <style> dinamis Tailwind CDN
+        doc.head.appendChild(styleEl);
+
+        if (!doc.__portalThemeObserver) {
+          doc.__portalThemeObserver = new MutationObserver(() => {
+            const el = doc.getElementById('portal-adaptive-exam-theme');
+            if (el && doc.head.lastElementChild !== el) {
+              doc.head.appendChild(el);
+            }
+          });
+          doc.__portalThemeObserver.observe(doc.head, { childList: true });
         }
 
         doc.documentElement.classList.toggle('portal-dark', isDark);
@@ -579,6 +626,7 @@
     });
   }
 
+  window.PORTAL_EXAM_THEME_CSS = EXAM_THEME_CSS;
   window.syncThemeButtons = () => updateAllThemeButtons(document.documentElement.classList.contains('dark'));
   window.syncExamTheme = () => syncExamFrameTheme(document.documentElement.classList.contains('dark'));
 

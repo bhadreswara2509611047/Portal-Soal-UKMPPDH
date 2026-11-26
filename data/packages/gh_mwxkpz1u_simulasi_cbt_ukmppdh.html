@@ -59,6 +59,16 @@
     .option-card:hover:not(.disabled-option) {
       transform: translateY(-1px);
     }
+    /* Dukungan Mode Gelap bawaan untuk Hero Banner Sukses 1.0 */
+    html.dark #setupScreen .bg-gradient-to-br,
+    html.portal-dark #setupScreen .bg-gradient-to-br {
+      --tw-gradient-from: #132238 !important;
+      --tw-gradient-via: #111827 !important;
+      --tw-gradient-to: #0f292e !important;
+      --tw-gradient-stops: #132238, #111827, #0f292e !important;
+      background: linear-gradient(135deg, #132238 0%, #111827 55%, #0f292e 100%) !important;
+      background-color: #111827 !important;
+    }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-vetnavy-600 selection:text-white">

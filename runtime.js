@@ -156,7 +156,10 @@
         return `<html class="${themeClass}"${attrs}>`;
       });
 
-      const preloadStyle = `<style id="portal-preload-bg">html,body{background-color:${baseBg};color:${baseText};}</style>`;
+      const themeStyle = window.PORTAL_EXAM_THEME_CSS
+        ? `<style id="portal-adaptive-exam-theme">${window.PORTAL_EXAM_THEME_CSS}</style>`
+        : '';
+      const preloadStyle = `<style id="portal-preload-bg">html,body{background-color:${baseBg};color:${baseText};}</style>${themeStyle}`;
       return out.replace(/<\/head>/i, `${preloadStyle}</head>`);
     },
 
