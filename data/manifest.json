@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-26T17:55:00.000Z",
+  "updatedAt": "2026-11-26T13:13:56.288Z",
   "packages": [
     {
       "id": "gh_mwxkpz1u",
@@ -7,9 +7,9 @@
       "name": "Try Out Nasional",
       "title": "Simulasi CBT UKMPPDH Sukses 1.0",
       "fileName": "gh_mwxkpz1u_simulasi_cbt_ukmppdh.html",
-      "questions": 48,
-      "duration": "48 Menit",
-      "hasOsce": false,
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:13:56.288Z"
     },
@@ -19,9 +19,9 @@
       "name": "Try Out Nasional",
       "title": "Simulasi CBT SUKSES UKMPPDH 2.0",
       "fileName": "gh_mwxkoa4j_simulasi_cbt_sukses_ukmppdh_2_0_fkh_universitas_udayana_150_soal.html",
-      "questions": 150,
-      "duration": "150 Menit",
-      "hasOsce": false,
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:12:37.392Z"
     },
@@ -33,7 +33,7 @@
       "fileName": "gh_mwxklyx7_simulasi_cbt_sukses_ukmppdh_3_0.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:10:49.439Z"
     },
@@ -45,7 +45,7 @@
       "fileName": "gh_mwxkknr8_simulasi_cbt_ukmppdh_sigap_batch_4.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:09:49.301Z"
     },
@@ -55,10 +55,10 @@
       "name": "Try Out Nasional",
       "title": "Simulasi CBT VETUP SIGAP — Volume 1",
       "fileName": "gh_mwxkfrv5_simulasi_cbt_vetup_sigap_volume_1_osce_veteriner.html",
-      "questions": 50,
-      "duration": "50 Menit",
+      "questions": 100,
+      "duration": "100 Menit",
       "hasOsce": true,
-      "highlights": "Paket simulasi CBT OSCE Veteriner lengkap dengan pembahasan.",
+      "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:05:59.753Z"
     },
     {
@@ -69,7 +69,7 @@
       "fileName": "gh_mwxkee21_simulasi_cbt_tryout_sigap_ukmppdh_batch_3.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:04:56.479Z"
     },
@@ -81,7 +81,7 @@
       "fileName": "gh_mwxkc0d4_sigap_batch_41.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:03:04.734Z"
     },
@@ -93,7 +93,7 @@
       "fileName": "gh_mwxka326_simulasi_cbt_tryout_sigap_ukmppdh_batch_30.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:01:35.288Z"
     },
@@ -105,7 +105,7 @@
       "fileName": "gh_mwxk88c3_simulasi_cbt_sigap_ukmppdh_batch_21.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T13:00:08.982Z"
     },
@@ -117,7 +117,7 @@
       "fileName": "gh_mwxipz0r_simulasi_cbt_ukmppdh_to_sigap_batch_42.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T12:17:56.904Z"
     },
@@ -129,7 +129,7 @@
       "fileName": "gh_mwxioa41_simulasi_cbt_tryout_sigap_ukmppdh_batch_43.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T12:16:38.326Z"
     },
@@ -141,7 +141,7 @@
       "fileName": "gh_mwximxsv_simulasi_cbt_ukmppdh_tryout_sigap_batch_45.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T12:15:35.758Z"
     },
@@ -153,7 +153,7 @@
       "fileName": "gh_mwxil5r1_simulasi_cbt_ukmppdh_tryout_sigap_batch_46.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T12:14:12.422Z"
     },
@@ -165,7 +165,7 @@
       "fileName": "gh_mwxig86q_simulasi_cbt_ukmppdh_tryout_sigap_batch_47.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
       "uploadedAt": "2026-11-26T12:10:22.788Z"
     },
@@ -177,7 +177,7 @@
       "fileName": "gh_mwxa0la0_simulasi_cbt_tryout_sigap_ukmppdh_batch_49.html",
       "questions": 100,
       "duration": "100 Menit",
-      "hasOsce": false,
+      "hasOsce": true,
       "highlights": "Paket soal CBT tambahan.",
       "uploadedAt": "2026-11-26T08:14:15.191Z"
     },
@@ -187,9 +187,9 @@
       "name": "Paket Cloud",
       "title": "Simulasi CBT UKMPPDH — Batch 6",
       "fileName": "gh_mwx9mv87_simulasi_cbt_ukmppdh_batch_6.html",
-      "questions": 99,
-      "duration": "99 Menit",
-      "hasOsce": false,
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
       "highlights": "Paket soal CBT tambahan.",
       "uploadedAt": "2026-11-26T08:03:36.158Z"
     }
