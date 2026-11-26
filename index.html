@@ -159,10 +159,37 @@
         }
 
         /* Kartu paket */
-        .pkg-card { transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
-        .pkg-card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 8px 24px -12px rgba(15,23,42,.25); }
-        .pkg-accent { height: 4px; background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899); }
-        .pkg-card.is-done .pkg-accent { background: linear-gradient(90deg, #10b981, #34d399); }
+        .pkg-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .pkg-card:hover { border-color: var(--border-strong); box-shadow: 0 6px 20px -14px rgba(15,23,42,.35); }
+        .pkg-badge {
+            display: inline-flex; align-items: center;
+            height: 24px; padding: 0 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; letter-spacing: .04em;
+            background-color: var(--bg-subtle); color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        .pkg-badge.is-osce { color: var(--text-secondary); font-weight: 600; letter-spacing: 0; }
+        .pkg-title { min-height: 2.8em; }
+        .pkg-meta {
+            display: flex; align-items: center; gap: 14px;
+            padding-top: 12px; border-top: 1px solid var(--border-color);
+            font-size: 12px; color: var(--text-secondary);
+        }
+        .pkg-meta span { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; }
+        .pkg-meta svg { color: var(--text-muted); }
+        .pkg-done-btn {
+            height: 26px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 600;
+            border: 1px solid var(--border-color); color: var(--text-muted); background: transparent;
+            transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+        }
+        .pkg-done-btn:hover { background-color: var(--bg-subtle); color: var(--text-primary); }
+        .pkg-done-btn.is-done { color: #047857; background-color: rgba(16,185,129,.1); border-color: rgba(16,185,129,.3); }
+        html.dark .pkg-done-btn.is-done { color: #6ee7b7; }
         .pkg-arrow { transition: transform .15s ease; }
         .pkg-card:hover .pkg-arrow { transform: translateX(3px); }
     </style>
@@ -937,44 +964,37 @@
                 const isLast = progress.lastOpened === p.id;
 
                 const card = document.createElement('div');
-                card.className = 'pkg-card surface border rounded-2xl overflow-hidden flex flex-col fade-in' + (isDone ? ' is-done' : '');
+                card.className = 'pkg-card overflow-hidden flex flex-col fade-in' + (isDone ? ' is-done' : '');
 
                 const iconDoc = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
                 const iconClock = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
                 card.innerHTML = `
-                    <div class="pkg-accent"></div>
                     <div class="p-4 sm:p-5 flex flex-col gap-4 flex-1">
                         <div class="flex items-center justify-between gap-2">
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="badge-pastel px-2.5 py-1 rounded-lg text-xs font-extrabold tracking-wide ${p.badgeColor}">${escapeHtml(p.code)}</span>
-                                ${p.hasOsce ? '<span class="badge-osce px-2 py-1 rounded-lg text-[11px] font-bold bg-purple-100 text-purple-800">+ OSCE</span>' : ''}
-                                ${isLast ? '<span class="subtle border px-2 py-1 rounded-lg text-[11px] font-medium text-sub">Terakhir</span>' : ''}
+                            <div class="flex flex-wrap items-center gap-1.5 min-w-0">
+                                <span class="pkg-badge">${escapeHtml(p.code)}</span>
+                                ${p.hasOsce ? '<span class="pkg-badge is-osce">+ OSCE</span>' : ''}
+                                ${isLast ? '<span class="pkg-badge is-osce">Terakhir</span>' : ''}
                             </div>
                             <button type="button" onclick="toggleDone('${escapeHtml(p.id)}')" title="Tandai selesai"
-                                class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition shrink-0 ${isDone ? 'badge-done bg-emerald-50 border-emerald-200 text-emerald-700' : 'btn-secondary text-mute'}">
+                                class="pkg-done-btn shrink-0 ${isDone ? 'is-done' : ''}">
                                 ${isDone ? '✓ Selesai' : 'Tandai'}
                             </button>
                         </div>
 
                         <div class="flex-1">
-                            <h2 class="text-[15px] sm:text-base font-bold text-main leading-snug line-clamp-3">${escapeHtml(p.title)}</h2>
+                            <h2 class="pkg-title text-[15px] sm:text-base font-bold text-main leading-snug line-clamp-2">${escapeHtml(p.title)}</h2>
                             <p class="text-xs text-mute mt-1.5 truncate">${escapeHtml(p.name)}</p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2 text-sub">
-                                ${iconDoc}
-                                <span class="text-xs font-semibold text-main">${p.questions} Soal</span>
-                            </div>
-                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2 text-sub">
-                                ${iconClock}
-                                <span class="text-xs font-semibold text-main truncate">${escapeHtml(p.duration || '-')}</span>
-                            </div>
+                        <div class="pkg-meta">
+                            <span>${iconDoc}${p.questions} Soal</span>
+                            <span>${iconClock}${escapeHtml(p.duration || '-')}</span>
                         </div>
 
                         <button type="button" onclick="openExam('${escapeHtml(p.id)}')"
-                            class="btn-primary w-full min-h-[44px] px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                            class="${isDone ? 'btn-secondary' : 'btn-primary'} w-full min-h-[44px] px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
                             <span>${isDone ? 'Ulangi Simulasi' : 'Mulai Simulasi'}</span>
                             <span class="pkg-arrow">→</span>
                         </button>
@@ -1180,7 +1200,11 @@
                     } catch (e) {}
                 });
             }
-            window.syncExamTheme = () => syncExamFrameTheme(document.documentElement.classList.contains('dark'));
+            window.syncExamTheme = () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                updateAllThemeButtons(isDark);
+                syncExamFrameTheme(isDark);
+            };
 
             window.togglePortalTheme = function () {
                 const isDark = document.documentElement.classList.toggle('dark');
