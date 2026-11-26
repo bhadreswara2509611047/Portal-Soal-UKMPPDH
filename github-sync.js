@@ -811,10 +811,7 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        const rawHtml = String(reader.result || '');
-        pendingUploadHtml = window.PortalTheme
-          ? window.PortalTheme.applyToHtml(rawHtml, { forceLight: true })
-          : rawHtml;
+        pendingUploadHtml = String(reader.result || '');
         pendingUploadFileName = slugifyFileName(file.name);
         const sizeKb = (file.size / 1024).toFixed(1);
         modal.querySelector('#gh-file-info').textContent = `✓ ${pendingUploadFileName} (${sizeKb} KB)`;
@@ -1037,10 +1034,7 @@
     showStatus('#gh-upload-status', '1/2 Mengunggah file soal ke GitHub...', true);
 
     try {
-      const themedUploadHtml = window.PortalTheme
-        ? window.PortalTheme.applyToHtml(pendingUploadHtml, { forceLight: true })
-        : pendingUploadHtml;
-      await putRepoFile(pkgFilePath, themedUploadHtml, `Upload paket soal: ${code} - ${title}`, token);
+      await putRepoFile(pkgFilePath, pendingUploadHtml, `Upload paket soal: ${code} - ${title}`, token);
 
       showStatus('#gh-upload-status', '2/2 Memperbarui manifest...', true);
       const manifestData = await getFileSha(cfg.manifestPath, token);
