@@ -513,19 +513,8 @@
           </button>
           <span id="gh-runner-title" class="text-xs sm:text-sm font-bold text-main truncate">Simulasi CBT</span>
         </div>
-        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-          <button type="button" onclick="togglePortalTheme()" title="Ubah Tema"
-            class="btn-secondary h-9 px-2.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5">
-            <svg class="theme-icon-sun hidden w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-            </svg>
-            <svg class="theme-icon-moon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-            </svg>
-          </button>
-          <button type="button" id="gh-runner-done"
-            class="btn-secondary h-9 px-3 rounded-lg text-xs font-semibold transition shrink-0">Tandai Selesai</button>
-        </div>
+        <button type="button" id="gh-runner-done"
+          class="btn-secondary h-9 px-3 rounded-lg text-xs font-semibold transition shrink-0">Tandai Selesai</button>
       </div>
       <iframe id="gh-runner-frame" class="w-full flex-1 border-0 bg-white" title="Simulasi CBT Tambahan"></iframe>
     `;

@@ -1,0 +1,3183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRY OUT BATCH 3 — SIGAP UKMPPDH | Simulasi CBT Interaktif</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            sigap: {
+              dark: '#134e4a',
+              primary: '#0f5c54',
+              hover: '#0b4640',
+              light: '#e6f4f1',
+              gold: '#eab308',
+              goldDark: '#ca8a04',
+              goldLight: '#fef9c3',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    html, body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      overflow-x: hidden;
+    }
+    /* Custom scrollbar untuk kenyamanan membaca panjang */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.22s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#0f5c54] selection:text-white">
+
+  <!-- Root Container Aplikasi -->
+  <div id="app" class="flex-1 flex flex-col"></div>
+
+  <!-- Custom Modal Container (Pengganti alert/confirm) -->
+  <div id="modal-root"></div>
+
+  <!-- Toast Notification -->
+  <div id="toast-root" class="fixed bottom-5 right-5 z-50 pointer-events-none flex flex-col gap-2"></div>
+
+  <script>
+    /**
+     * ============================================================================
+     * BANK SOAL LENGKAP: TRY OUT BATCH 3 - SIGAP UKMPPDH (100 SOAL)
+     * Struktur per item:
+     * - id: Nomor soal asli (1 - 100)
+     * - category: Bidang ilmu sesuai pemetaan SIGAP UKMPPDH
+     * - kasus: Uraian kasus ("-" jika tidak ada uraian kasus)
+     * - tanya: Pertanyaan inti
+     * - opsi: Array 5 pilihan jawaban (A-E)
+     * - kunci: Indeks jawaban benar (0 = A, 1 = B, 2 = C, 3 = D, 4 = E)
+     * - pembahasan: Pembahasan komprehensif
+     * - ref: Sumber referensi literatur / regulasi / tautan
+     * ============================================================================
+     */
+    const QUESTION_BANK = [
+      {
+        id: 1,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Untuk memastikan diagnosis penyakit leptospirosis, pemeriksaan laboratorium sangat penting.",
+        tanya: "Metode diagnostik mana yang paling sering digunakan untuk mendeteksi keberadaan bakteri Leptospira dalam tubuh pasien?",
+        opsi: ["a. Dark Field Urin", "b. ELISA", "c. Uji laboratorium", "d. Mikroskop", "e. Skin scrapping"],
+        kunci: 0,
+        pembahasan: "Leptospira adalah bakteri heliks yang fleksibel dan bergerak aktif secara rotasi pada sumbu longitudinal, fleksi, dan ekstensi dengan ujung berbentuk lengkung seperti mata pancing. Bakteri ini tidak dapat dilihat dengan mikroskop cahaya biasa, melainkan harus menggunakan mikroskop medan gelap atau Dark Field Microscope (DFM) dari sampel urin/darah.",
+        ref: "https://repository.badankebijakan.kemkes.go.id/3873/1/Buku_Leptospirosis.pdf"
+      },
+      {
+        id: 2,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Dalam pemeriksaan RT-PCR / deteksi antigen kasus penyakit FPV (Feline Panleukopenia Virus) sampel yang digunakan adalah...",
+        opsi: ["a. Feses", "b. Air liur", "c. Darah", "d. Urin", "e. Kulit"],
+        kunci: 0,
+        pembahasan: "Uji deteksi FPV menggunakan sampel feses yang diambil melalui swab rektum kucing, dicampur dengan larutan pengencer lalu diuji menggunakan perangkat uji diagnostik (interpretasi positif bila muncul dua pita warna pada C dan T).",
+        ref: "https://ojs.unud.ac.id/index.php/jvet/article/download/83440/44944"
+      },
+      {
+        id: 3,
+        category: "Kesmavet & Regulasi",
+        kasus: "Ikan laut seperti tuna dan makarel dapat menyebabkan alergi pada manusia yang mengkonsumsinya karena kandungan histamin yang tinggi.",
+        tanya: "Hal tersebut disebut dengan...",
+        opsi: ["a. Scombrotoxin", "b. Tetrodotoxin", "c. Aflatoxin", "d. Batrachotoxin", "e. Calliotoxin"],
+        kunci: 0,
+        pembahasan: "Ikan tuna dan makarel termasuk dalam famili Scombridae yang dapat menghasilkan scombrotoxin akibat dekarboksilasi histidin menjadi histamin oleh bakteri. Akumulasi histamin menyebabkan gejala menyerupai reaksi alergi seperti flushing, urtikaria, pruritus, sakit kepala, diare, hingga hipotensi.",
+        ref: "Maintz dan Novak (2007)"
+      },
+      {
+        id: 4,
+        category: "Penyakit Akuatik",
+        kasus: "-",
+        tanya: "Berikut ini nama penyakit pada ikan yang disebabkan Aphanomyces invadans adalah, kecuali...",
+        opsi: ["a. Red Suppurative Disease", "b. Epizootic Ulcerative Syndrome", "c. Mycotic granulomatosis", "d. Ulcerative mycosis", "e. Ulcerative granulomatosis"],
+        kunci: 4,
+        pembahasan: "Infeksi oomycete Aphanomyces invadans dikenal luas sebagai Epizootic Ulcerative Syndrome (EUS), Red Spot/Suppurative Disease (RSD), Mycotic Granulomatosis (MG), dan Ulcerative Mycosis (UM). Ulcerative granulomatosis bukan merupakan sinonim penyakit ini.",
+        ref: "https://jurnal.untirta.ac.id/index.php/jpk/article/viewFile/22360/11867"
+      },
+      {
+        id: 5,
+        category: "Penyakit Akuatik",
+        kasus: "-",
+        tanya: "Berikut merupakan mikroorganisme yang dapat menjadi indikator kualitas suatu perairan adalah...",
+        opsi: ["a. Aeromonas sp.", "b. Shigella sp.", "c. Vibrio sp.", "d. Yersinia sp.", "e. Spirulina maxima"],
+        kunci: 4,
+        pembahasan: "Berdasarkan klasifikasi mikroorganisme indikator perairan dalam literatur Penyakit Akuatik, Spirulina maxima termasuk dalam kelompok Alga Biru-Hijau (Cyanobacteria) indikator kondisi kesuburan/kualitas perairan. (Catatan: Sesuai kunci TO Batch 3, jawaban yang dipilih adalah Spirulina maxima).",
+        ref: "https://www.researchgate.net/publication/305780756_Penyakit_Akuatik"
+      },
+      {
+        id: 6,
+        category: "Penyakit Akuatik",
+        kasus: "-",
+        tanya: "Furunkulosis merupakan penyakit ikan yang disebabkan oleh...",
+        opsi: ["a. Aeromonas hydrophila", "b. Aeromonas salmonicida", "c. Vibrio sp.", "d. Yersinia sp.", "e. Edwardsiella sp."],
+        kunci: 1,
+        pembahasan: "Aeromonas salmonicida adalah bakteri Gram negatif berbentuk batang pendek, non-motil, yang terdapat di perairan tawar, payau, maupun laut dan merupakan agen penyebab utama penyakit furunkulosis pada ikan salmonid.",
+        ref: "https://www.researchgate.net/publication/305780756_Penyakit_Akuatik"
+      },
+      {
+        id: 7,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Hewan non ruminansia yang bisa terkena penyakit PMK (Penyakit Mulut dan Kuku) adalah...",
+        opsi: ["a. Babi", "b. Kuda", "c. Kambing", "d. Domba", "e. Sapi"],
+        kunci: 0,
+        pembahasan: "PMK menyerang hewan berkuku genap (Artiodactyla). Babi merupakan hewan monogastrik (non-ruminansia) berkuku genap yang rentan terinfeksi virus PMK dengan lesi vesikel khas pada moncong, mulut, lidah, dan terutama kaki. Kuda bukan hewan berkuku genap sehingga tahan terhadap PMK.",
+        ref: "https://vetmed.iastate.edu/vdpam/FSVD/swine/index-diseases/foot-mouth-disease"
+      },
+      {
+        id: 8,
+        category: "Penyakit Akuatik",
+        kasus: "Bakteri ini termasuk bakteri gram negatif, merupakan patogen oportunistik yang menyerang ikan air tawar dan digolongkan ke dalam kelompok bakteri perusak sirip (bacterial fin rot). Gejala klinis serangan bakteri ini yaitu terjadi hemorrhage pada insang dan ekor, borok pada kulit, dan septicemia.",
+        tanya: "Bakteri tersebut adalah...",
+        opsi: ["a. Edwardsiella sp.", "b. Vibrio sp.", "c. Gyrodactylus sp.", "d. Aeromonas sp.", "e. Pseudomonas sp."],
+        kunci: 4,
+        pembahasan: "Pseudomonas sp. (seperti P. aeruginosa, P. fluorescens, P. anguilliseptica) adalah bakteri Gram negatif aerob berbentuk batang motil dengan flagela polar yang berperan sebagai patogen oportunistik perusak sirip (bacterial fin rot) serta memicu hemoragi pada insang dan ekor, borok kulit, dan septikemia.",
+        ref: "https://www.researchgate.net/publication/305780756_Penyakit_Akuatik"
+      },
+      {
+        id: 9,
+        category: "Penyakit Akuatik",
+        kasus: "-",
+        tanya: "Penyakit septicemia enteric yang biasanya menyerang pada ikan lele (Ictalurus punctatus) disebabkan oleh...",
+        opsi: ["a. Edwardsiella sp.", "b. Vibrio sp.", "c. Gyrodactylus sp.", "d. Aeromonas sp.", "e. Pseudomonas sp."],
+        kunci: 0,
+        pembahasan: "Bakteri Edwardsiella sp. (khususnya Edwardsiella ictaluri) adalah bakteri Gram negatif berbentuk batang melengkung pleomorfik yang menyebabkan edwardsiellosis atau Enteric Septicemia of Catfish (ESC) pada ikan lele (Ictalurus punctatus).",
+        ref: "https://www.researchgate.net/publication/305780756_Penyakit_Akuatik"
+      },
+      {
+        id: 10,
+        category: "Penyakit Akuatik",
+        kasus: "Gejala klinis mirip seperti serangan Saprolegnia sp., yaitu menyerang organ eksternal ikan seperti kulit, sirip, insang, dan telur, serta organ yang terserang menunjukkan indikasi ditumbuhi benang-benang halus seperti kapas. Gejala klinis lainnya adalah timbulnya borok akibat serangan sekunder yang meluas hingga ke tulang belakang.",
+        tanya: "Penyebab penyakit tersebut adalah...",
+        opsi: ["a. Lagenidium sp.", "b. Achlya sp.", "c. Aphanomyces sp.", "d. Ichthyosporidium sp.", "e. Branchiomyces sp."],
+        kunci: 1,
+        pembahasan: "Achlya sp. merupakan kapang air (oomycete) agen penyebab saprolegniasis selain Saprolegnia sp., dengan ciri khas pertumbuhan hifa menyerupai benang kapas putih halus pada permukaan kulit, sirip, insang, dan telur ikan.",
+        ref: "https://www.researchgate.net/publication/305780756_Penyakit_Akuatik"
+      },
+      {
+        id: 11,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Dalam mengetahui bakteri yang menginfeksi diperlukan diagnosa. Salah satu metode diagnosa adalah pewarnaan preparat.",
+        tanya: "Pewarnaan yang umum untuk mendeteksi Mycobacterium sp. adalah...",
+        opsi: ["a. Pewarnaan gram", "b. Giemsa", "c. Pewarnaan tahan asam (Ziehl-Neelsen)", "d. Pewarnaan negatif", "e. Methylen blue"],
+        kunci: 2,
+        pembahasan: "Pewarnaan Ziehl-Neelsen (ZN) merupakan metode pengecatan Bakteri Tahan Asam (BTA) menggunakan karbol-fuchsin yang mampu menembus dinding sel berlilin (asam mikolat) pada Mycobacterium sp.",
+        ref: "https://fk.uii.ac.id/mikrobiologi/materi/pengecatan-ziehl-neelsen-zn/"
+      },
+      {
+        id: 12,
+        category: "Penyakit Akuatik",
+        kasus: "Ikan yang berada di perairan luas rentan terkena parasit.",
+        tanya: "Parasit ikan yang tergolong pada kelas Monogenea adalah...",
+        opsi: ["a. Dactylogyrus dan Gyrodactylus sp.", "b. Trichodina dan Saprolegnia sp.", "c. Ichthyophthirius dan Argulus sp.", "d. Bothriocephalus sp.", "e. Trypanosoma sp."],
+        kunci: 0,
+        pembahasan: "Dactylogyrus sp. (cacing insang) dan Gyrodactylus sp. (cacing kulit) termasuk dalam kelas Monogenea (trematoda ektoparasit). Trichodina, Ichthyophthirius, dan Trypanosoma adalah protozoa; Bothriocephalus adalah cestoda; Argulus adalah krustasea.",
+        ref: "https://www.researchgate.net/publication/305780756_Penyakit_Akuatik"
+      },
+      {
+        id: 13,
+        category: "Penyakit Akuatik",
+        kasus: "Virus ini merupakan virus RNA dengan diameter antara 20-25 nm. Penyakit ini paling umum menyerang pada larva ikan umur kurang dari 20 hari. Secara makroskopik ditandai hati pucat, saluran cerna kosong berisi cairan kehijauan, dan spot merah pada limpa. Replikasi virus pada otak, distal sumsum tulang belakang, dan retina mata menimbulkan vakuolisasi serta kematian hingga 95% pada larva.",
+        tanya: "Virus tersebut adalah...",
+        opsi: ["a. VNN", "b. WSSV", "c. IPNV", "d. KHV", "e. VHS"],
+        kunci: 0,
+        pembahasan: "Viral Nervous Necrosis (VNN) disebabkan oleh Betanodavirus (virus RNA tidak beramplop berdiameter 20-25 nm) yang menimbulkan vakuolisasi berat pada sistem saraf pusat dan retina mata larva serta juvenil ikan laut.",
+        ref: "https://www.researchgate.net/publication/305780756_Penyakit_Akuatik"
+      },
+      {
+        id: 14,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Hal-hal yang dapat mengakibatkan sertifikat NKV dicabut kecuali?",
+        opsi: [
+          "a. Penyimpangan yang membahayakan keamanan konsumen",
+          "b. Unit usaha tidak melakukan kegiatannya selama 3 bulan berturut-turut",
+          "c. Lokasi unit usaha berpindah lokasi",
+          "d. Tidak mencantumkan NKV pada kemasan atau bahan",
+          "e. Dinyatakan pailit oleh pengadilan niaga"
+        ],
+        kunci: 1,
+        pembahasan: "Berdasarkan Permentan RI No. 11 Tahun 2020, pencabutan sertifikat NKV dilakukan apabila unit usaha tidak lagi melakukan kegiatan usahanya selama 6 (enam) bulan berturut-turut (bukan 3 bulan), atas permintaan pemohon, tidak memenuhi syarat administrasi/teknis, penyimpangan proses produksi, pailit, atau berpindah lokasi ke provinsi berbeda.",
+        ref: "Permentan RI Nomor 11 Tahun 2020 tentang Sertifikasi NKV Unit Usaha Produk Hewan"
+      },
+      {
+        id: 15,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Sertifikat Nomor Kontrol Veteriner (NKV) dikeluarkan oleh?",
+        opsi: ["a. Dinas Provinsi", "b. Kementerian Pertanian", "c. Pemerintah pusat", "d. Dinas peternakan kabupaten/kota", "e. Pemerintah Kota"],
+        kunci: 0,
+        pembahasan: "Sertifikat NKV unit usaha produk hewan diterbitkan oleh Kepala Dinas Provinsi yang membidangi fungsi peternakan dan kesehatan hewan setelah melalui audit oleh Tim Auditor NKV provinsi.",
+        ref: "Permentan No. 11 Tahun 2020 tentang Sertifikasi NKV Unit Usaha Produk Hewan"
+      },
+      {
+        id: 16,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Berapa lama waktu maksimal pembinaan suatu usaha untuk mendapatkan NKV?",
+        opsi: ["a. 1 tahun", "b. 2 tahun", "c. 3 tahun", "d. 4 tahun", "e. 5 tahun"],
+        kunci: 4,
+        pembahasan: "Berdasarkan Permentan No. 11 Tahun 2020 Pasal 2 ayat (2), pembinaan kepada pelaku usaha untuk memenuhi persyaratan NKV diberikan waktu paling lama 5 (lima) tahun.",
+        ref: "Permentan RI Nomor 11 Tahun 2020 tentang Sertifikasi NKV"
+      },
+      {
+        id: 17,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Berapa lama masa berlaku sertifikat NKV?",
+        opsi: ["a. 6 bulan", "b. 1 tahun", "c. 5 tahun", "d. 10 tahun", "e. 5 bulan"],
+        kunci: 2,
+        pembahasan: "Berdasarkan Permentan No. 11 Tahun 2020 Pasal 6 ayat (3), Sertifikat Nomor Kontrol Veteriner (NKV) berlaku selama 5 (lima) tahun sejak tanggal diterbitkan dan dapat diperpanjang.",
+        ref: "Permentan RI Nomor 11 Tahun 2020 tentang Sertifikasi NKV"
+      },
+      {
+        id: 18,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Syarat administrasi mendaftar NKV, kecuali...",
+        opsi: ["a. KTP pemilik usaha", "b. NPWP pemilik usaha", "c. Surat izin usaha", "d. Surat izin bangunan", "e. Surat rekomendasi dinas"],
+        kunci: 3,
+        pembahasan: "Berdasarkan Permentan Nomor 381/Kpts/OT.140/10/2005 Bab III Pasal 6 ayat 2, persyaratan administrasi meliputi KTP/Akta Pendirian, Surat Keterangan Domisili, SIUP/izin usaha, NPWP, Surat Izin HO/Lingkungan, dan Rekomendasi Dinas Peternakan Kab/Kota. Surat izin bangunan tidak termasuk syarat administrasi NKV.",
+        ref: "Permentan Nomor: 381/Kpts/OT.140/10/2005 Bab III Pasal 6 ayat 2"
+      },
+      {
+        id: 19,
+        category: "Kesmavet & Regulasi",
+        kasus: "Dalam memulai usaha veteriner produk hewan, pelaku usaha memerlukan sertifikat NKV.",
+        tanya: "Pengajuan NKV dilakukan melalui tingkat...",
+        opsi: [
+          "a. Menteri pertanian tingkat provinsi",
+          "b. Menteri pertanian tingkat kabupaten/kota",
+          "c. Gubernur tingkat provinsi",
+          "d. Bupati/walikota tingkat provinsi",
+          "e. Bupati/walikota tingkat kabupaten/kota"
+        ],
+        kunci: 2,
+        pembahasan: "Pembimbingan dilakukan oleh pemerintah kabupaten/kota, sedangkan pengajuan permohonan dan penerbitan sertifikat NKV berada pada kewenangan tingkat Provinsi (Gubernur / Badan Pelayanan Terpadu Satu Pintu & Dinas Provinsi yang membidangi fungsi Kesmavet).",
+        ref: "Permentan 381/KPTS/OT.140/10/2005"
+      },
+      {
+        id: 20,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Telur ayam kualitas (Mutu) 1 memiliki ciri...",
+        opsi: [
+          "a. Kerabang bersih, bentuk normal, tidak ada kotoran, kantung udara < 0,5 cm",
+          "b. Ukuran kantung udara 0,5-0,9 cm",
+          "c. Terdapat noda pada putih telur",
+          "d. Kuning telur gepeng",
+          "e. Bentuk tidak normal"
+        ],
+        kunci: 0,
+        pembahasan: "Telur konsumsi Mutu I memiliki ciri kerabang bersih tanpa noda/kotoran, halus, utuh, bentuk normal (Shape Index 72-76), kedalaman kantung udara < 0,5 cm dan tidak bergerak, putih telur kental bebas benda asing, serta kuning telur bulat di tengah.",
+        ref: "SNI 3926:2008 / SNI 7388:2009"
+      },
+      {
+        id: 21,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Pada telur segar, batas maksimal cemaran koliform yang diperbolehkan sesuai standar keamanan pangan (SNI) adalah...",
+        opsi: ["a. 10^1 koloni/g", "b. 10^2 koloni/g", "c. 10^3 koloni/g", "d. 10^4 koloni/g", "e. 10^5 koloni/g"],
+        kunci: 1,
+        pembahasan: "Berdasarkan SNI 7388:2009 tentang Batas Maksimum Cemaran Mikroba dalam Pangan, batas maksimum cemaran koliform pada telur segar adalah 1 x 10^2 koloni/g (ALT 1 x 10^5 koloni/g, E. coli 1 x 10^1 koloni/g, Salmonella sp. negatif/25 g).",
+        ref: "Standar Nasional Indonesia (SNI) Nomor 01-7388-2009"
+      },
+      {
+        id: 22,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Batas maksimal cemaran mikroba (ALT) pada daging sapi segar adalah...",
+        opsi: ["a. 10^1", "b. 10^2", "c. 10^3", "d. 10^4", "e. 10^6"],
+        kunci: 4,
+        pembahasan: "Berdasarkan SNI 7388:2009, batas maksimum cemaran mikroba (Angka Lempeng Total / ALT) pada daging segar adalah 1 x 10^6 koloni/g, susu segar 1 x 10^6 koloni/ml, dan telur segar 1 x 10^5 koloni/g.",
+        ref: "Standar Nasional Indonesia (SNI) Nomor 01-7388-2009"
+      },
+      {
+        id: 23,
+        category: "Kesmavet & Regulasi",
+        kasus: "Anda sedang melakukan audit pada sebuah bangunan di Rumah Potong Hewan (RPH).",
+        tanya: "Manakah yang merupakan penyimpangan dan harus diperbaiki?",
+        opsi: [
+          "a. Bangunan tidak sesuai dengan alur proses",
+          "b. Lantai dengan bahan kedap air",
+          "c. Pertemuan antar dinding dan lantai lengkung",
+          "d. Dinding setinggi 3 meter",
+          "e. Semua benar"
+        ],
+        kunci: 0,
+        pembahasan: "Menurut Permentan No. 13 Tahun 2010 Pasal 11, tata ruang RPH wajib didesain searah dengan alur proses pemotongan hewan serta memisahkan secara fisik area bersih dan area kotor. Lantai kedap air, sudut dinding-lantai melengkung (jari-jari ±75 mm), dan dinding terang minimal 3 meter sudah sesuai persyaratan teknis.",
+        ref: "Permentan No. 13 Tahun 2010 Pasal 11 tentang RPH"
+      },
+      {
+        id: 24,
+        category: "Kesmavet & Regulasi",
+        kasus: "Penerapan produk asal hewan di RPH perlu dilakukan dengan prinsip ASUH (Aman, Sehat, Utuh, Halal).",
+        tanya: "Salah satu contoh penerapan kriteria \"utuh\" adalah...",
+        opsi: [
+          "a. Pemeriksaan mikrobiologi total cemaran coliform",
+          "b. Pemeriksaan campuran daging babi di tempat penggilingan daging sapi untuk pembuatan bakso",
+          "c. Pengukuran nilai nutrisi dari kualitas telur",
+          "d. Pengukuran nilai nutrisi dari susu",
+          "e. Pemotongan hewan harus dilakukan dengan memutus 3 saluran arteri, vena, dan esofagus, trakea"
+        ],
+        kunci: 1,
+        pembahasan: "Kriteria \"Utuh\" dalam prinsip ASUH berarti produk pangan asal hewan tidak dicampur atau dipalsukan dengan bagian lain dari hewan tersebut maupun bagian dari spesies hewan lain (contohnya pengujian spesies daging babi pada penggilingan daging sapi).",
+        ref: "Pedoman Kesmavet / Prinsip ASUH"
+      },
+      {
+        id: 25,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Dasar hukum yang mengatur kesehatan hewan di Indonesia adalah...",
+        opsi: [
+          "a. UU No. 18 Tahun 2009",
+          "b. UU No. 6 Tahun 1967",
+          "c. UU No. 7 Tahun 2009",
+          "d. UU No. 8 Tahun 2009",
+          "e. Surat Keputusan Menteri Pertanian Nomor: 808/Kpts/TN.260/12/1994"
+        ],
+        kunci: 0,
+        pembahasan: "Dasar hukum utama yang mengatur peternakan dan kesehatan hewan di Indonesia adalah UU No. 18 Tahun 2009 tentang Peternakan dan Kesehatan Hewan (yang diperbarui sebagian melalui UU No. 41 Tahun 2014).",
+        ref: "UU No. 18 Tahun 2009 jo. UU No. 41 Tahun 2014"
+      },
+      {
+        id: 26,
+        category: "Kesmavet & Regulasi",
+        kasus: "-",
+        tanya: "Berdasarkan Permentan No. 14 Tahun 2017, obat apa saja yang dilarang digunakan secara oral, parenteral, dan topikal?",
+        opsi: [
+          "a. Barbiturate dan Pentobarbitone",
+          "b. Acepromazine dan benzodiazepin",
+          "c. Karbon tetraklorida dan kloramfenikol",
+          "d. Pyrethrin dan synthetic pyrethroid",
+          "e. Pirazinamid dan amphotericin B"
+        ],
+        kunci: 2,
+        pembahasan: "Menurut Permentan No. 14 Tahun 2017, obat hewan tertentu yang dilarang pemakaiannya secara oral, parenteral, maupun topikal meliputi: Amphetamine, Dihydrostreptomycin (DHS), Kloramfenikol, Nitrofuran, Fenilbutazone, Beta 1 & 2-adrenergic agonist, Karbadoks, Karbon tetraklorida, Olaquindoks, Roksarson, dan Thalidomide.",
+        ref: "Permentan No. 14 Tahun 2017"
+      },
+      {
+        id: 27,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Seekor pedet baru lahir dengan kondisi sehat tetapi tidak aseptis dalam penanganan umbilicalnya sehingga terjadi peradangan dan terdapat nanah di umbilicalnya.",
+        tanya: "Menurut anda penyakit tersebut dinamakan?",
+        opsi: ["a. Hernia umbilical", "b. Tumor umbilical", "c. Prolaps umbilical", "d. Omphalitis", "e. Milk Fever"],
+        kunci: 3,
+        pembahasan: "Omphalitis (navel ill) adalah infeksi bakteri pada sisa tali pusat neonatus akibat penanganan yang tidak aseptis, ditandai dengan kebengkakan, kemerahan, panas, nyeri, dan keluarnya nanah dari umbilikus.",
+        ref: "https://doi.org/10.1542/peds.2021-054189"
+      },
+      {
+        id: 28,
+        category: "Reproduksi & Kebidanan",
+        kasus: "-",
+        tanya: "Penyimpanan semen beku dalam waktu lama yang tidak ditentukan dilakukan pada suhu...",
+        opsi: ["a. -86°C", "b. -98°C", "c. -144°C", "d. -186°C", "e. -196°C"],
+        kunci: 4,
+        pembahasan: "Semen beku sapi dan kambing disimpan dalam kontainer kriogenik yang terendam nitrogen cair (N2 cair) pada suhu -196°C untuk menghentikan aktivitas metabolik spermatozoa secara reversibel dalam jangka panjang.",
+        ref: "https://bbibsingosari.ditjenpkh.pertanian.go.id/"
+      },
+      {
+        id: 29,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Jika seseorang mau membuat peternakan sapi, efisiensi reproduksi perlu diperhatikan.",
+        tanya: "Di antara ini merupakan parameter efisiensi reproduksi, kecuali:",
+        opsi: [
+          "a. Jumlah yang dikawinkan dibanding jumlah kelahiran (calving rate)",
+          "b. Jarak antar kelahiran (calving interval)",
+          "c. Angka kebuntingan (conception rate)",
+          "d. Lama birahi",
+          "e. Waktu antara setelah melahirkan hingga bunting kembali (days open)"
+        ],
+        kunci: 3,
+        pembahasan: "Parameter penilaian efisiensi reproduksi ternak meliputi Service per Conception (S/C), Conception Rate (CR), Calving Rate, Days Open (DO), dan Calving Interval (CI). Lama birahi merupakan sifat fisiologis siklus estrus, bukan indikator efisiensi reproduksi.",
+        ref: "Sulaksono, A., Suharyati, S., & Santosa, P. E. (2012). Jurnal Ilmiah Peternakan Terpadu, 1(1)."
+      },
+      {
+        id: 30,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Seekor sapi mengalami komplikasi post partum, yaitu sebagian atau seluruh uterus keluar dari saluran vagina.",
+        tanya: "Apa diagnosa anda terhadap gangguan kasus tersebut?",
+        opsi: ["a. Mumifikasi fetus", "b. Prolapsus uteri", "c. Pseudopregnancy", "d. Hidramnion", "e. Retensio secundinae"],
+        kunci: 1,
+        pembahasan: "Prolapsus uteri (broyong) adalah kondisi emergensi obstetrik ketika sebagian atau seluruh organ uterus mengalami eversi dan keluar melalui serviks dan vulva, umumnya terjadi dalam beberapa jam pertama pascapartus.",
+        ref: "https://www.msdvetmanual.com/reproductive-system/uterine-prolapse-and-eversion/uterine-prolapse-and-eversion-in-animals"
+      },
+      {
+        id: 31,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Hewan sudah melewati fase estrusnya.",
+        tanya: "Jadi hewan tersebut sekarang berada dalam fase?",
+        opsi: ["a. Metestrus", "b. Diestrus", "c. Proestrus", "d. Anestrus", "e. Prolapsus"],
+        kunci: 0,
+        pembahasan: "Urutan fase siklus estrus terdiri atas fase folikuler (Proestrus -> Estrus) diikuti oleh fase luteal (Metestrus -> Diestrus). Setelah fase estrus berakhir, hewan memasuki fase metestrus di mana terjadi ovulasi (pada sapi) dan pembentukan awal korpus luteum.",
+        ref: "https://www.sciencedirect.com/science/article/abs/pii/S0749072008000108"
+      },
+      {
+        id: 32,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Sapi berumur 2 tahun dengan BCS 3 tidak pernah mengalami estrus. Petugas melakukan pemeriksaan organ reproduksi dan mengalami kesulitan saat palpasi. Petugas memasukkan kateter untuk mengangkat organ dan teraba organ kecil, dengan penampilan kepala pendek seperti jantan.",
+        tanya: "Kejadian ini disebut dengan...",
+        opsi: ["a. White heifer disease", "b. Freemartin", "c. Aplasia segmental", "d. Normal", "e. Intersex"],
+        kunci: 1,
+        pembahasan: "Freemartin adalah bentuk interseksualitas pada pedet betina yang lahir kembar heteroseksual (jantan dan betina) akibat anastomosis vaskular plasenta janin, menyebabkan maskulinisasi fenotipe dan hipoplasia/aplasia saluran reproduksi betina sehingga steril dan tidak pernah estrus.",
+        ref: "https://pubmed.ncbi.nlm.nih.gov/15885443/"
+      },
+      {
+        id: 33,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Anjing berumur 6 tahun dengan gejala lemas, anoreksia, dan eksudat purulen pada vagina dibawa ke klinik hewan. Pemeriksaan hematologi menunjukkan leukositosis dan neutrofilia, lalu USG menunjukkan dinding uterus menebal dan lumen berisi cairan, mengerucut pada pyometra.",
+        tanya: "Sebagai dokter hewan bagaimana penanganan terbaik pada kasus anjing tersebut?",
+        opsi: [
+          "a. Injeksi antibiotik spektrum luas",
+          "b. Terapi hormon PGF2-alpha",
+          "c. Ovariohisterektomi",
+          "d. Flushing uterus dengan antiseptik",
+          "e. Injeksi antibiotika spektrum luas dan terapi hormon PGF2-alpha"
+        ],
+        kunci: 2,
+        pembahasan: "Penanganan kuratif terbaik dan paling direkomendasikan pada kasus pyometra anjing adalah tindakan bedah Ovariohisterektomi (OH) untuk mengangkat seluruh uterus yang terinfeksi dan ovarium guna mencegah risiko ruptur uterus, toksemia, dan kekambuhan.",
+        ref: "Simarmata, Y. T., Lakapu, A. K., & Anom, I. D. M. (2020). Jurnal Veteriner, 8(1), 81-91."
+      },
+      {
+        id: 34,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Sapi yang sedang melahirkan mengalami kesulitan dalam mengeluarkan anaknya, namun setelah dibantu, anak tersebut berhasil keluar. Setelah kelahiran, induk sapi ambruk dan tidak bisa berdiri lagi meskipun telah diberikan rangsangan elektrik.",
+        tanya: "Apa yang menjadi kemungkinan penyebab induk sapi tersebut tidak dapat berdiri setelah melahirkan?",
+        opsi: [
+          "a. Paralysis nervus obturatorius",
+          "b. Hipokalsemia",
+          "c. Hipomagnesemia",
+          "d. Calcium borogluconas",
+          "e. Hiperfosfatemia"
+        ],
+        kunci: 0,
+        pembahasan: "Penarikan paksa fetus pada distokia dapat menekan nervus obturatorius yang berjalan di sepanjang permukaan medial tulang ilium menuju foramen obturatorium, mengakibatkan kelumpuhan otot-otot adduktor paha (m. adductor, m. gracilis, m. pectineus) sehingga sapi ambruk (downer cow) pascapartus.",
+        ref: "http://www.ijvets.com/pdf-files/Volume-4-no-3-2015/158-160.pdf"
+      },
+      {
+        id: 35,
+        category: "Reproduksi & Kebidanan",
+        kasus: "-",
+        tanya: "Penanganan distokia yang dilakukan dengan cara menarik fetus yang kesulitan kelahiran dikarenakan induk kesusahan merejan disebut...",
+        opsi: ["a. Fetotomi", "b. Maserasi", "c. Reposisi", "d. Traksi", "e. Sectio caesaria"],
+        kunci: 3,
+        pembahasan: "Traksi (forced extraction) adalah tindakan membantu pengeluaran fetus melalui saluran kelahiran dengan menarik fetus secara hati-hati searah kontraksi perejanan induk ketika posisi fetus normal namun induk mengalami kelelahan/inersia uteri.",
+        ref: "Hakim, M. M. B. A. (2022). Penanganan Distokia Pada Sapi Bunting Crossbreeding. Universitas Hasanuddin."
+      },
+      {
+        id: 36,
+        category: "Reproduksi & Kebidanan",
+        kasus: "-",
+        tanya: "Dalam program inseminasi buatan, hal yang perlu diperhatikan agar tidak terjadi inbreeding adalah melakukan...",
+        opsi: ["a. Recording", "b. Dikandangkan", "c. Pembersihan IB gun", "d. Perendaman pada N2 cair", "e. Membersihkan vulva"],
+        kunci: 0,
+        pembahasan: "Recording (pencatatan silsilah/pedigree ternak, kode straw pejantan, dan riwayat IB) sangat penting untuk mencegah perkawinan sedarah (inbreeding) yang dapat menurunkan performa produksi dan reproduksi keturunan.",
+        ref: "https://dinkannak.banyumaskab.go.id/news/44549/recording-ternak"
+      },
+      {
+        id: 37,
+        category: "Reproduksi & Kebidanan",
+        kasus: "-",
+        tanya: "Apa nama lain dari melahirkan normal?",
+        opsi: ["a. Eutocia", "b. Distokia", "c. Euthanasia", "d. Pyometra", "e. Eunocia"],
+        kunci: 0,
+        pembahasan: "Eutocia adalah istilah obstetrik untuk proses persalinan atau kelahiran yang berlangsung secara normal dan fisiologis tanpa bantuan manusia setelah masa kebuntingan normal.",
+        ref: "Ilmu Kebidanan Veteriner"
+      },
+      {
+        id: 38,
+        category: "Reproduksi & Kebidanan",
+        kasus: "Peternak melaporkan kambingnya bunting hingga bulan ke-7 dan tidak ada tanda kelahiran. Pemeriksaan fisik terlihat pembesaran abdomen & teraba janin saat palpasi, tetapi pada vulva terdapat leleran darah & nanah. Dilakukan terapi suntik PGF2a untuk mendilatasi serviks & kontraksi miometrium. Kondisi janin yang keluar tampak pada abdominal sampai ekstremitas kaudal membusuk dan lisis.",
+        tanya: "Apa diagnosis kasus tersebut?",
+        opsi: ["a. Pyometra", "b. Abortus", "c. Maserasi", "d. Prematur", "e. Mumifikasi"],
+        kunci: 2,
+        pembahasan: "Maserasi fetus adalah kondisi kematian janin setelah terbentuknya kerangka tulang disertai dilatasi serviks parsial sehingga bakteri menginvasi uterus, menyebabkan pembusukan/disintegrasi jaringan lunak fetus dan leleran purulen berbau busuk dari vulva.",
+        ref: "Widyastuti, R., Setiawan, R., & Ulum, M. F. (2023). ARSHI Veterinary Letters, 7(1), 13-14."
+      },
+      {
+        id: 39,
+        category: "Reproduksi & Kebidanan",
+        kasus: "-",
+        tanya: "PMSG (Pregnant Mare Serum Gonadotropin) pada kuda bunting diproduksi saat...",
+        opsi: [
+          "a. 40-140 hari kebuntingan",
+          "b. Kurang dari 40 hari",
+          "c. Lebih dari 40 hari",
+          "d. Selama kebuntingan",
+          "e. 40-80 hari kebuntingan"
+        ],
+        kunci: 0,
+        pembahasan: "PMSG atau equine Chorionic Gonadotropin (eCG) disekresikan oleh sel trofoblastik pada cawan endometrium (endometrial cups) kuda betina bunting mulai hari ke-40 hingga hari ke-140 kebuntingan.",
+        ref: "https://www.sciencedirect.com/science/article/abs/pii/B9780123704917000210"
+      },
+      {
+        id: 40,
+        category: "Bedah & Radiologi",
+        kasus: "-",
+        tanya: "Fraktur tulang dengan ciri jaringan kulit mengalami ruptur, tulang serta jaringan subkutan terekspos adalah fraktur tipe...",
+        opsi: ["a. Impacted", "b. Greenstick", "c. Compound", "d. Comminuted", "e. Fusion"],
+        kunci: 2,
+        pembahasan: "Compound fracture (open fracture / fraktur terbuka) adalah jenis patah tulang di mana fragmen tulang merobek jaringan subkutan dan kulit sehingga tulang berhubungan langsung dengan dunia luar dan berisiko tinggi mengalami infeksi.",
+        ref: "Mahpuz, L. R., Wirata, I. W., & Wandia, I. N. Laporan Kasus Fraktur Diafisis pada Anjing."
+      },
+      {
+        id: 41,
+        category: "Bedah & Radiologi",
+        kasus: "Seekor harimau sumatera jantan dilaporkan mengalami kesulitan berjalan, terlihat pincang dengan kaki kiri belakang diangkat tinggi, dan terdapat peningkatan area trochanter pasca terpeleset ke dalam parit. Dugaan kuat mengalami luksasi coxofemoral.",
+        tanya: "Posisi radiografi yang paling tepat untuk memastikan diagnosis kasus ini adalah...",
+        opsi: [
+          "a. Lateral dexter/sinister, VD",
+          "b. Lateral dexter/sinister, DV",
+          "c. Lateral dexter, DV",
+          "d. Lateral sinister, DV",
+          "e. VD"
+        ],
+        kunci: 0,
+        pembahasan: "Proyeksi radiografi Ventrodorsal (VD) dan Lateral (dexter/sinister) merupakan standar emas untuk mengonfirmasi luksasi sendi coxofemoral serta mengevaluasi integritas asetabulum, kaput femoralis, dan pelvis.",
+        ref: "https://upstatevet.com/2018/11/coxofemoral-luxation/"
+      },
+      {
+        id: 42,
+        category: "Bedah & Radiologi",
+        kasus: "Seekor kucing betina berumur 2 tahun dibawa ke klinik dengan keluhan prolaps rektal yang baru saja terjadi, kurang nafsu makan, dan kesulitan buang air besar. Saat palpasi abdomen ditemukan massa keras.",
+        tanya: "Berdasarkan hasil pemeriksaan tersebut, penanganan pembedahan yang paling tepat untuk mencegah kekambuhan prolaps rektal adalah...",
+        opsi: ["a. Colopexy", "b. Cystopexy", "c. Enterectomy", "d. Enterotomy", "e. Anastomosis Usus"],
+        kunci: 0,
+        pembahasan: "Colopexy adalah prosedur bedah memfiksasi (menjahit) dinding kolon ke dinding abdomen lateral untuk mencegah terulangnya prolapsus rektum apabila jaringan rektum yang prolaps masih viabel.",
+        ref: "Guadalupi, M., et al. (2024). Veterinary Sciences, 11(8), 355."
+      },
+      {
+        id: 43,
+        category: "Bedah & Radiologi",
+        kasus: "Seekor anjing betina berusia 5 tahun datang ke klinik hewan dengan keluhan demam, penurunan nafsu makan, pembesaran perut, leukositosis, neutrofilia, dan leleran purulen vagina. USG menunjukkan penebalan dinding uterus (hyperechoic) dan lumen berisi cairan (hypoechoic).",
+        tanya: "Berdasarkan temuan ini, dokter hewan mendiagnosis pyometra. Tindakan yang paling tepat untuk menangani kasus ini adalah...",
+        opsi: [
+          "a. Pemberian antibiotik spektrum luas",
+          "b. Pemberian hormon prostaglandin F2a (PGF2a)",
+          "c. Ovariohisterektomi (OH)",
+          "d. Flushing uterus dengan antiseptik",
+          "e. Pemberian cairan infus untuk mendukung stabilitas kondisi"
+        ],
+        kunci: 2,
+        pembahasan: "Operasi Ovariohisterektomi (OH) merupakan penanganan definitif terbaik untuk kasus pyometra pada anjing guna menghilangkan fokus infeksi secara tuntas, diikuti terapi suportif dan antibiotik pascaoperasi.",
+        ref: "Rizky, G. P. (2023). Studi Kasus: Penanganan Pyometra pada Anjing Siberian Husky."
+      },
+      {
+        id: 44,
+        category: "Bedah & Radiologi",
+        kasus: "Penyu memiliki enam jendela auskultasi/akustik yang digunakan untuk pemeriksaan organ internal. Dalam pemeriksaan sistem kardiovaskular, salah satu jendela sering digunakan untuk memeriksa denyut jantung dan aliran darah.",
+        tanya: "Di antara pilihan berikut, jendela auskultasi manakah yang paling umum digunakan untuk memeriksa sistem kardiovaskular pada penyu?",
+        opsi: ["a. Pre femoralis", "b. Post femoralis", "c. Axillaris", "d. Cervical ventralis", "e. Cervical dorsalis"],
+        kunci: 3,
+        pembahasan: "Pemeriksaan jantung (auskultasi dan ekokardiografi/USG) pada penyu dilakukan melalui jendela akustik cervical ventralis (cervicobrachial window) di bagian ventral pangkal leher.",
+        ref: "Valente, A. L., et al. (2007). Veterinary Record, 161(7), 226-232."
+      },
+      {
+        id: 45,
+        category: "Bedah & Radiologi",
+        kasus: "Hewan yang mengalami hipoksemia selama operasi dapat disebabkan oleh beberapa faktor, termasuk mekanis, ventilasi, dan fisiologi.",
+        tanya: "Dalam menangani hipoksemia yang disebabkan oleh faktor mekanis, apa tindakan yang paling tepat untuk memastikan jalan napas tetap paten dan aliran udara tidak terhambat?",
+        opsi: [
+          "a. Menilai kadar CO2",
+          "b. Memeriksa dan memperbaiki posisi tabung endotrakeal jika tertekuk",
+          "c. Mengatur ulang dosis anestesi",
+          "d. Memberikan intervensi untuk meningkatkan saturasi oksigen",
+          "e. Menerapkan ventilasi tekanan positif"
+        ],
+        kunci: 1,
+        pembahasan: "Faktor mekanis penyebab hipoksemia selama anestesi mencakup sumbatan fisik atau tertekuknya (kinking) tabung endotrakeal (ETT) serta kebocoran/lepasnya sirkuit pernapasan, sehingga pemeriksaan dan perbaikan posisi ETT merupakan langkah utama.",
+        ref: "Prinsip Anestesiologi Veteriner"
+      },
+      {
+        id: 46,
+        category: "Bedah & Radiologi",
+        kasus: "Seorang dokter hewan menerima pasien seekor anjing dengan gejala perut membesar secara tiba-tiba, muntah tidak produktif (retching), gelisah, dan lemah. Dokter mencurigai kondisi Gastric Dilatation and Volvulus (GDV).",
+        tanya: "Pemeriksaan apa yang paling relevan dan sering dilakukan untuk memastikan diagnosis GDV?",
+        opsi: ["a. Palpasi perektal", "b. Pemeriksaan X-ray", "c. Pemeriksaan USG", "d. Pemeriksaan darah", "e. Semua benar"],
+        kunci: 1,
+        pembahasan: "Pemeriksaan radiografi (X-ray) dengan posisi berbaring lateral kanan (right lateral recumbency) dan dorsoventral merupakan metode diagnostik utama untuk memastikan GDV yang ditandai gambaran khas kompartemen ganda (\"double bubble\" / \"Popeye's arm\").",
+        ref: "https://www.msdvetmanual.com/digestive-system/diseases-of-the-stomach-and-intestines-in-small-animals/gastric-dilation-and-volvulus-in-small-animals"
+      },
+      {
+        id: 47,
+        category: "Bedah & Radiologi",
+        kasus: "-",
+        tanya: "Langkah-langkah berikut merupakan tata laksana pemeriksaan X-ray, kecuali...",
+        opsi: [
+          "a. Mengatur posisi hewan",
+          "b. Mengetahui jenis kelamin",
+          "c. Melakukan anamnesis dengan tepat",
+          "d. Memeriksa kondisi kulit",
+          "e. Memeriksa kelainan yang terjadi"
+        ],
+        kunci: 3,
+        pembahasan: "Tata laksana pemeriksaan radiologi meliputi identifikasi sinyalemen (nama, spesies, ras, jenis kelamin, umur), anamnesis, pemeriksaan fisik untuk melokalisasi area kelainan, dan pengaturan posisi hewan sesuai proyeksi radiografi. Memeriksa kondisi kulit bukan tahapan tata laksana X-ray.",
+        ref: "Ilmu Radiologi Veteriner"
+      },
+      {
+        id: 48,
+        category: "Bedah & Radiologi",
+        kasus: "Seorang klien datang membawa kucing dengan keluhan abdomen distensi dan kesulitan urinasi. Hasil USG menunjukkan adanya kristal/urolith dalam vesica urinaria, dengan bayangan hitam di bawahnya.",
+        tanya: "Artefak USG tersebut dinamakan sebagai...",
+        opsi: [
+          "a. Acoustic enhancement",
+          "b. Acoustic shadowing",
+          "c. Reverberation",
+          "d. Distal enhancement",
+          "e. Mirror image"
+        ],
+        kunci: 1,
+        pembahasan: "Acoustic shadowing terbentuk ketika gelombang ultrasound mengenai struktur berimpedansi sangat tinggi seperti urolith/kalkuli yang memantulkan hampir seluruh gelombang suara sehingga area di bawahnya tampak hitam (anechoic).",
+        ref: "Hu, R., et al. (2019). Ultrasound in Medicine & Biology, 45(8): 2248-2257."
+      },
+      {
+        id: 49,
+        category: "Bedah & Radiologi",
+        kasus: "Prosedur ovariohisterektomi pada kucing betina berusia 8 bulan dilakukan sebagai tindakan pembedahan untuk sterilisasi.",
+        tanya: "Pilih pernyataan yang paling tepat terkait prosedur ovariohisterektomi pada kucing...",
+        opsi: [
+          "a. Sayatan dibuat sepanjang 1 cm di sisi kiri dan kanan umbilicus",
+          "b. Sayatan dilakukan di daerah cranial umbilicus",
+          "c. Kedua ovarium dan uterus diangkat sepenuhnya",
+          "d. Jahitan ligasi menggunakan benang catgut ukuran 3/0",
+          "e. Pemotongan uterus dilakukan tanpa melibatkan ovarium"
+        ],
+        kunci: 2,
+        pembahasan: "Ovariohisterektomi (OH) adalah prosedur bedah pengangkatan kedua ovarium beserta kornua dan korpus uteri sepenuhnya melalui insisi dinding abdomen (umumnya midline caudal umbilicus).",
+        ref: "Prayoga, S. F., Megawati, N. I., Arifin, E. M. Z., & Nangoi, L. Ovariohysterectomy pada kucing liar."
+      },
+      {
+        id: 50,
+        category: "Bedah & Radiologi",
+        kasus: "Seekor kucing domestik berusia 3 tahun datang ke klinik dengan keluhan tidak buang air kecil selama 24 jam terakhir, riwayat hematuria dan piuria, serta terkonfirmasi adanya obstruksi urolith di vesica urinaria.",
+        tanya: "Prosedur pembedahan apa yang paling tepat dilakukan untuk mengeluarkan kalkuli dari vesica urinaria?",
+        opsi: ["a. Urethrostomy", "b. Urethrectomy", "c. Cystotomy", "d. Cystectomy", "e. Pielotomi"],
+        kunci: 2,
+        pembahasan: "Cystotomy adalah tindakan operasi membuka dinding vesica urinaria untuk mengangkat/mengeluarkan batu/kalkuli (urolith) dari dalam kandung kemih lalu menutupnya kembali.",
+        ref: "Antika, D. D., Aulia, A. S. K., & Nofan, R. (2021). E-Journal Unair, 144-156."
+      },
+      {
+        id: 51,
+        category: "Bedah & Radiologi",
+        kasus: "Seorang mahasiswa kedokteran hewan sedang berlatih menjahit luka dengan menggunakan needle holder. Saat memegang alat tersebut, ia menempatkan ibu jari dan jari manis ke dalam cincin pegangan, sementara jari telunjuk digunakan untuk menstabilkan alat.",
+        tanya: "Teknik memegang seperti ini dikenal sebagai...",
+        opsi: ["a. Palm grip", "b. Thenar grip", "c. Thumb ring finger grip", "d. Thumb ring", "e. Finger ring"],
+        kunci: 2,
+        pembahasan: "Tripod grip atau \"thumb and ring finger grip\" adalah teknik standar memegang needle holder dengan menempatkan ibu jari dan jari manis di dalam cincin pegangan serta jari telunjuk menstabilkan batang alat.",
+        ref: "https://www.vetsurgeryonline.com/needle-holder-handling/"
+      },
+      {
+        id: 52,
+        category: "Bedah & Radiologi",
+        kasus: "Seekor anjing ras Chow Chow betina umur 1,5 tahun dibawa ke praktik dengan keluhan epifora kronis dan kekeruhan kornea (keratitis). Pemeriksaan menunjukkan tepi kelopak mata (palpebra) membengkok ke arah dalam.",
+        tanya: "Apa yang terjadi pada anjing tersebut dan bagaimana cara mengatasinya?",
+        opsi: [
+          "a. Anjing menderita infeksi pada mata",
+          "b. Anjing post vaksinasi",
+          "c. Anjing menderita katarak",
+          "d. Anjing menderita entropion dan harus dilakukan operasi dengan metode Hotz",
+          "e. Anjing menderita cacing mata"
+        ],
+        kunci: 3,
+        pembahasan: "Entropion adalah melipatnya tepi palpebra ke arah dalam sehingga silia mengiritasi kornea dan memicu keratitis. Koreksi definitif dilakukan melalui pembedahan plastik kelopak mata dengan metode Hotz-Celsus.",
+        ref: "https://www.vettimes.co.uk/app/uploads/wp-post-to-pdf-enhancedcache/1/diagnosis-and-treatment-of-entropion-in-felines.pdf"
+      },
+      {
+        id: 53,
+        category: "Farmakologi & Etika",
+        kasus: "Dokter Mila akan melakukan anestesi menggunakan thiopenthane pada anjing. Paramedis melarutkan thiopenthane sediaan padat 5 gram ke dalam 100 mL akuades steril. Berat anjing 30 kg dan dosis obat 5 mg/kg BB.",
+        tanya: "Berapa volume larutan yang dibutuhkan untuk obat anestesi tersebut?",
+        opsi: ["a. 15 mL", "b. 30 mL", "c. 3 mL", "d. 0,3 mL", "e. 33 mL"],
+        kunci: 2,
+        pembahasan: "Kebutuhan dosis total = 30 kg x 5 mg/kg = 150 mg. Konsentrasi larutan = 5 gram (5.000 mg) / 100 mL = 50 mg/mL. Volume yang diambil = 150 mg / 50 mg/mL = 3 mL.",
+        ref: "Farmakologi & Terapi Veteriner"
+      },
+      {
+        id: 54,
+        category: "Farmakologi & Etika",
+        kasus: "Terdapat 3 macam obat (A, B, C) yang masing-masing memerlukan instruksi dan cara pemberian berbeda dalam satu lembar resep.",
+        tanya: "Bagaimana penulisan resep yang benar?",
+        opsi: [
+          "a. Tulis 3 R/ dengan masing-masing, lengkap dengan perintah, cara pemberian, paraf",
+          "b. Tulis 2 R/ dengan masing-masing, lengkap dengan perintah, cara pemberian, paraf",
+          "c. Tulis masing-masing obat dalam satu resep dengan paraf yang berbeda",
+          "d. Tulis 3 R/ dengan masing-masing, cara pemberian, paraf",
+          "e. Semua obat bergabung dengan instruksi yang berbeda"
+        ],
+        kunci: 0,
+        pembahasan: "Setiap jenis obat atau sediaan farmasi yang berbeda wajib ditulis dengan tanda R/ (Recipe) masing-masing, lengkap dengan praescriptio (nama, sediaan, jumlah), signatura (cara pemberian/aturan pakai), dan subscriptio (garis penutup dan paraf dokter hewan).",
+        ref: "Brinkman, D. J., et al. (2017). Clinical Pharmacology and Therapeutics, 102(5), 815-822."
+      },
+      {
+        id: 55,
+        category: "Farmakologi & Etika",
+        kasus: "Dalam pemberian obat tetes telinga sangat perlu memperhatikan kontraindikasi obat tersebut apabila membran timpani ruptur.",
+        tanya: "Obat tetes telinga yang berbahaya dan dapat merusak telinga dalam / pendengaran dari antibiotik golongan...",
+        opsi: ["a. Aminoglikosida", "b. Cisplatin", "c. Furosemide", "d. Beta-lactam", "e. Quinolon"],
+        kunci: 0,
+        pembahasan: "Antibiotik golongan aminoglikosida (gentamicin, neomycin, streptomycin, amikacin) bersifat ototoksik ireversibel karena merusak sel rambut koklea dan sistem vestibular apabila masuk ke telinga dalam melalui gendang telinga yang rusak.",
+        ref: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3490132"
+      },
+      {
+        id: 56,
+        category: "Farmakologi & Etika",
+        kasus: "-",
+        tanya: "Informasi penting untuk penggunaan obat di peternakan unggas agar produk aman dapat dilihat dari prinsip...",
+        opsi: [
+          "a. Tepat indikasi, tepat dosis, tepat cara dan waktu pemberian",
+          "b. Tepat dosis, tepat dokter, tepat waktu pemberian",
+          "c. Tepat cara pemberian, tepat obat, tepat penyakit",
+          "d. Tepat cara dan waktu pemberian, tepat indikasi dan tepat obat",
+          "e. Tepat indikasi, tepat cara pemberian, tepat obat"
+        ],
+        kunci: 0,
+        pembahasan: "Penggunaan obat hewan secara rasional dan aman dari residu pada peternakan unggas berpedoman pada tepat indikasi sesuai diagnosis, tepat dosis, serta tepat cara dan waktu pemberian (termasuk mematuhi masa henti obat).",
+        ref: "https://www.medion.co.id/cermati-pengobatan-penyakit-pada-ayam/"
+      },
+      {
+        id: 57,
+        category: "Farmakologi & Etika",
+        kasus: "Seekor anjing mengalami kesulitan berjalan dan terlihat pincang. Saat diperiksa kimia darah positif asam urat tinggi. Dokter memberikan obat allopurinol.",
+        tanya: "Bagaimanakah mekanisme kerja obat allopurinol?",
+        opsi: [
+          "a. Inhibisi xanthine oxidase",
+          "b. Inhibisi phospholipase",
+          "c. Inhibisi phosphodiesterase",
+          "d. Inhibisi prostaglandine",
+          "e. Inhibisi oksidase"
+        ],
+        kunci: 0,
+        pembahasan: "Allopurinol bekerja menurunkan produksi asam urat dengan menghambat (inhibisi) enzim xanthine oxidase, enzim yang mengubah hipoxantin menjadi xantin dan xantin menjadi asam urat pada jalur metabolisme purin.",
+        ref: "Umboh, D. Y., De Queljoe, E., & Yamlean, P. V. (2019). Pharmacon, 8(4), 878-887."
+      },
+      {
+        id: 58,
+        category: "Farmakologi & Etika",
+        kasus: "Seekor kucing terinfeksi virus herpes. Dokter memberikan obat antivirus berupa acyclovir.",
+        tanya: "Bagaimanakah cara kerja obat antivirus acyclovir?",
+        opsi: [
+          "a. Mengganggu sintesis DNA dan menghambat replikasi virus",
+          "b. Menghambat neuraminidase virus",
+          "c. Menghambat protease virus",
+          "d. Menghambat pertumbuhan dinding sel",
+          "e. Menghambat enzim polymerase"
+        ],
+        kunci: 0,
+        pembahasan: "Acyclovir merupakan analog nukleosida guanin sintetik yang menghambat DNA polimerase virus herpes, sehingga mengganggu sintesis DNA dan menghentikan replikasi virus.",
+        ref: "Purwaningtyas, L. D. (2021). Rasionalitas Penggunaan Obat Acyclovir."
+      },
+      {
+        id: 59,
+        category: "Farmakologi & Etika",
+        kasus: "Kucing yang terinfeksi herpes virus (FHV-1) umumnya menunjukkan gejala konjungtivitis.",
+        tanya: "Obat tetes antivirus yang paling efektif untuk terapi mata kucing adalah...",
+        opsi: ["a. Trifluorothymidine", "b. Flucytocine", "c. Mitomycin", "d. Apraclonidine", "e. Nystatine"],
+        kunci: 0,
+        pembahasan: "Trifluorothymidine (trifluridine) adalah antivirus topikal mata yang sangat poten dalam menghambat replikasi Feline Herpesvirus-1 (FHV-1) pada kasus konjungtivitis maupun keratitis herpetik kucing.",
+        ref: "https://pubmed.ncbi.nlm.nih.gov/6284470/"
+      },
+      {
+        id: 60,
+        category: "Farmakologi & Etika",
+        kasus: "Seekor ayam akan dianestesi untuk dilakukan operasi.",
+        tanya: "Apakah jenis kombinasi anestesi yang dapat digunakan untuk ayam?",
+        opsi: [
+          "a. Ketamine dan diazepam",
+          "b. Ketamin dan propofol",
+          "c. Ketamine dan benzocaine",
+          "d. Ketamine dan lidocain",
+          "e. Pentobarbital"
+        ],
+        kunci: 0,
+        pembahasan: "Kombinasi ketamin (5-30 mg/kg) dan diazepam (0,5-2 mg/kg) secara IM atau IV umum digunakan untuk anestesi pada unggas karena memberikan relaksasi otot yang baik dan mengurangi efek kekakuan kataleptik dari ketamin.",
+        ref: "Fauziah, N. (2021). Universitas Brawijaya."
+      },
+      {
+        id: 61,
+        category: "Farmakologi & Etika",
+        kasus: "-",
+        tanya: "Pencegahan atau pengobatan kemoterapi untuk trypanosomiasis (Surra) adalah...",
+        opsi: ["a. Quinapiramin sulfat", "b. Organofosfat", "c. Rafoxanide", "d. Praziquantel", "e. Levamisole"],
+        kunci: 0,
+        pembahasan: "Quinapyramine sulphate merupakan obat tripanosidal pilihan untuk pengobatan maupun profilaksis infeksi Trypanosoma sp. pada hewan ternak dan peliharaan.",
+        ref: "https://www.sciencedirect.com/science/article/abs/pii/S1773224723000679"
+      },
+      {
+        id: 62,
+        category: "Farmakologi & Etika",
+        kasus: "Seekor kucing mengalami obstruksi paru, dokter memberikan obat untuk memperlancar pernapasan.",
+        tanya: "Obat yang dapat memperparah kondisi obstruksi paru, salah satunya adalah...",
+        opsi: ["a. Albuterol", "b. Atenolol", "c. Isoproterenol", "d. Phenoxybenzamine", "e. Propranolol"],
+        kunci: 4,
+        pembahasan: "Propranolol adalah beta-blocker non-selektif yang memblokir reseptor beta-2 adrenergik pada otot polos bronkus sehingga menghambat bronkodilatasi dan memperparah bronkospasme/obstruksi saluran napas.",
+        ref: "https://respiratory-research.biomedcentral.com/articles/10.1186/s12931-021-01661-8"
+      },
+      {
+        id: 63,
+        category: "Farmakologi & Etika",
+        kasus: "-",
+        tanya: "Komunikasi persuasif, salah satunya dengan memahami perasaan klien dan menempatkan diri seolah berada di pihak klien. Metode komunikasi dokter hewan yang digunakan adalah...",
+        opsi: ["a. Integrasi", "b. Pay off", "c. Icing", "d. Fear arousing", "e. Asosiasi"],
+        kunci: 0,
+        pembahasan: "Teknik integrasi (empati) dilakukan dengan cara menyatukan diri dan menunjukkan pemahaman mendalam terhadap perasaan/kondisi klien sehingga terbangun rasa kebersamaan dan kepercayaan.",
+        ref: "https://www.humasindonesia.id/berita/tujuh-teknik-komunikasi-persuasif-%C2%A0-1219"
+      },
+      {
+        id: 64,
+        category: "Farmakologi & Etika",
+        kasus: "Drh. Fulan menangani pasien infeksius dan menyakitkan, tetapi klien tidak mampu membayar pengobatan dan menolak euthanasia.",
+        tanya: "Apakah tindakan yang sebaiknya dilakukan?",
+        opsi: [
+          "a. Lanjut pengobatan yang mahal tanpa pemberitahuan pada klien",
+          "b. Memberikan obat alternatif dan solusi manajemen nyeri hewan",
+          "c. Segera menyuntik mati anjing",
+          "d. Menolak merawat dan meminta pemilik untuk pergi",
+          "e. Melanjutkan pengobatan dan memberi info program bantuan keuangan atau badan amal untuk bantuan"
+        ],
+        kunci: 4,
+        pembahasan: "Sesuai Kode Etik Dokter Hewan (kewajiban terhadap pasien dan klien), dokter hewan tetap wajib mengupayakan penanganan untuk mengurangi penderitaan hewan sekaligus membantu klien dengan menginformasikan program bantuan keuangan/badan amal kesejahteraan hewan tanpa melanggar persetujuan klien.",
+        ref: "Kode Etik Dokter Hewan"
+      },
+      {
+        id: 65,
+        category: "Farmakologi & Etika",
+        kasus: "Regulasi Permentan Nomor 14 Tahun 2017 mengklasifikasikan obat hewan berdasarkan tingkat bahaya dalam penggunaannya menjadi obat keras, obat bebas terbatas, dan obat bebas.",
+        tanya: "Yang dimaksud obat bebas terbatas adalah...",
+        opsi: [
+          "a. Obat yang harus menggunakan resep dokter",
+          "b. Obat yang ketersediaannya terbatas",
+          "c. Obat yang dibeli tanpa resep dokter namun penggunaannya harus memperhatikan informasi obat pada kemasan",
+          "d. Obat keras yang diberikan untuk jenis hewan tertentu dengan ketentuan disediakan dalam jumlah, aturan dosis, dan cara pemberian tertentu",
+          "e. Obat hewan yang jika pemberiannya tidak sesuai dengan ketentuan dapat menimbulkan bahaya bagi hewan yang mengonsumsinya"
+        ],
+        kunci: 3,
+        pembahasan: "Berdasarkan Permentan No. 14 Tahun 2017 Bab I Pasal 1 ayat 10, obat bebas terbatas adalah obat keras untuk hewan yang diberlakukan sebagai obat bebas untuk jenis hewan tertentu dengan ketentuan disediakan dalam jumlah, aturan dosis, bentuk sediaan, dan cara pemberian tertentu serta diberi tanda peringatan khusus.",
+        ref: "Permentan No. 14 Tahun 2017"
+      },
+      {
+        id: 66,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Pada hewan muda yang mengalami kekurangan kalsium dapat mengakibatkan terjadinya kondisi...",
+        opsi: ["a. Osteitis", "b. Osteositis", "c. Osteoporosis", "d. Osteophagia", "e. Osteomalacia"],
+        kunci: 4,
+        pembahasan: "Defisiensi kalsium dan vitamin D3 menyebabkan gangguan mineralisasi tulang yang dikenal sebagai osteomalacia (atau rickets pada fase pertumbuhan aktif) dan dapat berlanjut menjadi osteoporosis bila tidak ditangani.",
+        ref: "Saggese, M.D. (2009). J. Exot. Pet Med., 18(2), 98-111."
+      },
+      {
+        id: 67,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Seorang dokter hewan di sebuah peternakan kambing Etawa memberikan terapi suportif injeksi vitamin B12 pada beberapa kambing.",
+        tanya: "Pertimbangan pemberian terapi tersebut adalah karena ternak tersebut mengalami defisiensi...",
+        opsi: ["a. Cyanocobalamin", "b. Asam askorbat", "c. Asam folat", "d. Riboflavin", "e. Tiamin"],
+        kunci: 0,
+        pembahasan: "Vitamin B12 adalah kobalamin (dengan bentuk aktif/sediaan utama berupa cyanocobalamin) yang mengandung ion logam kobalt (Co) sebagai inti molekulnya dan esensial dalam pembentukan sel darah merah serta metabolisme ruminansia.",
+        ref: "Amani, P. (2022). Jurnal Penelitian dan Karya Ilmiah Lembaga Penelitian Universitas Trisakti, 90-100."
+      },
+      {
+        id: 68,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Seekor kambing betina bunting terlihat adanya pembengkakan di area leher dan didiagnosa mengalami penyakit goiter yang disebabkan oleh gangguan sintesis hormon tiroid.",
+        tanya: "Hal tersebut sering disebabkan oleh defisiensi mineral...",
+        opsi: ["a. Yodium", "b. Kalsium", "c. Kalium", "d. Natrium", "e. Kadmium"],
+        kunci: 0,
+        pembahasan: "Goiter (gondok) terjadi akibat kekurangan asupan yodium (iodium) atau konsumsi pakan goitrogenik yang menghambat sintesis hormon tiroid sehingga memicu hiperplasia kompensatorik kelenjar tiroid, terutama meningkat kebutuhannya saat kebuntingan.",
+        ref: "Inarsih, D., et al. (2018). Prosiding RATEKPIL, 101-110."
+      },
+      {
+        id: 69,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Faktor-faktor/parameter laboratorium yang perlu diperhatikan pada anjing dan kucing yang mengidap penyakit ginjal adalah..., kecuali...",
+        opsi: ["a. BUN", "b. Kalium", "c. Fosfat", "d. Kreatinin", "e. Kreatinin kinase"],
+        kunci: 4,
+        pembahasan: "BUN, kreatinin, fosfat, dan kalium merupakan parameter biokimia darah penting dalam evaluasi gangguan ginjal. Sementara Kreatin Kinase (CK) adalah enzim indikator kerusakan sel otot (miopati/trauma otot).",
+        ref: "Neumann, S. (2005). Creatine kinase activity in dogs and cats with metabolic diseases."
+      },
+      {
+        id: 70,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Pemphigus disease adalah salah satu penyakit autoimun yang sering terjadi pada anjing dan kucing.",
+        tanya: "Berikut pernyataan yang benar mengenai Pemphigus foliaceus adalah...",
+        opsi: [
+          "a. Tidak dipengaruhi oleh jenis kelamin",
+          "b. Terjadi pada hampir semua ras, terutama ras Akita dan Chow Chow",
+          "c. Menyebabkan hilangnya adhesi antar sel (akantolisis) dari keratinosit sehingga integritas lapisan epidermis hilang",
+          "d. Menghasilkan pustula yang akan menjadi erosi, kerak, sisik, disertai alopecia",
+          "e. Semua benar"
+        ],
+        kunci: 4,
+        pembahasan: "Pemphigus foliaceus tidak dipengaruhi jenis kelamin, memiliki predisposisi ras pada Akita dan Chow Chow, ditandai autoantibodi yang memicu akantolisis keratinosit epidermis serta menimbulkan pustula, krusta, sisik, erosi, dan alopesia.",
+        ref: "Almela, R., & Chan, T. (2021). Issues in Dermatology."
+      },
+      {
+        id: 71,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Seekor anjing ras Pekingese betina diperiksa dengan keluhan adanya benjolan besar di bagian perinealis. Dugaan sementara adalah adanya tumor pada regio tersebut.",
+        tanya: "Tindakan yang dilakukan oleh dokter hewan untuk meneguhkan diagnosa adalah...",
+        opsi: ["a. Rontgen", "b. Biopsi", "c. Rontgen dan biopsi", "d. Operasi", "e. Pembiusan"],
+        kunci: 2,
+        pembahasan: "Diagnosis tumor perinealis diteguhkan melalui pemeriksaan foto rontgen untuk melihat batas, ukuran, dan densitas jaringan massa serta pemeriksaan histopatologi dari sampel biopsi jaringan tumor (pewarnaan HE).",
+        ref: "Darmawan, P. G. B. I., Wandia, N. I., & Pemayun, G. A. G. P. I. (2019). Case report: lipoma in pekingese breeds dogs."
+      },
+      {
+        id: 72,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Seekor sapi terdapat adanya pertumbuhan kulit yang abnormal di area leher dan kepala, tampak padat menonjol berbentuk seperti bunga kol atau kutil.",
+        tanya: "Kelainan tersebut umum terjadi pada ternak terutama sapi yang disebut...",
+        opsi: ["a. Epitelioma", "b. Papillomatosis", "c. Ringworm", "d. Dermatophytosis", "e. Dermatitis"],
+        kunci: 1,
+        pembahasan: "Bovine papillomatosis adalah penyakit neoplastik kulit jinak yang disebabkan oleh Bovine Papillomavirus (BPV), ditandai pertumbuhan nodul keratinisasi menyerupai bunga kol/kutil pada kepala, leher, dewlap, dan bahu sapi.",
+        ref: "Feyisa, A. F. (2018). J. Vet. Sci. Technol, 9(544), 2."
+      },
+      {
+        id: 73,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Vitamin E sering disebut sebagai tocopherols, bermanfaat untuk meningkatkan fertilitas, pertumbuhan embrio normal dan sebagai antioksidan.",
+        tanya: "Apa yang menjadi masalah kesehatan pada ayam yang mengalami defisiensi vitamin E?",
+        opsi: [
+          "a. Masalah pada sistem reproduksi",
+          "b. Kelemahan otot",
+          "c. Infeksi saluran pernapasan",
+          "d. Gangguan pencernaan",
+          "e. Mata ayam menjadi merah dan bengkak"
+        ],
+        kunci: 1,
+        pembahasan: "Defisiensi vitamin E (alpha-tocopherol) pada unggas menyebabkan distrofi otot nutrisi (nutritional muscular dystrophy / miopati) yang mengakibatkan kelemahan otot, encephalomalacia, dan eksudatif diatesis.",
+        ref: "Ames, S. R. (1956). Poultry Science, 35(1), 145-159."
+      },
+      {
+        id: 74,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Penyakit mulut dan kuku (PMK) menyerang sapi dengan gejala khas berupa:",
+        opsi: [
+          "a. Lesi pustula di kulit kepala dan perut",
+          "b. Pembengkakan sendi dan demam ringan",
+          "c. Vesikula di lidah, gusi, dan celah kuku",
+          "d. Ulserasi pada organ dalam",
+          "e. Hemoragi pada kulit sekitar mulut"
+        ],
+        kunci: 2,
+        pembahasan: "Gejala patognomonik PMK pada sapi adalah pembentukan vesikula pada mukosa rongga mulut (lidah, gusi, palatum), puting, serta celah kuku (interdigital) yang pecah menjadi ulserasi sehingga menyebabkan hipersalivasi dan kepincangan.",
+        ref: "https://journal.ipb.ac.id/index.php/pim/article/download/45219/25536/"
+      },
+      {
+        id: 75,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Penyakit apa yang ditunjukkan oleh anjing yang memiliki gejala klinis seperti lesi kulit di axilla (ketiak) dan inguinal (selangkangan), kulit bengkak/menebal, serta rambut yang berwarna keabu-abuan hingga pigmentasi kehitaman?",
+        opsi: ["a. Acanthosis nigricans", "b. Eczema", "c. Kista", "d. Demodicosis", "e. Urtikaria"],
+        kunci: 0,
+        pembahasan: "Acanthosis nigricans merupakan kelainan dermatologis pada anjing yang ditandai dengan hiperpigmentasi keabu-abuan hingga kehitaman, alopesia, dan likenifikasi kulit pada area lipatan tubuh seperti aksila dan inguinal.",
+        ref: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8682925/"
+      },
+      {
+        id: 76,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Pada kasus Gumboro disease (Infectious Bursal Disease) pada ayam, gejala dan lesi utamanya meliputi:",
+        opsi: [
+          "a. Diare hijau, anoreksia, dan penurunan berat badan",
+          "b. Batuk, pilek, dan sesak napas",
+          "c. Lesi hemoragik pada bursa Fabricius dan imunodepresi",
+          "d. Paralisasi, kejang, dan kematian mendadak",
+          "e. Kulit kepala kebiruan dan busa di mata"
+        ],
+        kunci: 2,
+        pembahasan: "Virus IBD menyerang sel limfosit B muda di bursa Fabricius ayam muda, menyebabkan kebengkakan, edema, dan lesi hemoragik pada bursa Fabricius serta imunosupresi berat.",
+        ref: "https://jurnal.ugm.ac.id/jsv/article/download/17890/14677"
+      },
+      {
+        id: 77,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Infeksi Brucella abortus pada sapi ditandai dengan:",
+        opsi: [
+          "a. Abortus pada trimester awal",
+          "b. Abortus pada trimester akhir dan retensi plasenta",
+          "c. Lahirnya anak sapi dengan kelainan kongenital",
+          "d. Diare kronis pada hewan dewasa",
+          "e. Kulit berkerak di sekitar perut"
+        ],
+        kunci: 1,
+        pembahasan: "Brucellosis sapi (Brucella abortus) menimbulkan plasentitis nekrotikans yang khas menyebabkan keguguran (abortus) pada trimester akhir kebuntingan, retensi plasenta, dan infertilitas.",
+        ref: "https://ojs.unud.ac.id/index.php/imv/article/download/11"
+      },
+      {
+        id: 78,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Infeksi Clostridium chauvoei pada sapi menyebabkan penyakit yang dikenal sebagai:",
+        opsi: ["a. Antraks", "b. Blackleg", "c. Botulisme", "d. Enterotoksemia", "e. Tetanus"],
+        kunci: 1,
+        pembahasan: "Clostridium chauvoei merupakan bakteri anaerob penyebab penyakit Blackleg (radang paha) pada sapi yang ditandai mionekrosis emfisematosa dengan krepitasi subkutan dan kematian mendadak.",
+        ref: "https://www.scielo.br/j/cr/a/9rxd5vGscrVzdP7GshLjkbK/"
+      },
+      {
+        id: 79,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Penyakit pada domba yang belum tercatat di Indonesia, yang disebarkan oleh vektor nyamuk Aedes dan termasuk dalam 25 penyakit yang terdaftar dalam Pandemic and High-risk Medical Surveillance (PHMS), disebabkan oleh virus dari genus Phlebovirus adalah:",
+        opsi: [
+          "a. Q fever",
+          "b. Rift Valley fever",
+          "c. Penyakit mulut dan kuku (PMK)",
+          "d. Bovine spongiform encephalopathy (BSE)",
+          "e. Cysticercosis"
+        ],
+        kunci: 1,
+        pembahasan: "Rift Valley Fever (RVF) disebabkan oleh virus genus Phlebovirus yang ditularkan vektor nyamuk Aedes, menimbulkan demam tinggi, nekrosis hati, dan badai abortus pada domba serta bersifat zoonotik.",
+        ref: "https://pmc.ncbi.nlm.nih.gov/articles/PMC8009587/"
+      },
+      {
+        id: 80,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Pada kasus leptospirosis pada anjing, gejala klinis yang umum ditemukan meliputi:",
+        opsi: [
+          "a. Gagal ginjal akut, jaundice, dan hematuria",
+          "b. Diare, dehidrasi, dan penurunan berat badan",
+          "c. Batuk kronis, demam, dan lemas",
+          "d. Lesi kulit, anoreksia, dan keluarnya cairan hidung",
+          "e. Tremor, kejang, dan hipersalivasi"
+        ],
+        kunci: 0,
+        pembahasan: "Leptospirosis pada anjing menyebabkan nefritis interstisial akut, kerusakan hepatoseluler, dan vaskulitis dengan manifestasi klinis gagal ginjal akut, ikterus (jaundice), serta hematuria.",
+        ref: "https://www.sciencedirect.com/science/article/pii/S2213398421000452"
+      },
+      {
+        id: 81,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Seekor anjing menunjukkan gejala demam, kejang, serta hipersensitivitas terhadap cahaya. Riwayat menunjukkan anjing tersebut tidak divaksinasi rabies dan sering berkeliaran di luar rumah, serta tes menunjukkan infeksi rabies.",
+        tanya: "Apa tindakan yang tepat dalam mengelola kasus ini dengan mempertimbangkan ancaman terhadap kesehatan manusia?",
+        opsi: [
+          "a. Segera melakukan vaksinasi rabies pada anjing terinfeksi dan menunggu respons imun",
+          "b. Melakukan pengobatan suportif untuk anjing dan mengisolasi anjing dari manusia dan hewan lain",
+          "c. Melakukan euthanasia pada anjing dan melaporkan kasus ke otoritas kesehatan masyarakat",
+          "d. Memberikan antivirotik untuk menghentikan replikasi virus rabies pada anjing",
+          "e. Semua jawaban di atas"
+        ],
+        kunci: 2,
+        pembahasan: "Rabies bersifat fatal dan zoonotik; apabila hewan telah menunjukkan gejala klinis rabies, tindakan yang wajib dilakukan adalah euthanasia secara manusiawi untuk konfirmasi diagnostik otak dan melaporkan kasus segera kepada otoritas veteriner dan kesehatan masyarakat.",
+        ref: "https://rr-asia.woah.org/app/uploads/2020/03/roadmap-rabies-v05_indonesia.pdf"
+      },
+      {
+        id: 82,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Berikut yang termasuk penyakit zoonotik pada daging babi adalah...",
+        opsi: [
+          "a. African swine fever",
+          "b. Classical swine fever",
+          "c. Cysticercus cellulosae",
+          "d. Hog cholera",
+          "e. Porcine respiratory and reproductive syndrome"
+        ],
+        kunci: 2,
+        pembahasan: "Cysticercus cellulosae adalah bentuk larva cacing pita Taenia solium pada daging babi yang bersifat zoonosis (menyebabkan taeniasis dan neurosistiserkosis pada manusia). ASF, CSF (Hog cholera), dan PRRS tidak menular ke manusia.",
+        ref: "https://wiki.isikhnas.com/images/9/94/Penyakit_CYSTICERCOSIS.pdf"
+      },
+      {
+        id: 83,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Infeksi kulit yang disebabkan oleh infestasi kutu disebut dengan...",
+        opsi: ["a. Pediculosis", "b. Licerosis", "c. Louse borne dermatitis", "d. Phtiraptosis", "e. Scabies"],
+        kunci: 0,
+        pembahasan: "Pediculosis adalah istilah medis untuk infestasi kutu (ordo Phthiraptera) pada permukaan kulit dan rambut/bulu inang yang menimbulkan rasa gatal (pruritus) dan dermatitis.",
+        ref: "https://pmc.ncbi.nlm.nih.gov/articles/PMC9134731/"
+      },
+      {
+        id: 84,
+        category: "Penyakit Akuatik",
+        kasus: "-",
+        tanya: "Lates Calcarifer Herpes Virus (LCHV) merupakan penyakit yang menginfeksi ikan Barramundi. LCHV merupakan virus dari famili:",
+        opsi: ["a. Reoviridae", "b. Orthomyxoherpesvirus", "c. Alloherpesviridae", "d. Parvoviridae", "e. Iridoherpesvirus"],
+        kunci: 2,
+        pembahasan: "Lates calcarifer herpesvirus (LCHV) merupakan herpesvirus yang menyerang ikan kakap putih (Barramundi) dan diklasifikasikan dalam famili Alloherpesviridae.",
+        ref: "https://pmc.ncbi.nlm.nih.gov/articles/PMC10213192/"
+      },
+      {
+        id: 85,
+        category: "Kesmavet & Regulasi",
+        kasus: "Pada sapi setelah penyembelihan dilakukan pemeriksaan postmortem dan ditemukan adanya nodul/kista pada muskulus masseter dan diafragma sapi.",
+        tanya: "Apakah agen tersebut dan apakah bersifat zoonosis?",
+        opsi: [
+          "a. Taenia saginata zoonosis",
+          "b. Taenia saginata tidak zoonosis",
+          "c. Taenia solium zoonosis",
+          "d. Taenia solium tidak zoonosis",
+          "e. Trichinella zoonosis"
+        ],
+        kunci: 0,
+        pembahasan: "Nodul pada otot predileksi sapi (m. masseter, lidah, jantung, diafragma) adalah Cysticercus bovis (stadium larva Taenia saginata) yang bersifat zoonosis dan menimbulkan taeniasis pada manusia.",
+        ref: "https://ojs.unud.ac.id/index.php/buletinvet/article/download/19652/13043"
+      },
+      {
+        id: 86,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Seekor iguana dibawa ke klinik hewan dengan keluhan ada benjolan pada bagian lateral abdomen dexter. Benjolan berwarna merah meradang, konsistensi lunak, ada rasa panas, dan ada rasa sakit ketika ditekan.",
+        tanya: "Apa diagnosa dari penyakit yang dialami iguana tersebut?",
+        opsi: ["a. Furuncle", "b. Kista", "c. Abscess", "d. Hernia abdominalis", "e. Lipoma"],
+        kunci: 2,
+        pembahasan: "Abses adalah akumulasi lokal eksudat purulen yang ditandai dengan gejala radang akut berupa pembengkakan, kemerahan, panas, nyeri tekan, serta konsistensi lunak/fluktuatif.",
+        ref: "Ramadhan, R., Astuti, I. F., & Cahyadi, D. (2017). Prosiding SAKTI Vol. 2 No. 1."
+      },
+      {
+        id: 87,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Seekor zebra dilakukan treatment pengobatan berupa penginjeksian vitamin B-kompleks untuk penambah nafsu makan dan kelesuan. Namun zebra tersebut mengalami reaksi Arthus pada keesokan harinya.",
+        tanya: "Manakah dari berikut ini yang merupakan manifestasi reaksi Arthus?",
+        opsi: [
+          "a. Lupus",
+          "b. Serum sickness",
+          "c. Rheumatoid arthritis",
+          "d. Myasthenia gravis",
+          "e. Indurasi kulit pasca injeksi"
+        ],
+        kunci: 4,
+        pembahasan: "Reaksi Arthus merupakan reaksi hipersensitivitas tipe III lokal akibat deposisi kompleks imun pada dinding pembuluh darah di lokasi penyuntikan, menyebabkan peradangan lokal, edema, dan indurasi kulit pasca injeksi.",
+        ref: "Viergienia, J. (2022). Hubungan antara Kejadian Penyakit Alergi dengan Tingkat Stres."
+      },
+      {
+        id: 88,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Burung dan satwa liar memiliki wilayah yang disebut home range.",
+        tanya: "Apakah yang dimaksud dari home range?",
+        opsi: [
+          "a. Wilayah favorit",
+          "b. Wilayah bersarang",
+          "c. Wilayah migrasi",
+          "d. Wilayah hidup",
+          "e. Wilayah reproduksi"
+        ],
+        kunci: 3,
+        pembahasan: "Home range (wilayah hidup / daerah jelajah) adalah kawasan tempat satwa liar beraktivitas sehari-hari untuk mencari makan, minum, dan berkembang biak tanpa dipertahankan secara agresif dari individu lain seperti halnya teritori.",
+        ref: "https://raymoon760.wordpress.com/2013/07/02/home-range-dan-territory-satwa-liar/"
+      },
+      {
+        id: 89,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Ada seekor elang dengan kondisi patah kaki tetapi tidak dapat dilakukan pemasangan pen, maka dilakukan pelurusan dengan cara menempelkan kayu lalu dibalut dengan bandage menutupi kayu tersebut.",
+        tanya: "Apakah nama metode pembalutan tersebut?",
+        opsi: [
+          "a. Pemasangan Wire",
+          "b. Pemasangan Pin",
+          "c. Pemasangan Plate",
+          "d. Pemasangan Plaster Cast",
+          "e. Pemasangan Spalk atau Pembidaian"
+        ],
+        kunci: 4,
+        pembahasan: "Pembidaian atau pemasangan spalk (splint) adalah teknik fiksasi eksternal menggunakan penyangga kaku (seperti bilah kayu) yang dibalut bandage untuk mengimobilisasi fragmen tulang patah agar tidak bergeser dan mengurangi nyeri.",
+        ref: "https://jurnal.umsb.ac.id/index.php/jsam/article/download/5059/pdf"
+      },
+      {
+        id: 90,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Klien membawa seekor orangutan dalam kondisi lemas dan dehidrasi, dan menyatakan telah memelihara orangutan tersebut selama 3 tahun.",
+        tanya: "Tindakan apa yang dilakukan oleh dokter hewan?",
+        opsi: [
+          "a. Memarahi klien karena memelihara satwa liar dilindungi",
+          "b. Melaporkan ke pihak berwajib",
+          "c. Tidak mau menangani pasien karena pasien satwa dilindungi",
+          "d. Melakukan tindakan emergensi dan menyarankan klien untuk melaporkan pada pihak berwajib",
+          "e. Menangani pasien dan mengambil bayaran lebih untuk tutup mulut"
+        ],
+        kunci: 3,
+        pembahasan: "Dokter hewan wajib mengutamakan penyelamatan nyawa dan kesejahteraan hewan melalui tindakan medis emergensi terlebih dahulu, kemudian mengedukasi dan menyarankan klien menyerahkan/melaporkan orangutan sebagai satwa dilindungi kepada BKSDA/pihak berwenang.",
+        ref: "https://ksdae.menlhk.go.id/info/2558/kerja-bersama-perlindungan-dan-penyelamatan-orangutan.html"
+      },
+      {
+        id: 91,
+        category: "Bedah & Radiologi",
+        kasus: "Terdapat pasien seekor kucing yang dilakukan kontrol setelah operasi fraktur pada humerus. Pemilik menyatakan kucing belum bisa menapakkan kakinya dengan baik walaupun masih digips. Hasil rontgen menunjukkan pada bagian patahan belum membentuk callus dan masih ada garis patahan walaupun posisi patahan tidak bergeser.",
+        tanya: "Sebagai dokter hewan, tindakan apa yang perlu dilakukan?",
+        opsi: [
+          "a. Melepas gips dan mengganti dengan Ehmer sling bandage",
+          "b. Melepas gips dan mengganti dengan Robert Jones bandage",
+          "c. Melepas gips",
+          "d. Tidak melepas gips dan menyarankan klien untuk datang kontrol satu bulan lagi",
+          "e. Melepas gips dan dilanjutkan dengan pengobatan terbuka"
+        ],
+        kunci: 3,
+        pembahasan: "Pembentukan kalus (callus) tulang secara radiografis membutuhkan waktu 1-4 bulan. Selama posisi fragmen tulang tidak bergeser dan tidak ada komplikasi pemasangan gips, gips tetap dipertahankan dan pasien dijadwalkan kontrol 1 bulan lagi.",
+        ref: "https://ejournal.unsrat.ac.id/v3/index.php/eclinic/article/download/32120/30499/67145"
+      },
+      {
+        id: 92,
+        category: "Bedah & Radiologi",
+        kasus: "-",
+        tanya: "Kuda sering menggunakan halter saat dipekerjakan, sehingga menekan saraf di area pipi dan mengakibatkan miring pada salah satu sisi kepala/moncong kuda. Gangguan ini disebut...",
+        opsi: [
+          "a. Paralysis nervus facialis",
+          "b. Paresis nervus facialis",
+          "c. Paresis lidah",
+          "d. Paralisis lidah",
+          "e. Paralisis brachialis"
+        ],
+        kunci: 1,
+        pembahasan: "Tekanan mekanis tali halter pada percabangan superfisial nervus facialis (CN VII) menyebabkan kelemahan ringan-sedang otot ekspresi wajah unilateral yang disebut paresis nervus facialis.",
+        ref: "https://conference.ipb.ac.id/index.php/kivnas/article/view/957"
+      },
+      {
+        id: 93,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Capture myopathy sering dijumpai pada satwa liar baik in situ maupun ex situ.",
+        tanya: "Usaha preventif untuk mencegah terjadinya penyakit ini adalah pemberian...",
+        opsi: ["a. Vit B6", "b. Vit A", "c. Vit B kompleks", "d. Vit E", "e. Vit C"],
+        kunci: 3,
+        pembahasan: "Vitamin E (dan selenium) berfungsi sebagai antioksidan biologis untuk melindungi membran sel otot dari kerusakan peroksidasi lipid akibat stres berat saat penangkapan/handling (Capture Myopathy).",
+        ref: "https://pubmed.ncbi.nlm.nih.gov/11808355/"
+      },
+      {
+        id: 94,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "-",
+        tanya: "Paragonimiasis adalah penyakit yang ditularkan melalui konsumsi kepiting (crab) atau udang karang (crayfish) mentah/setengah matang yang terinfeksi agen...",
+        opsi: [
+          "a. Fasciola (liver fluke)",
+          "b. Taenia (tapeworm)",
+          "c. Paragonimus (flatworm)",
+          "d. Schistosoma (blood fluke)",
+          "e. Dirofilaria immitis (heartworm)"
+        ],
+        kunci: 2,
+        pembahasan: "Paragonimiasis disebabkan oleh cacing trematoda paru (flatworm) Paragonimus sp. yang memiliki inang perantara kedua berupa kepiting air tawar atau udang karang.",
+        ref: "https://www.researchgate.net/publication/374232263_Parasitologi_Helmintologi_dan_Protozoologi"
+      },
+      {
+        id: 95,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Penyakit pada iguana dengan gejala infeksi bakteri yang bermanifestasi sebagai perdarahan pada gusi, gusi bengkak, produksi lendir kental berlebihan di dalam mulut, dan pembengkakan rahang (mouth rot / busuk mulut).",
+        tanya: "Nama lain dari Mouth rot adalah...",
+        opsi: ["a. Osteomyelitis", "b. Periodontitis", "c. Infectious Stomatitis", "d. Abscess Oral", "e. Gingivitis"],
+        kunci: 2,
+        pembahasan: "Mouth rot pada reptil merupakan istilah klinis untuk Infectious Stomatitis, yaitu peradangan infeksius pada mukosa rongga mulut yang ditandai petekie, pembengkakan gusi, dan eksudat kaseosa/lendir kental.",
+        ref: "https://journal.unair.ac.id/download-fullpapers-3%20Djoko.pdf"
+      },
+      {
+        id: 96,
+        category: "Satwa Liar & Eksotik",
+        kasus: "-",
+        tanya: "Ekspor daging atau satwa tokek (Gekko gecko) memerlukan surat izin/pengiriman internasional yang diatur dalam konvensi...",
+        opsi: ["a. CITES", "b. FAO", "c. WHO", "d. CITOS", "e. BKSDA"],
+        kunci: 0,
+        pembahasan: "Tokek rumah (Gekko gecko) masuk dalam daftar CITES Apendiks II sejak Agustus 2019, sehingga perdagangan/ekspor lintas negara wajib dilengkapi dokumen izin resmi CITES beserta kuota dari otoritas pengelola nasional.",
+        ref: "https://penasultra.com/tokek-dan-status-barunya-dalam-cites-apendiks-ii/"
+      },
+      {
+        id: 97,
+        category: "Satwa Liar & Eksotik",
+        kasus: "-",
+        tanya: "Proyeksi/lokasi pengambilan foto rontgen paru-paru pada kura-kura adalah...",
+        opsi: [
+          "a. Dorsal, lateral, dan oblique",
+          "b. Ventral, oblique, dan cranio-caudal",
+          "c. Lateral, antero-posterior (AP), dan cranio-caudal",
+          "d. Dorsoventral, cranio-caudal, dan lateral",
+          "e. Oblique, dorsoventral, dan antero-posterior"
+        ],
+        kunci: 2,
+        pembahasan: "Evaluasi lapangan paru-paru pada kura-kura menggunakan proyeksi horizontal beam Lateral serta proyeksi Antero-Posterior (AP) / Cranio-Caudal untuk memvisualisasikan paru-paru kiri dan kanan secara jelas tanpa tumpang tindih dengan saluran pencernaan.",
+        ref: "https://todaysveterinarypractice.com/reptile-radiography/"
+      },
+      {
+        id: 98,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Penyakit pada iguana dengan gejala pembengkakan rahang bawah, pelunakan rahang dan tulang wajah (rubber jaw), serta pembengkakan kaki belakang yang terasa gemuk dan lentur dengan risiko tinggi deformasi dan patah tulang.",
+        tanya: "Penyakit tersebut adalah...",
+        opsi: [
+          "a. Rickets",
+          "b. Osteoarthritis",
+          "c. Penyakit Tulang Metabolik (MBD)",
+          "d. Hipovitaminosis A",
+          "e. Osteoporosis"
+        ],
+        kunci: 2,
+        pembahasan: "Penyakit Tulang Metabolik (Metabolic Bone Disease / MBD) disebabkan oleh defisiensi kalsium, rasio Ca:P pakan tidak seimbang, atau kurangnya paparan sinar UV-B/vitamin D3 yang mengakibatkan pelunakan tulang rahang dan ekstremitas.",
+        ref: "https://unair.ac.id/laporan-kasus-penyakit-tulang-metabolik-pada-kura-kura-kaki-merah-berdasarkan-kerusakan-pada-berbagai-organ/"
+      },
+      {
+        id: 99,
+        category: "Satwa Liar & Eksotik",
+        kasus: "Suhu lingkungan yang tinggi dan pengejaran/perburuan menyebabkan hipertermia akut dan miolisis (Porcine Stress Syndrome).",
+        tanya: "Hewan yang sangat mudah mengalami hipertermia karena diburu adalah...",
+        opsi: [
+          "a. Rusa dan kambing",
+          "b. Kambing dan domba hutan",
+          "c. Kambing gunung dan rusa",
+          "d. Rusa",
+          "e. Babi hutan"
+        ],
+        kunci: 4,
+        pembahasan: "Babi hutan (serta babi domestik dengan mutasi gen RYR1) memiliki frekuensi alel ryanodine receptor 1 yang memicu Porcine Stress Syndrome / Malignant Hyperthermia saat mengalami stres pengejaran, berujung pada kekakuan otot, hipertermia, dan kematian mendadak.",
+        ref: "https://www.researchgate.net/publication/316977454_Porcine_Stress_Syndrome"
+      },
+      {
+        id: 100,
+        category: "Penyakit Dalam & Zoonosis",
+        kasus: "Penyakit Japanese Encephalitis (JE) merupakan contoh nyata dari penerapan konsep One Health.",
+        tanya: "Kenapa penyakit Japanese Encephalitis menjadi contoh nyata dari penerapan One Health?",
+        opsi: [
+          "a. Hanya mempengaruhi manusia yang tinggal di dekat persawahan",
+          "b. Penyakit ini melibatkan interaksi antara manusia, hewan, dan lingkungan",
+          "c. Virus JE hanya menginfeksi babi",
+          "d. Penyakit ini dapat dicegah dengan vaksinasi pada manusia saja",
+          "e. Penyakit dapat menyebabkan perpecahan"
+        ],
+        kunci: 1,
+        pembahasan: "Japanese Encephalitis (JE) mencerminkan keterkaitan langsung kesehatan manusia, hewan (babi dan burung air sebagai reservoir/amplifying host serta nyamuk Culex sebagai vektor), dan lingkungan (area persawahan dan genangan air tempat vektor berkembang biak).",
+        ref: "https://ejournal.unsrat.ac.id/index.php/biomedik/article/download/12697/12295"
+      }
+    ];
+
+    /**
+     * ============================================================================
+     * KONFIGURASI PAKET SOAL
+     * ============================================================================
+     */
+    const EXAM_PACKAGES = [
+      {
+        id: "all",
+        title: "Semua Soal (Full Try Out)",
+        subtitle: "Soal 1 – 100 • Komprehensif Seluruh Bidang Ilmu",
+        count: 100,
+        minutes: 100,
+        badge: "Standar UKMPPDH",
+        getQuestions: (bank) => [...bank]
+      },
+      {
+        id: "blok1",
+        title: "Blok 1: Soal 1 – 25",
+        subtitle: "Akuatik, Kesmavet & Regulasi Veteriner",
+        count: 25,
+        minutes: 25,
+        badge: "25 Soal",
+        getQuestions: (bank) => bank.slice(0, 25)
+      },
+      {
+        id: "blok2",
+        title: "Blok 2: Soal 26 – 50",
+        subtitle: "Reproduksi, Kebidanan, Bedah & Radiologi",
+        count: 25,
+        minutes: 25,
+        badge: "25 Soal",
+        getQuestions: (bank) => bank.slice(25, 50)
+      },
+      {
+        id: "blok3",
+        title: "Blok 3: Soal 51 – 75",
+        subtitle: "Farmakologi, Etika, Penyakit Dalam & Metabolik",
+        count: 25,
+        minutes: 25,
+        badge: "25 Soal",
+        getQuestions: (bank) => bank.slice(50, 75)
+      },
+      {
+        id: "blok4",
+        title: "Blok 4: Soal 76 – 100",
+        subtitle: "Zoonosis, Satwa Liar, Eksotik & One Health",
+        count: 25,
+        minutes: 25,
+        badge: "25 Soal",
+        getQuestions: (bank) => bank.slice(75, 100)
+      },
+      {
+        id: "quick20",
+        title: "Latihan Cepat: 20 Soal Acak",
+        subtitle: "20 Soal Terpilih Acak dari Bank 100 Soal",
+        count: 20,
+        minutes: 20,
+        badge: "Sprint 20m",
+        getQuestions: (bank) => shuffleArray([...bank]).slice(0, 20)
+      }
+    ];
+
+    const OPTION_LETTERS = ["A", "B", "C", "D", "E"];
+
+    /**
+     * ============================================================================
+     * STATE APLIKASI GLOBAL
+     * ============================================================================
+     */
+    const state = {
+      screen: "lobby", // 'lobby' | 'exam' | 'results'
+      participantName: "Calon Dokter Hewan",
+      mode: "cbt", // 'cbt' | 'practice'
+      selectedPack: "all",
+      shuffleQuestions: false,
+      shuffleOptions: false,
+
+      // Session Exam Data
+      sessionLabel: "Semua Soal (Full Try Out)",
+      sessionQuestions: [],
+      currentIndex: 0,
+      userAnswers: [],
+      flagged: [],
+      fontSizeLevel: 1, // 0 = A- (kecil), 1 = A (normal), 2 = A+ (besar)
+
+      // Timer
+      totalSeconds: 6000,
+      remainingSeconds: 6000,
+      elapsedSeconds: 0,
+      timerInterval: null,
+
+      // UI Drawers & Filters
+      mobileDrawerOpen: false,
+      reviewFilter: "all", // 'all' | 'wrong' | 'correct' | 'unanswered'
+      reviewCategoryFilter: "all",
+      reviewSearch: ""
+    };
+
+    /**
+     * ============================================================================
+     * FUNGSI UTILITAS & HELPER
+     * ============================================================================
+     */
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatRichText(str) {
+      // Escape HTML lalu format pangkat seperti 10^2 menjadi 10<sup>2</sup>
+      const safe = escapeHTML(str);
+      return safe.replace(/10\^(\d+)/g, '10<sup>$1</sup>');
+    }
+
+    function stripOptionPrefix(optText) {
+      return String(optText).replace(/^[a-eA-E]\.\s*/, "").trim();
+    }
+
+    function formatClock(totalSec) {
+      const sec = Math.max(0, Math.floor(totalSec));
+      const hrs = Math.floor(sec / 3600);
+      const mins = Math.floor((sec % 3600) / 60);
+      const secs = sec % 60;
+      const pad = (n) => String(n).padStart(2, "0");
+      if (hrs > 0) {
+        return `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+      }
+      return `${pad(mins)}:${pad(secs)}`;
+    }
+
+    function formatDurationText(totalSec) {
+      const sec = Math.max(0, Math.floor(totalSec));
+      const mins = Math.floor(sec / 60);
+      const secs = sec % 60;
+      if (mins === 0) return `${secs} detik`;
+      return `${mins} menit ${secs} detik`;
+    }
+
+    function showToast(message, type = "info") {
+      const root = document.getElementById("toast-root");
+      if (!root) return;
+      const toast = document.createElement("div");
+      const colorClasses =
+        type === "success"
+          ? "bg-[#0f5c54] text-white border-[#eab308]"
+          : type === "warning"
+          ? "bg-amber-600 text-white border-amber-300"
+          : "bg-slate-900 text-white border-slate-700";
+      toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border-l-4 text-sm font-medium animate-fade-in ${colorClasses}`;
+      toast.innerHTML = `<span>${escapeHTML(message)}</span>`;
+      root.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transition = "opacity 0.25s ease";
+        setTimeout(() => toast.remove(), 260);
+      }, 2800);
+    }
+
+    function copyTextToClipboard(text) {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        showToast("Referensi berhasil disalin ke clipboard.", "success");
+      } catch (err) {
+        showToast("Gagal menyalin referensi.", "warning");
+      }
+    }
+
+    function closeModal() {
+      const modalRoot = document.getElementById("modal-root");
+      if (modalRoot) modalRoot.innerHTML = "";
+    }
+
+    function openConfirmFinishModal() {
+      const answeredCount = state.userAnswers.filter((a) => a !== null).length;
+      const flaggedCount = state.flagged.filter(Boolean).length;
+      const unansweredCount = state.sessionQuestions.length - answeredCount;
+
+      const modalRoot = document.getElementById("modal-root");
+      modalRoot.innerHTML = `
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in" role="dialog" aria-modal="true">
+          <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-[#134e4a] to-[#0f5c54] px-6 py-4 flex items-center justify-between">
+              <div class="flex items-center gap-2.5 text-white">
+                <svg class="w-5 h-5 text-[#eab308]" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <h3 class="font-bold text-base tracking-tight">Konfirmasi Selesai Ujian</h3>
+              </div>
+              <button onclick="closeModal()" class="text-white/80 hover:text-white p-1 rounded-lg transition" aria-label="Tutup">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div class="p-6">
+              <p class="text-sm text-slate-600 leading-relaxed mb-4">
+                Apakah Anda yakin ingin mengakhiri simulasi CBT dan melihat hasil skor serta pembahasan lengkap?
+              </p>
+              <div class="grid grid-cols-3 gap-2.5 mb-5">
+                <div class="bg-[#e6f4f1] border border-[#0f5c54]/20 rounded-xl p-3 text-center">
+                  <div class="text-xl font-extrabold text-[#0f5c54]">${answeredCount}</div>
+                  <div class="text-[11px] font-semibold text-slate-600 mt-0.5">Dijawab</div>
+                </div>
+                <div class="bg-amber-50 border border-amber-300 rounded-xl p-3 text-center">
+                  <div class="text-xl font-extrabold text-amber-600">${flaggedCount}</div>
+                  <div class="text-[11px] font-semibold text-slate-600 mt-0.5">Ragu-ragu</div>
+                </div>
+                <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 text-center">
+                  <div class="text-xl font-extrabold text-slate-700">${unansweredCount}</div>
+                  <div class="text-[11px] font-semibold text-slate-600 mt-0.5">Belum Dijawab</div>
+                </div>
+              </div>
+              ${
+                unansweredCount > 0 || flaggedCount > 0
+                  ? `<div class="mb-5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-start gap-2">
+                      <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                      </svg>
+                      <span>Masih terdapat <strong>${unansweredCount} soal kosong</strong> dan <strong>${flaggedCount} soal ragu-ragu</strong>. Soal kosong akan dihitung salah.</span>
+                    </div>`
+                  : ""
+              }
+              <div class="flex items-center justify-end gap-3">
+                <button onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition">
+                  Kembali Mengerjakan
+                </button>
+                <button onclick="finishExam(false)" class="px-5 py-2.5 rounded-xl bg-[#0f5c54] hover:bg-[#0b4640] text-white font-semibold text-sm shadow-sm transition flex items-center gap-2">
+                  <span>Ya, Selesai &amp; Nilai</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openTimeUpModal() {
+      const modalRoot = document.getElementById("modal-root");
+      modalRoot.innerHTML = `
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs animate-fade-in" role="dialog" aria-modal="true">
+          <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden text-center p-6">
+            <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1.5">Waktu Ujian Telah Habis!</h3>
+            <p class="text-sm text-slate-600 mb-6">
+              Sistem otomatis menyimpan seluruh jawaban Anda dan menghitung skor evaluasi CBT SIGAP UKMPPDH.
+            </p>
+            <button onclick="closeModal()" class="w-full py-3 rounded-xl bg-[#0f5c54] hover:bg-[#0b4640] text-white font-bold text-sm shadow-md transition">
+              Lihat Hasil &amp; Pembahasan
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * LOGIKA SESI UJIAN, TIMER & NAVIGASI
+     * ============================================================================
+     */
+    function prepareSessionQuestions(rawQuestions, shouldShuffleQ, shouldShuffleOpt) {
+      let list = [...rawQuestions];
+      if (shouldShuffleQ) {
+        list = shuffleArray(list);
+      }
+      return list.map((q) => {
+        const paired = q.opsi.map((text, idx) => ({
+          text: stripOptionPrefix(text),
+          isCorrect: idx === q.kunci
+        }));
+        const finalPaired = shouldShuffleOpt ? shuffleArray(paired) : paired;
+        return {
+          id: q.id,
+          category: q.category,
+          kasus: q.kasus && q.kasus.trim() !== "-" ? q.kasus.trim() : "",
+          tanya: q.tanya.trim(),
+          options: finalPaired.map((p) => p.text),
+          correctIndex: finalPaired.findIndex((p) => p.isCorrect),
+          pembahasan: q.pembahasan.trim(),
+          ref: q.ref.trim()
+        };
+      });
+    }
+
+    function startExamSession(customQuestions = null, customLabel = null) {
+      stopTimer();
+
+      const nameInput = document.getElementById("input-participant-name");
+      if (nameInput) {
+        const val = nameInput.value.trim();
+        state.participantName = val || "Calon Dokter Hewan";
+      }
+
+      let rawQuestions = [];
+      let minutes = 100;
+      let label = "";
+
+      if (customQuestions && customQuestions.length > 0) {
+        rawQuestions = customQuestions;
+        minutes = Math.max(5, rawQuestions.length);
+        label = customLabel || `Latihan Ulang (${rawQuestions.length} Soal)`;
+      } else {
+        const pkg = EXAM_PACKAGES.find((p) => p.id === state.selectedPack) || EXAM_PACKAGES[0];
+        rawQuestions = pkg.getQuestions(QUESTION_BANK);
+        minutes = pkg.minutes;
+        label = pkg.title;
+      }
+
+      state.sessionLabel = label;
+      state.sessionQuestions = prepareSessionQuestions(
+        rawQuestions,
+        state.shuffleQuestions,
+        state.shuffleOptions
+      );
+      state.currentIndex = 0;
+      state.userAnswers = new Array(state.sessionQuestions.length).fill(null);
+      state.flagged = new Array(state.sessionQuestions.length).fill(false);
+      state.totalSeconds = minutes * 60;
+      state.remainingSeconds = minutes * 60;
+      state.elapsedSeconds = 0;
+      state.mobileDrawerOpen = false;
+      state.screen = "exam";
+
+      startTimer();
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startTimer() {
+      stopTimer();
+      state.timerInterval = setInterval(() => {
+        if (state.screen !== "exam") {
+          stopTimer();
+          return;
+        }
+        state.elapsedSeconds += 1;
+        if (state.remainingSeconds > 0) {
+          state.remainingSeconds -= 1;
+          updateTimerDOM();
+          if (state.remainingSeconds === 0) {
+            finishExam(true);
+          }
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+    }
+
+    function updateTimerDOM() {
+      const timerEl = document.getElementById("cbt-timer-display");
+      const timerBox = document.getElementById("cbt-timer-box");
+      if (!timerEl || !timerBox) return;
+
+      timerEl.textContent = formatClock(state.remainingSeconds);
+      if (state.remainingSeconds < 300) {
+        timerBox.className =
+          "flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-600 text-white font-mono font-bold text-sm sm:text-base shadow-sm animate-pulse";
+      } else {
+        timerBox.className =
+          "flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#134e4a] border border-white/20 text-[#eab308] font-mono font-bold text-sm sm:text-base";
+      }
+    }
+
+    function selectAnswer(optionIndex) {
+      if (state.screen !== "exam") return;
+      state.userAnswers[state.currentIndex] = optionIndex;
+      render();
+    }
+
+    function resetCurrentAnswer() {
+      if (state.screen !== "exam") return;
+      state.userAnswers[state.currentIndex] = null;
+      render();
+    }
+
+    function toggleFlagCurrent() {
+      if (state.screen !== "exam") return;
+      state.flagged[state.currentIndex] = !state.flagged[state.currentIndex];
+      render();
+    }
+
+    function goToQuestion(idx) {
+      if (idx < 0 || idx >= state.sessionQuestions.length) return;
+      state.currentIndex = idx;
+      state.mobileDrawerOpen = false;
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function changeFontSize(delta) {
+      const next = Math.min(2, Math.max(0, state.fontSizeLevel + delta));
+      if (next !== state.fontSizeLevel) {
+        state.fontSizeLevel = next;
+        render();
+      }
+    }
+
+    function toggleMobileDrawer(forceVal = null) {
+      state.mobileDrawerOpen = forceVal !== null ? forceVal : !state.mobileDrawerOpen;
+      render();
+    }
+
+    function finishExam(autoSubmitted = false) {
+      stopTimer();
+      closeModal();
+      state.mobileDrawerOpen = false;
+      state.reviewFilter = "all";
+      state.reviewCategoryFilter = "all";
+      state.reviewSearch = "";
+      state.screen = "results";
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (autoSubmitted) {
+        openTimeUpModal();
+      }
+    }
+
+    function retryWrongQuestions() {
+      const wrongOriginalIds = new Set();
+      state.sessionQuestions.forEach((q, idx) => {
+        const ans = state.userAnswers[idx];
+        if (ans === null || ans !== q.correctIndex) {
+          wrongOriginalIds.add(q.id);
+        }
+      });
+
+      const subset = QUESTION_BANK.filter((item) => wrongOriginalIds.has(item.id));
+      if (subset.length === 0) {
+        showToast("Selamat! Tidak ada soal yang salah atau kosong.", "success");
+        return;
+      }
+      startExamSession(subset, `Ulangi Soal Salah & Kosong (${subset.length} Soal)`);
+    }
+
+    function backToLobby() {
+      stopTimer();
+      closeModal();
+      state.screen = "lobby";
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    /**
+     * ============================================================================
+     * KEYBOARD SHORTCUTS UNTUK ANTARMUKA CBT
+     * - A, B, C, D, E -> Pilih opsi jawaban A-E
+     * - ArrowLeft / ArrowRight -> Soal sebelumnya / selanjutnya
+     * - R -> Tandai / Batal Ragu-ragu
+     * ============================================================================
+     */
+    document.addEventListener("keydown", (e) => {
+      if (state.screen !== "exam") return;
+      const modalRoot = document.getElementById("modal-root");
+      if (modalRoot && modalRoot.innerHTML.trim() !== "") return;
+
+      const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+
+      const key = e.key.toLowerCase();
+      if (["a", "b", "c", "d", "e"].includes(key)) {
+        e.preventDefault();
+        const optIdx = key.charCodeAt(0) - 97;
+        selectAnswer(optIdx);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        if (state.currentIndex < state.sessionQuestions.length - 1) {
+          goToQuestion(state.currentIndex + 1);
+        }
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        if (state.currentIndex > 0) {
+          goToQuestion(state.currentIndex - 1);
+        }
+      } else if (key === "r") {
+        e.preventDefault();
+        toggleFlagCurrent();
+      }
+    });
+
+    /**
+     * ============================================================================
+     * RENDER 1: HALAMAN LOBBY & PENGATURAN UJIAN
+     * ============================================================================
+     */
+    function renderLobby() {
+      const selectedPkg = EXAM_PACKAGES.find((p) => p.id === state.selectedPack) || EXAM_PACKAGES[0];
+
+      return `
+        <!-- Header Identitas SIGAP UKMPPDH -->
+        <header class="bg-gradient-to-r from-[#134e4a] via-[#0f5c54] to-[#134e4a] text-white shadow-md border-b-4 border-[#eab308]">
+          <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-3.5">
+              <div class="w-12 h-12 rounded-2xl bg-[#eab308] text-[#134e4a] flex items-center justify-center font-extrabold text-xl shadow-md shrink-0">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+                </svg>
+              </div>
+              <div>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-white/15 text-[#fef08a] text-xs font-bold tracking-wide uppercase mb-1">
+                  <span>Computer Based Test • Veteriner</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight leading-tight">
+                  TRY OUT BATCH 3 — SIGAP UKMPPDH
+                </h1>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs sm:text-sm bg-black/20 px-3.5 py-2 rounded-xl border border-white/10 self-start sm:self-center">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#eab308]"></span>
+              <span class="font-medium text-emerald-50">Bank Soal Lengkap: <strong class="text-white">100 Soal &amp; Pembahasan</strong></span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Lobby Content -->
+        <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Kolom Kiri: Pengaturan Peserta, Mode & Paket Soal -->
+            <div class="lg:col-span-8 space-y-6">
+              
+              <!-- Card 1: Identitas Peserta & Mode Pengerjaan -->
+              <section class="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 sm:p-6">
+                <div class="flex items-center gap-2.5 mb-4">
+                  <span class="w-7 h-7 rounded-lg bg-[#0f5c54] text-white font-bold text-sm flex items-center justify-center">1</span>
+                  <h2 class="text-base sm:text-lg font-bold text-slate-900">Identitas Peserta &amp; Mode Simulasi</h2>
+                </div>
+
+                <!-- Input Nama Peserta -->
+                <div class="mb-5">
+                  <label for="input-participant-name" class="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Nama Lengkap Peserta <span class="text-slate-400 font-normal">(Opsional)</span>
+                  </label>
+                  <div class="relative">
+                    <input
+                      id="input-participant-name"
+                      type="text"
+                      value="${escapeHTML(state.participantName)}"
+                      oninput="state.participantName = this.value"
+                      placeholder="Calon Dokter Hewan"
+                      class="w-full px-4 py-3 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-slate-900 font-medium text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#0f5c54] focus:border-[#0f5c54] transition"
+                    />
+                  </div>
+                </div>
+
+                <!-- Pilihan Mode Pengerjaan -->
+                <div>
+                  <label class="block text-sm font-semibold text-slate-700 mb-2.5">
+                    Pilih Mode Pengerjaan
+                  </label>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <!-- Mode CBT -->
+                    <button
+                      type="button"
+                      onclick="state.mode = 'cbt'; render();"
+                      class="text-left p-4 rounded-xl border-2 transition flex flex-col justify-between ${
+                        state.mode === "cbt"
+                          ? "border-[#0f5c54] bg-[#e6f4f1]/60 shadow-xs"
+                          : "border-slate-200 bg-white hover:border-slate-300"
+                      }"
+                    >
+                      <div class="flex items-start justify-between gap-2 mb-2">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold ${
+                          state.mode === "cbt" ? "bg-[#0f5c54] text-white" : "bg-slate-100 text-slate-600"
+                        }">
+                          Mode Ujian CBT
+                        </span>
+                        <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          state.mode === "cbt" ? "border-[#0f5c54]" : "border-slate-300"
+                        }">
+                          ${state.mode === "cbt" ? '<span class="w-2.5 h-2.5 rounded-full bg-[#0f5c54]"></span>' : ""}
+                        </span>
+                      </div>
+                      <h3 class="font-bold text-slate-900 text-sm mb-1">Standar Ujian UKMPPDH</h3>
+                      <p class="text-xs text-slate-600 leading-relaxed">
+                        Timer hitung mundur aktif, fitur tombol <strong>Ragu-ragu</strong>, skor &amp; pembahasan lengkap ditampilkan setelah ujian selesai.
+                      </p>
+                    </button>
+
+                    <!-- Mode Latihan Interaktif -->
+                    <button
+                      type="button"
+                      onclick="state.mode = 'practice'; render();"
+                      class="text-left p-4 rounded-xl border-2 transition flex flex-col justify-between ${
+                        state.mode === "practice"
+                          ? "border-[#0f5c54] bg-[#e6f4f1]/60 shadow-xs"
+                          : "border-slate-200 bg-white hover:border-slate-300"
+                      }"
+                    >
+                      <div class="flex items-start justify-between gap-2 mb-2">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold ${
+                          state.mode === "practice" ? "bg-[#eab308] text-slate-950" : "bg-slate-100 text-slate-600"
+                        }">
+                          Mode Latihan Interaktif
+                        </span>
+                        <span class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          state.mode === "practice" ? "border-[#0f5c54]" : "border-slate-300"
+                        }">
+                          ${state.mode === "practice" ? '<span class="w-2.5 h-2.5 rounded-full bg-[#0f5c54]"></span>' : ""}
+                        </span>
+                      </div>
+                      <h3 class="font-bold text-slate-900 text-sm mb-1">Langsung Tampil Pembahasan</h3>
+                      <p class="text-xs text-slate-600 leading-relaxed">
+                        Begitu memilih jawaban, status <strong>Benar/Salah</strong>, kunci jawaban, pembahasan mendalam, dan referensi langsung muncul di bawah soal.
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <!-- Card 2: Pilihan Paket Soal -->
+              <section class="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 sm:p-6">
+                <div class="flex items-center gap-2.5 mb-4">
+                  <span class="w-7 h-7 rounded-lg bg-[#0f5c54] text-white font-bold text-sm flex items-center justify-center">2</span>
+                  <h2 class="text-base sm:text-lg font-bold text-slate-900">Pilih Paket Soal</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  ${EXAM_PACKAGES.map((pkg) => {
+                    const active = state.selectedPack === pkg.id;
+                    return `
+                      <button
+                        type="button"
+                        onclick="state.selectedPack = '${pkg.id}'; render();"
+                        class="text-left p-4 rounded-xl border-2 transition flex items-start justify-between gap-3 ${
+                          active
+                            ? "border-[#0f5c54] bg-[#e6f4f1]/60 shadow-xs"
+                            : "border-slate-200 bg-white hover:border-slate-300"
+                        }"
+                      >
+                        <div class="min-w-0">
+                          <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <span class="font-bold text-sm text-slate-900">${escapeHTML(pkg.title)}</span>
+                          </div>
+                          <p class="text-xs text-slate-600 leading-snug mb-2">${escapeHTML(pkg.subtitle)}</p>
+                          <div class="inline-flex items-center gap-2 text-[11px] font-semibold text-[#0f5c54] bg-white px-2.5 py-1 rounded-lg border border-[#0f5c54]/20">
+                            <span>${pkg.count} Soal</span>
+                            <span>•</span>
+                            <span>${pkg.minutes} Menit</span>
+                          </div>
+                        </div>
+                        <span class="w-5 h-5 rounded-full border-2 shrink-0 mt-0.5 flex items-center justify-center ${
+                          active ? "border-[#0f5c54]" : "border-slate-300"
+                        }">
+                          ${active ? '<span class="w-2.5 h-2.5 rounded-full bg-[#0f5c54]"></span>' : ""}
+                        </span>
+                      </button>
+                    `;
+                  }).join("")}
+                </div>
+              </section>
+
+              <!-- Card 3: Opsi Pengacakan -->
+              <section class="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 sm:p-6">
+                <div class="flex items-center gap-2.5 mb-4">
+                  <span class="w-7 h-7 rounded-lg bg-[#0f5c54] text-white font-bold text-sm flex items-center justify-center">3</span>
+                  <h2 class="text-base sm:text-lg font-bold text-slate-900">Opsi Pengacakan (Randomizer)</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  <!-- Toggle Acak Soal -->
+                  <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 cursor-pointer transition">
+                    <div class="pr-3">
+                      <div class="text-sm font-bold text-slate-800">Acak Urutan Soal</div>
+                      <div class="text-xs text-slate-500">Mengacak urutan nomor soal saat ujian</div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      ${state.shuffleQuestions ? "checked" : ""}
+                      onchange="state.shuffleQuestions = this.checked; render();"
+                      class="sr-only peer"
+                    />
+                    <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:bg-[#0f5c54] relative transition shrink-0 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+                  </label>
+
+                  <!-- Toggle Acak Pilihan -->
+                  <label class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 cursor-pointer transition">
+                    <div class="pr-3">
+                      <div class="text-sm font-bold text-slate-800">Acak Urutan Pilihan Jawaban</div>
+                      <div class="text-xs text-slate-500">Mengacak posisi opsi A–E secara otomatis</div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      ${state.shuffleOptions ? "checked" : ""}
+                      onchange="state.shuffleOptions = this.checked; render();"
+                      class="sr-only peer"
+                    />
+                    <div class="w-11 h-6 bg-slate-300 rounded-full peer peer-checked:bg-[#0f5c54] relative transition shrink-0 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
+                  </label>
+                </div>
+              </section>
+
+            </div>
+
+            <!-- Kolom Kanan: Ringkasan Ujian & Panduan CBT -->
+            <aside class="lg:col-span-4 space-y-5 lg:sticky lg:top-6">
+              <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                <div class="bg-[#134e4a] px-5 py-4 text-white border-b-2 border-[#eab308]">
+                  <h3 class="font-bold text-base">Ringkasan Sesi Simulasi</h3>
+                  <p class="text-xs text-emerald-100 mt-0.5">Periksa kembali konfigurasi sebelum memulai</p>
+                </div>
+                <div class="p-5 space-y-3.5 text-sm">
+                  <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+                    <span class="text-slate-500">Peserta</span>
+                    <span class="font-bold text-slate-900 truncate max-w-[180px]">${escapeHTML(
+                      state.participantName.trim() || "Calon Dokter Hewan"
+                    )}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+                    <span class="text-slate-500">Mode</span>
+                    <span class="font-bold px-2.5 py-0.5 rounded-md text-xs ${
+                      state.mode === "cbt"
+                        ? "bg-[#e6f4f1] text-[#0f5c54]"
+                        : "bg-amber-100 text-amber-800"
+                    }">
+                      ${state.mode === "cbt" ? "Ujian CBT Standar" : "Latihan Interaktif"}
+                    </span>
+                  </div>
+                  <div class="flex justify-between items-start py-1.5 border-b border-slate-100 gap-2">
+                    <span class="text-slate-500 shrink-0">Paket</span>
+                    <span class="font-bold text-slate-900 text-right">${escapeHTML(selectedPkg.title)}</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+                    <span class="text-slate-500">Jumlah &amp; Waktu</span>
+                    <span class="font-bold text-[#0f5c54]">${selectedPkg.count} Soal • ${selectedPkg.minutes} Menit</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+                    <span class="text-slate-500">Passing Grade</span>
+                    <span class="font-bold text-slate-800">Skor &ge; 65 (LULUS)</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1.5">
+                    <span class="text-slate-500">Pengacakan</span>
+                    <span class="text-xs font-semibold text-slate-700">
+                      ${
+                        state.shuffleQuestions && state.shuffleOptions
+                          ? "Soal &amp; Opsi Diacak"
+                          : state.shuffleQuestions
+                          ? "Soal Diacak"
+                          : state.shuffleOptions
+                          ? "Opsi Diacak"
+                          : "Urutan Standar"
+                      }
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onclick="startExamSession()"
+                    class="w-full mt-2 py-3.5 px-5 rounded-xl bg-[#0f5c54] hover:bg-[#0b4640] active:scale-[0.99] text-white font-bold text-base shadow-md transition flex items-center justify-center gap-2.5 cursor-pointer"
+                  >
+                    <span>Mulai Simulasi Sekarang</span>
+                    <svg class="w-5 h-5 text-[#eab308]" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Panduan Shortcut Keyboard -->
+              <div class="bg-white rounded-2xl border border-slate-200 p-4 text-xs text-slate-600 space-y-2">
+                <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                  <svg class="w-4 h-4 text-[#0f5c54]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                  </svg>
+                  <span>Pintasan Keyboard CBT</span>
+                </div>
+                <div class="grid grid-cols-2 gap-1.5 pt-1">
+                  <div><kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono font-bold text-slate-800">A</kbd>–<kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono font-bold text-slate-800">E</kbd> Pilih Jawaban</div>
+                  <div><kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono font-bold text-slate-800">R</kbd> Tandai Ragu-ragu</div>
+                  <div class="col-span-2"><kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono font-bold text-slate-800">&larr;</kbd> / <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono font-bold text-slate-800">&rarr;</kbd> Soal Sebelumnya / Selanjutnya</div>
+                </div>
+              </div>
+            </aside>
+
+          </div>
+        </main>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * RENDER 2: ANTARMUKA PENGERJAAN CBT
+     * ============================================================================
+     */
+    function renderExam() {
+      const q = state.sessionQuestions[state.currentIndex];
+      const total = state.sessionQuestions.length;
+      const userAns = state.userAnswers[state.currentIndex];
+      const isFlagged = state.flagged[state.currentIndex];
+
+      const answeredCount = state.userAnswers.filter((a) => a !== null).length;
+      const flaggedCount = state.flagged.filter(Boolean).length;
+      const unansweredCount = total - answeredCount;
+
+      // Skala Ukuran Font
+      const caseFontClass =
+        state.fontSizeLevel === 0
+          ? "text-xs sm:text-sm"
+          : state.fontSizeLevel === 2
+          ? "text-base sm:text-lg"
+          : "text-sm sm:text-base";
+      const questionFontClass =
+        state.fontSizeLevel === 0
+          ? "text-sm sm:text-base"
+          : state.fontSizeLevel === 2
+          ? "text-lg sm:text-xl"
+          : "text-base sm:text-[17px]";
+      const optionFontClass =
+        state.fontSizeLevel === 0
+          ? "text-xs sm:text-sm"
+          : state.fontSizeLevel === 2
+          ? "text-base sm:text-lg"
+          : "text-sm sm:text-[15px]";
+
+      const showInstantFeedback = state.mode === "practice" && userAns !== null;
+      const isUserCorrect = userAns === q.correctIndex;
+
+      // Grid Navigasi Nomor Soal (dipakai di desktop sidebar & mobile drawer)
+      const renderNumberGrid = () => `
+        <div class="grid grid-cols-5 gap-2">
+          ${state.sessionQuestions
+            .map((_, idx) => {
+              const ans = state.userAnswers[idx];
+              const flg = state.flagged[idx];
+              const active = idx === state.currentIndex;
+
+              let baseColor = "bg-white border-slate-300 text-slate-700 hover:bg-slate-50";
+              if (flg) {
+                baseColor = "bg-[#eab308] border-[#ca8a04] text-slate-950 font-extrabold";
+              } else if (ans !== null) {
+                baseColor = "bg-[#0f5c54] border-[#0f5c54] text-white font-bold";
+              }
+
+              const activeOutline = active
+                ? "ring-2 ring-offset-2 ring-slate-900 scale-[1.03]"
+                : "";
+
+              return `
+                <button
+                  type="button"
+                  onclick="goToQuestion(${idx})"
+                  class="h-10 rounded-xl border text-xs sm:text-sm font-semibold transition flex items-center justify-center cursor-pointer ${baseColor} ${activeOutline}"
+                  title="Soal ${idx + 1}"
+                >
+                  ${idx + 1}
+                </button>
+              `;
+            })
+            .join("")}
+        </div>
+      `;
+
+      const isUrgent = state.remainingSeconds < 300;
+
+      return `
+        <!-- Header Atas CBT Sticky -->
+        <header class="sticky top-0 z-30 bg-[#0f5c54] text-white shadow-md border-b-2 border-[#eab308]">
+          <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2.5">
+            
+            <!-- Kiri: Identitas & Badge Soal -->
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-9 h-9 rounded-xl bg-[#eab308] text-[#134e4a] font-extrabold text-sm flex items-center justify-center shrink-0">
+                CBT
+              </div>
+              <div class="min-w-0">
+                <div class="font-extrabold text-xs sm:text-sm tracking-tight truncate">
+                  TRY OUT BATCH 3 — SIGAP UKMPPDH
+                </div>
+                <div class="flex items-center gap-1.5 text-[11px] text-emerald-100 truncate">
+                  <span class="truncate">${escapeHTML(state.participantName)}</span>
+                  <span>•</span>
+                  <span class="text-[#fef08a] font-semibold">${
+                    state.mode === "cbt" ? "Mode CBT" : "Mode Latihan"
+                  }</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Kanan: Font Adjuster, Timer, Tombol Selesai -->
+            <div class="flex items-center gap-2 sm:gap-3 ml-auto">
+              <!-- Pengatur Ukuran Teks -->
+              <div class="hidden md:flex items-center bg-[#134e4a] rounded-xl p-1 border border-white/15" title="Ukuran Teks Soal">
+                <button
+                  type="button"
+                  onclick="changeFontSize(-1)"
+                  class="px-2 py-1 rounded-lg text-xs font-bold transition ${
+                    state.fontSizeLevel === 0 ? "bg-[#eab308] text-slate-950" : "text-white/80 hover:text-white"
+                  }"
+                >A-</button>
+                <button
+                  type="button"
+                  onclick="state.fontSizeLevel = 1; render();"
+                  class="px-2 py-1 rounded-lg text-xs font-bold transition ${
+                    state.fontSizeLevel === 1 ? "bg-[#eab308] text-slate-950" : "text-white/80 hover:text-white"
+                  }"
+                >A</button>
+                <button
+                  type="button"
+                  onclick="changeFontSize(1)"
+                  class="px-2 py-1 rounded-lg text-xs font-bold transition ${
+                    state.fontSizeLevel === 2 ? "bg-[#eab308] text-slate-950" : "text-white/80 hover:text-white"
+                  }"
+                >A+</button>
+              </div>
+
+              <!-- Timer Hitung Mundur -->
+              <div
+                id="cbt-timer-box"
+                class="${
+                  isUrgent
+                    ? "flex items-center gap-2 px-3 py-1.5 rounded-xl bg-rose-600 text-white font-mono font-bold text-sm sm:text-base shadow-sm animate-pulse"
+                    : "flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#134e4a] border border-white/20 text-[#eab308] font-mono font-bold text-sm sm:text-base"
+                }"
+              >
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                <span id="cbt-timer-display">${formatClock(state.remainingSeconds)}</span>
+              </div>
+
+              <!-- Toggle Drawer Mobile -->
+              <button
+                type="button"
+                onclick="toggleMobileDrawer(true)"
+                class="lg:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#134e4a] hover:bg-[#0b4640] border border-white/20 text-white text-xs font-bold transition"
+              >
+                <svg class="w-4 h-4 text-[#eab308]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                </svg>
+                <span>${answeredCount}/${total}</span>
+              </button>
+
+              <!-- Tombol Selesai Ujian -->
+              <button
+                type="button"
+                onclick="openConfirmFinishModal()"
+                class="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-[#eab308] hover:bg-[#ca8a04] text-slate-950 font-extrabold text-xs sm:text-sm shadow-sm transition cursor-pointer"
+              >
+                Selesai Ujian
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Konten Utama CBT -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Area Soal Utama (Kiri / Tengah) -->
+            <div class="lg:col-span-8 flex flex-col gap-4 animate-fade-in">
+              
+              <!-- Kartu Soal -->
+              <article class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+                <!-- Bar Informasi Soal -->
+                <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-3 py-1 rounded-lg bg-[#0f5c54] text-white font-extrabold text-xs sm:text-sm">
+                      Soal No. ${state.currentIndex + 1} <span class="font-normal text-emerald-200">/ ${total}</span>
+                    </span>
+                    <span class="px-3 py-1 rounded-lg bg-[#e6f4f1] text-[#134e4a] border border-[#0f5c54]/20 font-bold text-xs">
+                      ${escapeHTML(q.category)}
+                    </span>
+                    ${
+                      state.shuffleQuestions
+                        ? `<span class="text-[11px] text-slate-400 font-medium">(Bank #${q.id})</span>`
+                        : ""
+                    }
+                  </div>
+
+                  <!-- Font Adjuster Mobile -->
+                  <div class="flex md:hidden items-center bg-white rounded-lg p-0.5 border border-slate-200">
+                    <button type="button" onclick="changeFontSize(-1)" class="px-2 py-0.5 text-xs font-bold text-slate-700">A-</button>
+                    <button type="button" onclick="state.fontSizeLevel = 1; render();" class="px-2 py-0.5 text-xs font-bold text-slate-700">A</button>
+                    <button type="button" onclick="changeFontSize(1)" class="px-2 py-0.5 text-xs font-bold text-slate-700">A+</button>
+                  </div>
+                </div>
+
+                <!-- Isi Kasus & Pertanyaan -->
+                <div class="p-5 sm:p-7 space-y-5">
+                  ${
+                    q.kasus
+                      ? `
+                        <div class="p-4 sm:p-5 rounded-xl bg-[#e6f4f1]/55 border-l-4 border-[#0f5c54] border-y border-r border-[#0f5c54]/15">
+                          <div class="text-[11px] font-extrabold uppercase tracking-wider text-[#0f5c54] mb-1.5 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+                            <span>Uraian Kasus</span>
+                          </div>
+                          <p class="${caseFontClass} text-slate-800 leading-relaxed font-normal">
+                            ${formatRichText(q.kasus)}
+                          </p>
+                        </div>
+                      `
+                      : ""
+                  }
+
+                  <!-- Pertanyaan -->
+                  <div>
+                    <p class="${questionFontClass} font-bold text-slate-900 leading-relaxed">
+                      ${formatRichText(q.tanya)}
+                    </p>
+                  </div>
+
+                  <!-- Pilihan Jawaban A - E -->
+                  <div class="space-y-3 pt-1">
+                    ${q.options
+                      .map((optText, optIdx) => {
+                        const letter = OPTION_LETTERS[optIdx];
+                        const isSelected = userAns === optIdx;
+                        const isCorrectOpt = optIdx === q.correctIndex;
+
+                        let cardStyle =
+                          "border-slate-200 bg-white hover:border-[#0f5c54]/60 hover:bg-slate-50/80 text-slate-800";
+                        let badgeStyle =
+                          "bg-slate-100 text-slate-700 border-slate-300 group-hover:bg-[#0f5c54] group-hover:text-white group-hover:border-[#0f5c54]";
+                        let statusTag = "";
+
+                        if (showInstantFeedback) {
+                          if (isCorrectOpt) {
+                            cardStyle =
+                              "border-emerald-600 bg-emerald-50/90 text-emerald-950 ring-1 ring-emerald-600";
+                            badgeStyle = "bg-emerald-600 text-white border-emerald-600";
+                            statusTag = `<span class="ml-auto shrink-0 px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Kunci Jawaban</span>`;
+                          } else if (isSelected && !isCorrectOpt) {
+                            cardStyle =
+                              "border-rose-500 bg-rose-50/90 text-rose-950 ring-1 ring-rose-500";
+                            badgeStyle = "bg-rose-600 text-white border-rose-600";
+                            statusTag = `<span class="ml-auto shrink-0 px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[11px] font-bold">Pilihan Anda</span>`;
+                          }
+                        } else if (isSelected) {
+                          cardStyle =
+                            "border-[#0f5c54] bg-[#e6f4f1] text-[#134e4a] ring-1 ring-[#0f5c54] shadow-xs";
+                          badgeStyle = "bg-[#0f5c54] text-white border-[#0f5c54]";
+                        }
+
+                        return `
+                          <button
+                            type="button"
+                            onclick="selectAnswer(${optIdx})"
+                            class="group w-full text-left p-3.5 sm:p-4 rounded-xl border-2 transition flex items-center gap-3.5 cursor-pointer ${cardStyle}"
+                          >
+                            <span class="w-9 h-9 rounded-xl border font-extrabold text-sm flex items-center justify-center shrink-0 transition ${badgeStyle}">
+                              ${letter}
+                            </span>
+                            <span class="${optionFontClass} font-medium leading-snug flex-1">
+                              ${formatRichText(optText)}
+                            </span>
+                            ${statusTag}
+                          </button>
+                        `;
+                      })
+                      .join("")}
+                  </div>
+
+                  <!-- Panel Pembahasan Langsung (Khusus Mode Latihan Interaktif) -->
+                  ${
+                    showInstantFeedback
+                      ? `
+                        <div class="mt-6 rounded-2xl border-2 ${
+                          isUserCorrect
+                            ? "border-emerald-500 bg-emerald-50/60"
+                            : "border-rose-400 bg-rose-50/60"
+                        } p-4 sm:p-5 animate-fade-in">
+                          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b ${
+                            isUserCorrect ? "border-emerald-200" : "border-rose-200"
+                          }">
+                            <div class="flex items-center gap-2">
+                              ${
+                                isUserCorrect
+                                  ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-600 text-white text-xs font-extrabold">
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                                      JAWABAN BENAR!
+                                    </span>`
+                                  : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-rose-600 text-white text-xs font-extrabold">
+                                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                                      JAWABAN KURANG TEPAT
+                                    </span>`
+                              }
+                            </div>
+                            <div class="text-xs font-bold text-slate-800 bg-white px-3 py-1 rounded-lg border border-slate-200">
+                              Kunci Jawaban: <span class="text-emerald-700">${OPTION_LETTERS[q.correctIndex]}</span>
+                            </div>
+                          </div>
+
+                          <div class="space-y-3 text-sm text-slate-800 leading-relaxed">
+                            <div>
+                              <div class="font-extrabold text-xs uppercase tracking-wider text-[#0f5c54] mb-1">Pembahasan Lengkap</div>
+                              <p>${formatRichText(q.pembahasan)}</p>
+                            </div>
+                            <div class="pt-2 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-2">
+                              <div class="text-xs text-slate-600 break-all">
+                                <span class="font-bold text-slate-800">Referensi: </span>
+                                ${renderReferenceMarkup(q.ref)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      `
+                      : ""
+                  }
+                </div>
+              </article>
+
+              <!-- Bar Navigasi Bawah -->
+              <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-3.5 sm:p-4 flex flex-wrap items-center justify-between gap-2.5">
+                <!-- Sebelumnya -->
+                <button
+                  type="button"
+                  onclick="goToQuestion(${state.currentIndex - 1})"
+                  ${state.currentIndex === 0 ? "disabled" : ""}
+                  class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                  </svg>
+                  <span>Sebelumnya</span>
+                </button>
+
+                <!-- Tengah: Reset & Ragu-ragu -->
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onclick="resetCurrentAnswer()"
+                    ${userAns === null ? "disabled" : ""}
+                    class="px-3.5 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:text-rose-600 hover:border-rose-300 hover:bg-rose-50 font-semibold text-xs sm:text-sm disabled:opacity-40 disabled:pointer-events-none transition cursor-pointer"
+                  >
+                    Reset Pilihan
+                  </button>
+
+                  <button
+                    type="button"
+                    onclick="toggleFlagCurrent()"
+                    class="px-3.5 py-2.5 rounded-xl font-bold text-xs sm:text-sm border transition flex items-center gap-1.5 cursor-pointer ${
+                      isFlagged
+                        ? "bg-[#eab308] border-[#ca8a04] text-slate-950 shadow-xs"
+                        : "bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100"
+                    }"
+                  >
+                    <svg class="w-4 h-4" fill="${isFlagged ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
+                    </svg>
+                    <span>Ragu-ragu</span>
+                  </button>
+                </div>
+
+                <!-- Selanjutnya / Selesai -->
+                ${
+                  state.currentIndex < total - 1
+                    ? `
+                      <button
+                        type="button"
+                        onclick="goToQuestion(${state.currentIndex + 1})"
+                        class="px-4 py-2.5 rounded-xl bg-[#0f5c54] hover:bg-[#0b4640] text-white font-semibold text-xs sm:text-sm shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>Selanjutnya</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                        </svg>
+                      </button>
+                    `
+                    : `
+                      <button
+                        type="button"
+                        onclick="openConfirmFinishModal()"
+                        class="px-5 py-2.5 rounded-xl bg-[#eab308] hover:bg-[#ca8a04] text-slate-950 font-extrabold text-xs sm:text-sm shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>Selesai Ujian</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                        </svg>
+                      </button>
+                    `
+                }
+              </div>
+
+            </div>
+
+            <!-- Sidebar Navigasi Nomor Soal (Desktop) -->
+            <aside class="hidden lg:block lg:col-span-4 sticky top-20 space-y-4">
+              <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+                <div class="bg-[#134e4a] px-4 py-3.5 text-white flex items-center justify-between">
+                  <span class="font-bold text-sm">Navigasi Nomor Soal</span>
+                  <span class="text-xs font-semibold text-[#fef08a]">${answeredCount}/${total} Dijawab</span>
+                </div>
+
+                <!-- Statistik Ringkas Real-time -->
+                <div class="grid grid-cols-3 gap-2 p-3.5 bg-slate-50 border-b border-slate-200 text-center">
+                  <div class="bg-white rounded-xl p-2 border border-slate-200">
+                    <div class="text-base font-extrabold text-[#0f5c54]">${answeredCount}</div>
+                    <div class="text-[11px] font-medium text-slate-500">Dijawab</div>
+                  </div>
+                  <div class="bg-white rounded-xl p-2 border border-slate-200">
+                    <div class="text-base font-extrabold text-amber-500">${flaggedCount}</div>
+                    <div class="text-[11px] font-medium text-slate-500">Ragu-ragu</div>
+                  </div>
+                  <div class="bg-white rounded-xl p-2 border border-slate-200">
+                    <div class="text-base font-extrabold text-slate-700">${unansweredCount}</div>
+                    <div class="text-[11px] font-medium text-slate-500">Belum</div>
+                  </div>
+                </div>
+
+                <!-- Grid Nomor -->
+                <div class="p-4 max-h-[400px] overflow-y-auto">
+                  ${renderNumberGrid()}
+                </div>
+
+                <!-- Legenda Warna -->
+                <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3.5 h-3.5 rounded bg-[#0f5c54] inline-block"></span>
+                    <span>Dijawab</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3.5 h-3.5 rounded bg-[#eab308] inline-block"></span>
+                    <span>Ragu-ragu</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-3.5 h-3.5 rounded bg-white border border-slate-400 inline-block"></span>
+                    <span>Kosong</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+          </div>
+        </main>
+
+        <!-- Drawer Navigasi Mobile / Tablet -->
+        ${
+          state.mobileDrawerOpen
+            ? `
+              <div class="fixed inset-0 z-50 lg:hidden flex justify-end bg-slate-900/60 backdrop-blur-xs animate-fade-in">
+                <div class="bg-white w-full max-w-sm h-full flex flex-col shadow-2xl">
+                  <div class="bg-[#134e4a] px-4 py-4 text-white flex items-center justify-between">
+                    <div>
+                      <h3 class="font-bold text-sm">Navigasi Nomor Soal</h3>
+                      <p class="text-[11px] text-emerald-200">${answeredCount} Dijawab • ${flaggedCount} Ragu • ${unansweredCount} Kosong</p>
+                    </div>
+                    <button
+                      type="button"
+                      onclick="toggleMobileDrawer(false)"
+                      class="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white"
+                      aria-label="Tutup Drawer"
+                    >
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="p-4 flex-1 overflow-y-auto">
+                    ${renderNumberGrid()}
+                  </div>
+                  <div class="p-4 border-t border-slate-200 bg-slate-50">
+                    <button
+                      type="button"
+                      onclick="toggleMobileDrawer(false); openConfirmFinishModal();"
+                      class="w-full py-3 rounded-xl bg-[#eab308] text-slate-950 font-extrabold text-sm shadow-sm"
+                    >
+                      Selesai Ujian Sekarang
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `
+            : ""
+        }
+      `;
+    }
+
+    function renderReferenceMarkup(refText) {
+      if (!refText) return "-";
+      const isUrl = /^https?:\/\//i.test(refText.trim());
+      if (isUrl) {
+        const safeUrl = escapeHTML(refText.trim());
+        return `
+          <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[#0f5c54] hover:text-[#0b4640] underline font-semibold break-all">
+            <span>${safeUrl}</span>
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+            </svg>
+          </a>
+        `;
+      }
+      const safeStr = escapeHTML(refText.trim());
+      return `
+        <span class="text-slate-700 font-medium">${safeStr}</span>
+        <button
+          type="button"
+          onclick='copyTextToClipboard(${JSON.stringify(refText.trim())})'
+          class="ml-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-600 text-[11px] font-semibold transition"
+          title="Salin sitasi referensi"
+        >
+          Salin
+        </button>
+      `;
+    }
+
+    /**
+     * ============================================================================
+     * RENDER 3: HALAMAN HASIL, SKOR & PEMBAHASAN LENGKAP
+     * ============================================================================
+     */
+    function renderResults() {
+      const total = state.sessionQuestions.length;
+      let correctCount = 0;
+      let wrongCount = 0;
+      let emptyCount = 0;
+
+      // Hitung agregat global & per bidang ilmu
+      const categoryStatsMap = {};
+
+      const evaluatedList = state.sessionQuestions.map((q, idx) => {
+        const ans = state.userAnswers[idx];
+        let status = "unanswered";
+        if (ans === null) {
+          emptyCount += 1;
+          status = "unanswered";
+        } else if (ans === q.correctIndex) {
+          correctCount += 1;
+          status = "correct";
+        } else {
+          wrongCount += 1;
+          status = "wrong";
+        }
+
+        if (!categoryStatsMap[q.category]) {
+          categoryStatsMap[q.category] = { category: q.category, total: 0, correct: 0 };
+        }
+        categoryStatsMap[q.category].total += 1;
+        if (status === "correct") {
+          categoryStatsMap[q.category].correct += 1;
+        }
+
+        return {
+          sessionNo: idx + 1,
+          q,
+          userAns: ans,
+          status
+        };
+      });
+
+      const rawScore = total > 0 ? (correctCount / total) * 100 : 0;
+      const displayScore = Number.isInteger(rawScore) ? rawScore : rawScore.toFixed(1);
+      const isPassed = rawScore >= 65;
+
+      const categoryStats = Object.values(categoryStatsMap);
+      const missedCount = wrongCount + emptyCount;
+
+      // Terapkan Filter & Pencarian pada Pembahasan
+      const searchLower = state.reviewSearch.trim().toLowerCase();
+      const filteredReviews = evaluatedList.filter((item) => {
+        if (state.reviewFilter !== "all" && item.status !== state.reviewFilter) {
+          return false;
+        }
+        if (state.reviewCategoryFilter !== "all" && item.q.category !== state.reviewCategoryFilter) {
+          return false;
+        }
+        if (searchLower) {
+          const haystack = [
+            `soal ${item.sessionNo}`,
+            `#${item.q.id}`,
+            item.q.category,
+            item.q.kasus,
+            item.q.tanya,
+            ...item.q.options,
+            item.q.pembahasan,
+            item.q.ref
+          ]
+            .join(" ")
+            .toLowerCase();
+          if (!haystack.includes(searchLower)) return false;
+        }
+        return true;
+      });
+
+      return `
+        <!-- Header Hasil -->
+        <header class="bg-gradient-to-r from-[#134e4a] via-[#0f5c54] to-[#134e4a] text-white shadow-md border-b-4 border-[#eab308]">
+          <div class="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-[#fef08a] mb-0.5">
+                Laporan Evaluasi Hasil CBT
+              </div>
+              <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">
+                TRY OUT BATCH 3 — SIGAP UKMPPDH
+              </h1>
+              <p class="text-xs sm:text-sm text-emerald-100 mt-0.5">
+                Peserta: <strong class="text-white">${escapeHTML(state.participantName)}</strong> • ${escapeHTML(state.sessionLabel)}
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+              ${
+                missedCount > 0
+                  ? `
+                    <button
+                      type="button"
+                      onclick="retryWrongQuestions()"
+                      class="px-4 py-2.5 rounded-xl bg-[#eab308] hover:bg-[#ca8a04] text-slate-950 font-extrabold text-xs sm:text-sm shadow-sm transition flex items-center gap-2 cursor-pointer"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                      </svg>
+                      <span>Kerjakan Ulang Soal yang Salah (${missedCount})</span>
+                    </button>
+                  `
+                  : ""
+              }
+              <button
+                type="button"
+                onclick="backToLobby()"
+                class="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 text-white font-bold text-xs sm:text-sm transition cursor-pointer"
+              >
+                Kembali ke Menu Utama
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+          
+          <!-- Grid Atas: Kartu Skor Akhir & Analisis Per Bidang Ilmu -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            
+            <!-- Kartu Skor Akhir (Skala 100) -->
+            <section class="lg:col-span-5 bg-white rounded-2xl shadow-xs border border-slate-200 p-6 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Skor Akhir CBT</span>
+                  <span class="px-3 py-1 rounded-full text-xs font-extrabold tracking-wide ${
+                    isPassed
+                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                      : "bg-rose-100 text-rose-800 border border-rose-300"
+                  }">
+                    ${isPassed ? "LULUS (STANDAR UKMPPDH)" : "PERLU EVALUASI (< 65)"}
+                  </span>
+                </div>
+
+                <div class="flex items-baseline gap-2 my-2">
+                  <span class="text-5xl sm:text-6xl font-extrabold tracking-tight ${
+                    isPassed ? "text-[#0f5c54]" : "text-rose-600"
+                  }">${displayScore}</span>
+                  <span class="text-lg font-bold text-slate-400">/ 100</span>
+                </div>
+                <p class="text-xs text-slate-500 mb-5">
+                  Batas kelulusan nasional (Passing Grade) simulasi UKMPPDH adalah skor <strong>65.0</strong>.
+                </p>
+              </div>
+
+              <!-- Rincian Benar, Salah, Kosong, Durasi -->
+              <div class="space-y-3">
+                <div class="grid grid-cols-3 gap-2.5 text-center">
+                  <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                    <div class="text-xl font-extrabold text-emerald-700">${correctCount}</div>
+                    <div class="text-[11px] font-bold text-emerald-800">Benar</div>
+                  </div>
+                  <div class="p-3 rounded-xl bg-rose-50 border border-rose-200">
+                    <div class="text-xl font-extrabold text-rose-700">${wrongCount}</div>
+                    <div class="text-[11px] font-bold text-rose-800">Salah</div>
+                  </div>
+                  <div class="p-3 rounded-xl bg-slate-100 border border-slate-200">
+                    <div class="text-xl font-extrabold text-slate-700">${emptyCount}</div>
+                    <div class="text-[11px] font-bold text-slate-600">Kosong</div>
+                  </div>
+                </div>
+
+                <div class="px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs sm:text-sm">
+                  <span class="text-slate-600 font-medium flex items-center gap-1.5">
+                    <svg class="w-4 h-4 text-[#0f5c54]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    Durasi Pengerjaan
+                  </span>
+                  <span class="font-bold text-slate-900">${formatDurationText(state.elapsedSeconds)}</span>
+                </div>
+              </div>
+            </section>
+
+            <!-- Grafik / Progress Bar Analisis Performa per Bidang Ilmu -->
+            <section class="lg:col-span-7 bg-white rounded-2xl shadow-xs border border-slate-200 p-6 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-4">
+                  <div>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-900">Analisis Performa per Bidang Ilmu</h2>
+                    <p class="text-xs text-slate-500">Persentase ketepatan jawaban berdasarkan topik kedokteran hewan</p>
+                  </div>
+                </div>
+
+                <div class="space-y-3.5">
+                  ${categoryStats
+                    .map((cat) => {
+                      const pct = cat.total > 0 ? Math.round((cat.correct / cat.total) * 100) : 0;
+                      const barColor =
+                        pct >= 65
+                          ? "bg-[#0f5c54]"
+                          : pct >= 50
+                          ? "bg-[#eab308]"
+                          : "bg-rose-500";
+                      const badgeText =
+                        pct >= 65
+                          ? "text-[#0f5c54]"
+                          : pct >= 50
+                          ? "text-amber-700"
+                          : "text-rose-600";
+
+                      return `
+                        <div>
+                          <div class="flex items-center justify-between text-xs sm:text-sm mb-1">
+                            <span class="font-semibold text-slate-800">${escapeHTML(cat.category)}</span>
+                            <span class="font-bold ${badgeText}">
+                              ${cat.correct}/${cat.total} (${pct}%)
+                            </span>
+                          </div>
+                          <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/60">
+                            <div class="h-full ${barColor} rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                          </div>
+                        </div>
+                      `;
+                    })
+                    .join("")}
+                </div>
+              </div>
+
+              <div class="mt-5 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-4 text-[11px] text-slate-500">
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#0f5c54]"></span> Kompeten (&ge; 65%)</span>
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-[#eab308]"></span> Cukup (50%–64%)</span>
+                <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Perlu Pendalaman (&lt; 50%)</span>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- Bagian Filter & Pencarian Pembahasan -->
+          <section class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 sm:p-5 space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <!-- Tab Filter Status -->
+              <div class="flex flex-wrap items-center gap-2">
+                ${[
+                  { id: "all", label: `Semua Soal (${total})` },
+                  { id: "wrong", label: `Jawaban Salah (${wrongCount})` },
+                  { id: "correct", label: `Jawaban Benar (${correctCount})` },
+                  { id: "unanswered", label: `Tidak Dijawab (${emptyCount})` }
+                ]
+                  .map((tab) => {
+                    const active = state.reviewFilter === tab.id;
+                    return `
+                      <button
+                        type="button"
+                        onclick="state.reviewFilter = '${tab.id}'; render();"
+                        class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer ${
+                          active
+                            ? "bg-[#0f5c54] text-white shadow-xs"
+                            : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                        }"
+                      >
+                        ${tab.label}
+                      </button>
+                    `;
+                  })
+                  .join("")}
+              </div>
+
+              <!-- Filter Kategori & Search -->
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                <select
+                  onchange="state.reviewCategoryFilter = this.value; render();"
+                  class="px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0f5c54]"
+                >
+                  <option value="all" ${state.reviewCategoryFilter === "all" ? "selected" : ""}>Semua Bidang Ilmu</option>
+                  ${categoryStats
+                    .map(
+                      (c) =>
+                        `<option value="${escapeHTML(c.category)}" ${
+                          state.reviewCategoryFilter === c.category ? "selected" : ""
+                        }>${escapeHTML(c.category)}</option>`
+                    )
+                    .join("")}
+                </select>
+
+                <div class="relative min-w-[230px]">
+                  <input
+                    id="review-search-input"
+                    type="text"
+                    value="${escapeHTML(state.reviewSearch)}"
+                    oninput="handleReviewSearch(this.value)"
+                    placeholder="Cari kata kunci soal/pembahasan..."
+                    class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0f5c54]"
+                  />
+                  <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Daftar Kartu Review Pembahasan per Soal -->
+          <section id="review-cards-list" class="space-y-4">
+            ${
+              filteredReviews.length === 0
+                ? `
+                  <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center">
+                    <p class="text-slate-600 font-semibold text-sm">Tidak ada soal yang sesuai dengan filter atau kata kunci pencarian Anda.</p>
+                    <button
+                      type="button"
+                      onclick="state.reviewFilter = 'all'; state.reviewCategoryFilter = 'all'; state.reviewSearch = ''; render();"
+                      class="mt-3 px-4 py-2 rounded-xl bg-[#0f5c54] text-white text-xs font-bold"
+                    >
+                      Reset Filter Pembahasan
+                    </button>
+                  </div>
+                `
+                : filteredReviews
+                    .map(({ sessionNo, q, userAns, status }) => {
+                      const statusBadge =
+                        status === "correct"
+                          ? `<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-extrabold">Benar</span>`
+                          : status === "wrong"
+                          ? `<span class="px-3 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-xs font-extrabold">Salah</span>`
+                          : `<span class="px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-extrabold">Tidak Dijawab</span>`;
+
+                      return `
+                        <article class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden">
+                          <!-- Top Bar Card -->
+                          <div class="px-5 py-3.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                              <span class="px-2.5 py-1 rounded-lg bg-[#134e4a] text-white font-extrabold text-xs">
+                                Soal #${sessionNo} ${sessionNo !== q.id ? `(Bank No. ${q.id})` : ""}
+                              </span>
+                              <span class="px-2.5 py-1 rounded-lg bg-[#e6f4f1] text-[#0f5c54] font-bold text-xs">
+                                ${escapeHTML(q.category)}
+                              </span>
+                            </div>
+                            ${statusBadge}
+                          </div>
+
+                          <!-- Body Card -->
+                          <div class="p-5 sm:p-6 space-y-4">
+                            ${
+                              q.kasus
+                                ? `
+                                  <div class="p-4 rounded-xl bg-[#e6f4f1]/50 border-l-4 border-[#0f5c54] text-sm text-slate-800 leading-relaxed">
+                                    <div class="text-[11px] font-extrabold uppercase tracking-wider text-[#0f5c54] mb-1">Uraian Kasus</div>
+                                    <p>${formatRichText(q.kasus)}</p>
+                                  </div>
+                                `
+                                : ""
+                            }
+
+                            <p class="font-bold text-slate-900 text-sm sm:text-base leading-relaxed">
+                              ${formatRichText(q.tanya)}
+                            </p>
+
+                            <!-- Opsi A-E Review -->
+                            <div class="space-y-2">
+                              ${q.options
+                                .map((optText, optIdx) => {
+                                  const letter = OPTION_LETTERS[optIdx];
+                                  const isKey = optIdx === q.correctIndex;
+                                  const isUserPick = optIdx === userAns;
+
+                                  let rowClass = "border-slate-200 bg-white text-slate-700";
+                                  let badgeClass = "bg-slate-100 text-slate-600";
+                                  let tags = "";
+
+                                  if (isKey) {
+                                    rowClass = "border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold";
+                                    badgeClass = "bg-emerald-600 text-white";
+                                    tags += `<span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[11px] font-bold">Kunci Jawaban</span>`;
+                                  }
+                                  if (isUserPick && !isKey) {
+                                    rowClass = "border-rose-500 bg-rose-50 text-rose-950 font-semibold";
+                                    badgeClass = "bg-rose-600 text-white";
+                                    tags += `<span class="px-2 py-0.5 rounded bg-rose-600 text-white text-[11px] font-bold">Jawaban Anda (Salah)</span>`;
+                                  } else if (isUserPick && isKey) {
+                                    tags += `<span class="px-2 py-0.5 rounded bg-[#0f5c54] text-white text-[11px] font-bold">Jawaban Anda</span>`;
+                                  }
+
+                                  return `
+                                    <div class="p-3 rounded-xl border flex flex-wrap sm:flex-nowrap items-center gap-3 text-xs sm:text-sm ${rowClass}">
+                                      <span class="w-7 h-7 rounded-lg font-extrabold text-xs flex items-center justify-center shrink-0 ${badgeClass}">
+                                        ${letter}
+                                      </span>
+                                      <span class="flex-1 leading-snug">${formatRichText(optText)}</span>
+                                      ${tags ? `<div class="flex items-center gap-1.5 ml-auto shrink-0">${tags}</div>` : ""}
+                                    </div>
+                                  `;
+                                })
+                                .join("")}
+                            </div>
+
+                            <!-- Kotak Pembahasan & Referensi Literatur -->
+                            <div class="mt-4 p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                              <div>
+                                <div class="text-xs font-extrabold uppercase tracking-wider text-[#0f5c54] mb-1 flex items-center gap-1.5">
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+                                  </svg>
+                                  <span>Pembahasan Mendalam</span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+                                  ${formatRichText(q.pembahasan)}
+                                </p>
+                              </div>
+
+                              <div class="pt-2.5 border-t border-slate-200 text-xs text-slate-600">
+                                <span class="font-bold text-slate-800">Referensi Literatur: </span>
+                                ${renderReferenceMarkup(q.ref)}
+                              </div>
+                            </div>
+                          </div>
+                        </article>
+                      `;
+                    })
+                    .join("")
+            }
+          </section>
+
+          <!-- Tombol Aksi Bawah -->
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-2 pb-6">
+            ${
+              missedCount > 0
+                ? `
+                  <button
+                    type="button"
+                    onclick="retryWrongQuestions()"
+                    class="px-5 py-3 rounded-xl bg-[#eab308] hover:bg-[#ca8a04] text-slate-950 font-extrabold text-sm shadow-sm transition cursor-pointer"
+                  >
+                    Kerjakan Ulang Soal yang Salah (${missedCount})
+                  </button>
+                `
+                : ""
+            }
+            <button
+              type="button"
+              onclick="backToLobby()"
+              class="px-5 py-3 rounded-xl bg-[#0f5c54] hover:bg-[#0b4640] text-white font-bold text-sm shadow-sm transition cursor-pointer"
+            >
+              Kembali ke Menu Utama
+            </button>
+          </div>
+
+        </main>
+      `;
+    }
+
+    function handleReviewSearch(val) {
+      state.reviewSearch = val;
+      const activeEl = document.activeElement;
+      const selStart = activeEl && activeEl.selectionStart ? activeEl.selectionStart : val.length;
+      render();
+      const restoredInput = document.getElementById("review-search-input");
+      if (restoredInput) {
+        restoredInput.focus();
+        restoredInput.setSelectionRange(selStart, selStart);
+      }
+    }
+
+    /**
+     * ============================================================================
+     * RENDER UTAMA APLIKASI
+     * ============================================================================
+     */
+    function render() {
+      const app = document.getElementById("app");
+      if (!app) return;
+
+      if (state.screen === "lobby") {
+        app.innerHTML = renderLobby();
+      } else if (state.screen === "exam") {
+        app.innerHTML = renderExam();
+      } else if (state.screen === "results") {
+        app.innerHTML = renderResults();
+      }
+    }
+
+    // Inisialisasi aplikasi saat halaman dimuat
+    window.addEventListener("DOMContentLoaded", () => {
+      render();
+    });
+  </script>
+</body>
+</html>
