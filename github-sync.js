@@ -5,8 +5,8 @@
   const CFG_OVERRIDE_KEY = 'portal_ukmppdh_gh_cfg';
 
   let repoConfig = {
-    owner: 'muhrizky',
-    repo: 'CBT-UKMPPDH-2026',
+    owner: 'bhadreswara2509611047',
+    repo: 'Portal-Soal-UKMPPDH',
     branch: 'main',
     manifestPath: 'data/manifest.json',
     packagesDir: 'data/packages'
