@@ -1,6 +1,18 @@
 {
-  "updatedAt": "2026-11-26T13:09:49.301Z",
+  "updatedAt": "2026-11-26T13:10:49.439Z",
   "packages": [
+    {
+      "id": "gh_mwxklyx7",
+      "code": "BARU",
+      "name": "Try Out Nasional",
+      "title": "Simulasi CBT SUKSES UKMPPDH 3.0",
+      "fileName": "gh_mwxklyx7_simulasi_cbt_sukses_ukmppdh_3_0.html",
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
+      "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
+      "uploadedAt": "2026-11-26T13:10:49.439Z"
+    },
     {
       "id": "gh_mwxkknr8",
       "code": "BARU",
