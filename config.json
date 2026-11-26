@@ -3,5 +3,14 @@
   "repo": "Portal-Soal-UKMPPDH",
   "branch": "main",
   "manifestPath": "data/manifest.json",
-  "packagesDir": "data/packages"
+  "packagesDir": "data/packages",
+  "encryptedToken": {
+    "alg": "AES-GCM",
+    "kdf": "PBKDF2-SHA256",
+    "iter": 200000,
+    "salt": "BMZJi0AsL+w/pZXuO+wYkA==",
+    "iv": "en9NEqzJUuOtJGYz",
+    "data": "Jbdm19EI/rz1dMEcxWK8B5S1BQtdHWKwArpINF01RbO3UgUKHFqdC9J8BYMJibqqlsEDuiI65pOT27bmvQGWJqWndbfVPaGIGqXir4CteUUTmBltsGd9CwW3UIGHaWgoXs0Dhx8vwTutY9H/3w=="
+  },
+  "updatedAt": "2026-11-26T08:59:19.489Z"
 }
