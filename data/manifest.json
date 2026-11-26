@@ -1,6 +1,18 @@
 {
-  "updatedAt": "2026-11-26T12:16:38.326Z",
+  "updatedAt": "2026-11-26T12:17:56.904Z",
   "packages": [
+    {
+      "id": "gh_mwxipz0r",
+      "code": "BARU",
+      "name": "Try Out Nasional",
+      "title": "Tryout SIGAP Batch 42",
+      "fileName": "gh_mwxipz0r_simulasi_cbt_ukmppdh_to_sigap_batch_42.html",
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
+      "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
+      "uploadedAt": "2026-11-26T12:17:56.904Z"
+    },
     {
       "id": "gh_mwxioa41",
       "code": "BARU",
