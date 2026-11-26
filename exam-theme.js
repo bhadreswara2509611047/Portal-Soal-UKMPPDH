@@ -462,6 +462,32 @@
       border-color: #fbbf24 !important;
     }
 
+    /* Perbaikan header & banner gradien terang di Mode Gelap (Sukses 1.0, Batch 47, Batch 49) */
+    html.portal-dark .from-vetnavy-50,
+    html.portal-dark .via-white,
+    html.portal-dark .to-vetteal-50,
+    html.portal-dark .from-slate-50,
+    html.portal-dark .to-teal-50\\/50 {
+      background-image: linear-gradient(135deg, #132238 0%, #111827 55%, #0f292e 100%) !important;
+      background-color: var(--p-elevated) !important;
+    }
+    html.portal-dark .from-amber-50,
+    html.portal-dark .to-orange-50 {
+      background-image: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(234, 88, 12, 0.14)) !important;
+      background-color: var(--p-elevated) !important;
+    }
+    html.portal-dark header.from-vetnavy-900,
+    html.portal-dark .from-vetnavy-900.to-vetteal-700 {
+      background-image: linear-gradient(90deg, #0a1e3a 0%, #102d54 50%, #0f766e 100%) !important;
+      background-color: #0a1e3a !important;
+    }
+    html.portal-dark .bg-vetnavy-50\\/40 {
+      background-color: rgba(59, 130, 246, 0.16) !important;
+    }
+    html.portal-dark .ring-offset-1 {
+      --tw-ring-offset-color: #111827 !important;
+    }
+
     /* Input, Select, Tabel, Bayangan & Gambar Klinis */
     html.portal-dark input:not([type="checkbox"]):not([type="radio"]),
     html.portal-dark select,

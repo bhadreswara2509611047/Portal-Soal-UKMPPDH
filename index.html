@@ -143,13 +143,19 @@
         .custom-scroll::-webkit-scrollbar-track { background: var(--bg-subtle); }
         .custom-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
 
-        /* Badge pastel adaptif Dark Mode */
+        /* Badge & kartu paket bersih tanpa pinggiran warna */
+        .badge-pastel {
+            background-color: var(--bg-subtle) !important;
+            color: var(--text-primary) !important;
+            border: 1px solid var(--border-color);
+        }
         html.dark .badge-pastel {
-            background-color: rgba(255, 255, 255, 0.08) !important;
-            color: #e4e4e7 !important;
+            background-color: rgba(148, 163, 184, 0.12) !important;
+            color: #e2e8f0 !important;
+            border-color: rgba(148, 163, 184, 0.2) !important;
         }
         html.dark .badge-osce {
-            background-color: rgba(168, 85, 247, 0.18) !important;
+            background-color: rgba(168, 85, 247, 0.16) !important;
             color: #d8b4fe !important;
         }
         html.dark .badge-done {
@@ -158,11 +164,23 @@
             color: #6ee7b7 !important;
         }
 
-        /* Kartu paket */
-        .pkg-card { transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
-        .pkg-card:hover { transform: translateY(-2px); border-color: var(--border-strong); box-shadow: 0 8px 24px -12px rgba(15,23,42,.25); }
-        .pkg-accent { height: 4px; background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899); }
-        .pkg-card.is-done .pkg-accent { background: linear-gradient(90deg, #10b981, #34d399); }
+        /* Kartu paket rapi & minimalis */
+        .pkg-card {
+            border-color: var(--border-color);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            transition: border-color .16s ease, transform .16s ease, box-shadow .16s ease;
+        }
+        .pkg-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--border-strong);
+            box-shadow: 0 10px 24px -14px rgba(15, 23, 42, 0.22);
+        }
+        html.dark .pkg-card {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+        }
+        html.dark .pkg-card:hover {
+            box-shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.65);
+        }
         .pkg-arrow { transition: transform .15s ease; }
         .pkg-card:hover .pkg-arrow { transform: translateX(3px); }
     </style>
@@ -939,15 +957,14 @@
                 const card = document.createElement('div');
                 card.className = 'pkg-card surface border rounded-2xl overflow-hidden flex flex-col fade-in' + (isDone ? ' is-done' : '');
 
-                const iconDoc = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
-                const iconClock = '<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+                const iconDoc = '<svg class="w-4 h-4 shrink-0 text-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
+                const iconClock = '<svg class="w-4 h-4 shrink-0 text-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
                 card.innerHTML = `
-                    <div class="pkg-accent"></div>
-                    <div class="p-4 sm:p-5 flex flex-col gap-4 flex-1">
+                    <div class="p-4 sm:p-5 flex flex-col gap-3.5 flex-1">
                         <div class="flex items-center justify-between gap-2">
-                            <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="badge-pastel px-2.5 py-1 rounded-lg text-xs font-extrabold tracking-wide ${p.badgeColor}">${escapeHtml(p.code)}</span>
+                            <div class="flex flex-wrap items-center gap-1.5 min-w-0">
+                                <span class="badge-pastel px-2.5 py-1 rounded-lg text-[11px] font-bold tracking-wide">${escapeHtml(p.code)}</span>
                                 ${p.hasOsce ? '<span class="badge-osce px-2 py-1 rounded-lg text-[11px] font-bold bg-purple-100 text-purple-800">+ OSCE</span>' : ''}
                                 ${isLast ? '<span class="subtle border px-2 py-1 rounded-lg text-[11px] font-medium text-sub">Terakhir</span>' : ''}
                             </div>
@@ -957,24 +974,24 @@
                             </button>
                         </div>
 
-                        <div class="flex-1">
-                            <h2 class="text-[15px] sm:text-base font-bold text-main leading-snug line-clamp-3">${escapeHtml(p.title)}</h2>
-                            <p class="text-xs text-mute mt-1.5 truncate">${escapeHtml(p.name)}</p>
+                        <div class="flex-1 pt-0.5">
+                            <h2 class="text-[15px] sm:text-base font-bold text-main leading-snug line-clamp-2">${escapeHtml(p.title)}</h2>
+                            <p class="text-xs text-mute mt-1 truncate">${escapeHtml(p.name)}</p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2 text-sub">
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2">
                                 ${iconDoc}
-                                <span class="text-xs font-semibold text-main">${p.questions} Soal</span>
+                                <span class="text-xs font-semibold text-main truncate">${p.questions} Soal</span>
                             </div>
-                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2 text-sub">
+                            <div class="pkg-stat subtle border rounded-xl px-3 py-2 flex items-center gap-2">
                                 ${iconClock}
                                 <span class="text-xs font-semibold text-main truncate">${escapeHtml(p.duration || '-')}</span>
                             </div>
                         </div>
 
                         <button type="button" onclick="openExam('${escapeHtml(p.id)}')"
-                            class="btn-primary w-full min-h-[44px] px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2">
+                            class="btn-primary w-full min-h-[42px] px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 mt-0.5">
                             <span>${isDone ? 'Ulangi Simulasi' : 'Mulai Simulasi'}</span>
                             <span class="pkg-arrow">→</span>
                         </button>
