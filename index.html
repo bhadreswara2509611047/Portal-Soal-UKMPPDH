@@ -832,7 +832,21 @@
                 name: p.name === 'Paket HTML Tambahan' ? (p.code || 'Try Out Nasional') : p.name,
                 badgeColor: 'bg-violet-100 text-violet-800'
             }));
-            return [...extraMapped, ...BUILTIN_META];
+            const known = new Set([...extraMapped, ...BUILTIN_META].map(p => p.id));
+            const cloud = (window.PortalCloud && window.PortalCloud.list ? window.PortalCloud.list() : [])
+                .filter(p => p && p.id && !known.has(p.id))
+                .map(p => ({
+                    ...p,
+                    source: 'cloud',
+                    code: p.code || 'BARU',
+                    name: p.name || 'Try Out Nasional',
+                    title: p.title || p.fileName || p.id,
+                    questions: Number(p.questions) || 0,
+                    duration: p.duration || '',
+                    highlights: p.highlights || '',
+                    badgeColor: 'bg-blue-100 text-blue-800'
+                }));
+            return [...extraMapped, ...BUILTIN_META, ...cloud];
         }
 
         // ==================== RENDER PORTAL ====================
@@ -860,12 +874,14 @@
         }
 
         function populateQuickSwitcher() {
-            const all = getAllPackages();
+            const all = getAllPackages().filter(p => p.source !== 'cloud');
             const switcher = document.getElementById('quick-switcher');
             if (!switcher) return;
+            const prev = switcher.value;
             switcher.innerHTML = all.map(p =>
                 `<option value="${escapeHtml(p.id)}">${escapeHtml(p.code)} — ${p.questions} Soal${p.hasOsce ? ' + OSCE' : ''}</option>`
             ).join('');
+            if (prev && all.some(p => p.id === prev)) switcher.value = prev;
         }
 
         function renderCards() {
@@ -964,6 +980,11 @@
                 if (reviewRecord) alert('Paket soal ini sudah tidak tersedia di portal.');
                 return;
             }
+            if (pkg.source === 'cloud') {
+                progress.lastOpened = id;
+                saveUserProgress();
+                return window.PortalCloud.open(id, reviewRecord);
+            }
 
             if (!PortalRuntime.confirmLeave()) {
                 document.getElementById('quick-switcher').value = activePackageId;
@@ -1022,6 +1043,17 @@
             progress.done[id] = !progress.done[id];
             saveUserProgress();
             renderCards();
+        }
+
+        function isPackageDone(id) {
+            return !!(progress.done && progress.done[id]);
+        }
+
+        function togglePackageDone(id) {
+            progress.done[id] = !progress.done[id];
+            saveUserProgress();
+            updatePortalStats();
+            return !!progress.done[id];
         }
 
         function toggleActiveDone() {

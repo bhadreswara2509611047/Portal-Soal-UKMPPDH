@@ -457,6 +457,8 @@
     const iframe = window.PortalRuntime.freshFrame(oldFrame);
 
     titleEl.textContent = `${pkg.code} — ${pkg.title}`;
+    overlay.dataset.pkgId = pkg.id;
+    syncRunnerDoneBtn(overlay);
 
     iframe.onload = () => {
       window.PortalHistory.attach(iframe, {
@@ -471,6 +473,16 @@
     document.body.style.overflow = 'hidden';
     window.PortalRuntime.enter(teardownCloudRunner);
     window.syncExamTheme();
+  }
+
+  function syncRunnerDoneBtn(overlay) {
+    const btn = overlay.querySelector('#gh-runner-done');
+    if (!btn) return;
+    const done = typeof window.isPackageDone === 'function' && window.isPackageDone(overlay.dataset.pkgId);
+    btn.textContent = done ? '✓ Selesai' : 'Tandai Selesai';
+    btn.className = done
+      ? 'h-9 px-3 rounded-lg bg-emerald-600 text-white text-xs font-bold transition shrink-0'
+      : 'btn-secondary h-9 px-3 rounded-lg text-xs font-semibold transition shrink-0';
   }
 
   function teardownCloudRunner() {
@@ -501,84 +513,31 @@
           </button>
           <span id="gh-runner-title" class="text-xs sm:text-sm font-bold text-main truncate">Simulasi CBT</span>
         </div>
+        <button type="button" id="gh-runner-done"
+          class="btn-secondary h-9 px-3 rounded-lg text-xs font-semibold transition shrink-0">Tandai Selesai</button>
       </div>
       <iframe id="gh-runner-frame" class="w-full flex-1 border-0 bg-white" title="Simulasi CBT Tambahan"></iframe>
     `;
     document.body.appendChild(el);
 
     el.querySelector('#gh-runner-close').addEventListener('click', () => window.PortalRuntime.requestClose());
+    el.querySelector('#gh-runner-done').addEventListener('click', () => {
+      const id = el.dataset.pkgId;
+      if (!id || typeof window.togglePackageDone !== 'function') return;
+      window.togglePackageDone(id);
+      syncRunnerDoneBtn(el);
+    });
 
     return el;
   }
 
   // ==================== RENDER SEKSI PAKET TAMBAHAN ====================
+  // Paket GitHub kini digabung ke grid utama oleh index.html (getAllPackages),
+  // sehingga ikut terhitung di statistik, filter, pencarian, dan penanda "Selesai".
   function renderCloudSection() {
-    const grid = document.getElementById('packages-grid');
-    if (!grid || !grid.parentElement) return;
-
-    let wrap = document.getElementById('gh-cloud-packages-section');
-    if (!wrap) {
-      wrap = document.createElement('section');
-      wrap.id = 'gh-cloud-packages-section';
-      wrap.className = 'mt-7 sm:mt-8 pt-6 border-t';
-      wrap.style.borderColor = 'var(--border-color)';
-      grid.parentElement.appendChild(wrap);
-    }
-
-    if (!cloudPackages.length) {
-      wrap.innerHTML = '';
-      wrap.classList.add('hidden');
-      return;
-    }
-
-    wrap.classList.remove('hidden');
-    wrap.innerHTML = `
-      <div class="flex items-center justify-between gap-2 mb-4">
-        <h2 class="text-sm sm:text-base font-extrabold tracking-tight text-main">Paket Soal Tambahan</h2>
-        <span class="subtle border px-2.5 py-1 rounded-full text-xs font-semibold text-sub">
-          ${cloudPackages.length} Paket
-        </span>
-      </div>
-      <div id="gh-cloud-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
-        ${cloudPackages
-          .map(
-            (pkg) => `
-          <div class="surface border rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-4 transition-colors hover:border-slate-400 dark:hover:border-zinc-600">
-            <div class="space-y-2.5">
-              <div class="flex items-center justify-between gap-2">
-                <span class="badge-pastel px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-100 text-blue-800">${escapeHtml(pkg.code)}</span>
-                ${
-                  pkg.hasOsce
-                    ? '<span class="badge-osce px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-800">+ OSCE</span>'
-                    : ''
-                }
-              </div>
-              <div>
-                <h3 class="text-[15px] sm:text-base font-bold text-main leading-snug">${escapeHtml(pkg.title)}</h3>
-                <p class="text-xs text-mute mt-0.5">${escapeHtml(pkg.name || 'Try Out Nasional')}</p>
-              </div>
-              <p class="text-xs text-sub leading-relaxed line-clamp-2">${escapeHtml(pkg.highlights || '')}</p>
-            </div>
-            <div class="space-y-3 pt-3 border-t" style="border-color: var(--border-color);">
-              <div class="flex items-center justify-between text-xs font-medium text-sub">
-                <span>${escapeHtml(pkg.questions)} Soal</span>
-                <span>${escapeHtml(pkg.duration)}</span>
-              </div>
-              <button type="button" data-gh-open="${escapeHtml(pkg.id)}"
-                class="btn-primary w-full min-h-[42px] px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2">
-                <span>Mulai Simulasi</span>
-                <span>→</span>
-              </button>
-            </div>
-          </div>`
-          )
-          .join('')}
-      </div>
-    `;
-
-    wrap.querySelectorAll('[data-gh-open]').forEach((btn) => {
-      btn.addEventListener('click', () => openCloudPackage(btn.getAttribute('data-gh-open')));
-    });
+    const old = document.getElementById('gh-cloud-packages-section');
+    if (old) old.remove();
+    if (typeof window.renderCards === 'function') window.renderCards();
   }
 
   // ==================== MODAL UPLOAD & KELOLA GITHUB (ADMIN) ====================
@@ -1211,7 +1170,7 @@
     });
   }
 
-  window.PortalCloud = { open: openCloudPackage };
+  window.PortalCloud = { open: openCloudPackage, list: () => cloudPackages.slice() };
 
   // ==================== INISIALISASI ====================
   async function init() {
