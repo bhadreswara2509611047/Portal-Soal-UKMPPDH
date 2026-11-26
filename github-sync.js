@@ -405,7 +405,10 @@
   }
 
   // ==================== BUKA PAKET CLOUD DI WORKSPACE ====================
+  let cloudRequest = 0;
+
   async function openCloudPackage(pkgId, reviewRecord) {
+    const request = ++cloudRequest;
     if (reviewRecord && !cloudPackages.length) await loadCloudManifest(false);
     const pkg = cloudPackages.find((p) => p.id === pkgId);
     if (!pkg) {
@@ -446,27 +449,37 @@
     const htmlHash = window.PortalHistory.hashText(htmlContent);
     if (!window.PortalHistory.confirmSameContent(reviewRecord, htmlHash)) return;
 
+    if (request !== cloudRequest) return; // ada permintaan yang lebih baru
+
     const overlay = ensureCloudRunnerOverlay();
     const titleEl = overlay.querySelector('#gh-runner-title');
-    const iframe = overlay.querySelector('#gh-runner-frame');
+    const oldFrame = overlay.querySelector('#gh-runner-frame');
+    const iframe = window.PortalRuntime.freshFrame(oldFrame);
 
     titleEl.textContent = `${pkg.code} — ${pkg.title}`;
-    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-    const blobUrl = URL.createObjectURL(blob);
 
-    if (iframe.dataset.blobUrl) {
-      try {
-        URL.revokeObjectURL(iframe.dataset.blobUrl);
-      } catch (e) {}
-    }
-    iframe.dataset.blobUrl = blobUrl;
-    iframe.onload = () => window.PortalHistory.attach(iframe, {
-      packageId: pkg.id, source: 'cloud', code: pkg.code, title: pkg.title, htmlHash
-    }, reviewRecord);
-    iframe.src = blobUrl;
+    iframe.onload = () => {
+      window.PortalHistory.attach(iframe, {
+        packageId: pkg.id, source: 'cloud', code: pkg.code, title: pkg.title, htmlHash
+      }, reviewRecord);
+      window.PortalRuntime.enhance(iframe);
+    };
+    // srcdoc (bukan blob:) agar tailwind.js tetap bisa diambil dari cache saat offline.
+    iframe.srcdoc = window.PortalRuntime.prepareHtml(htmlContent);
 
     overlay.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    window.PortalRuntime.enter(teardownCloudRunner);
+    window.syncExamTheme();
+  }
+
+  function teardownCloudRunner() {
+    cloudRequest++;
+    const overlay = document.getElementById('gh-cloud-runner');
+    const frame = overlay.querySelector('#gh-runner-frame');
+    window.PortalRuntime.freshFrame(frame); // hentikan timer paket yang sudah ditutup
+    overlay.classList.add('hidden');
+    document.body.style.overflow = '';
   }
 
   function ensureCloudRunnerOverlay() {
@@ -493,10 +506,7 @@
     `;
     document.body.appendChild(el);
 
-    el.querySelector('#gh-runner-close').addEventListener('click', () => {
-      el.classList.add('hidden');
-      document.body.style.overflow = '';
-    });
+    el.querySelector('#gh-runner-close').addEventListener('click', () => window.PortalRuntime.requestClose());
 
     return el;
   }

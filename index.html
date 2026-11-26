@@ -61,6 +61,7 @@
         }
 
         body {
+            overscroll-behavior-y: contain;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-app);
             color: var(--text-primary);
@@ -694,13 +695,12 @@
             currentSession = null;
             activePackageId = null;
             PortalHistory.closeModal();
-            document.getElementById('exam-frame').onload = null;
+            PortalRuntime.reset();
             try {
                 sessionStorage.removeItem(SESSION_KEY);
                 localStorage.removeItem(REMEMBER_KEY); // keluar = lupakan perangkat; progres tetap tersimpan
             } catch (e) {}
 
-            document.getElementById('exam-frame').removeAttribute('srcdoc');
             document.getElementById('exam-view').classList.add('hidden');
             document.getElementById('portal-view').classList.add('hidden');
             document.getElementById('admin-settings-modal').classList.add('hidden');
@@ -957,6 +957,7 @@
         }
 
         // ==================== NAVIGASI EXAM ====================
+        let openRequest = 0;
         async function openExam(id, reviewRecord) {
             const pkg = getAllPackages().find(p => p.id === id);
             if (!pkg) {
@@ -964,7 +965,14 @@
                 return;
             }
 
+            if (!PortalRuntime.confirmLeave()) {
+                document.getElementById('quick-switcher').value = activePackageId;
+                return;
+            }
+
+            const request = ++openRequest;
             const htmlStr = await getPackageHtml(id);
+            if (request !== openRequest || !currentSession) return; // ada permintaan yang lebih baru
             if (!htmlStr) {
                 alert('Konten simulasi tidak ditemukan. Periksa koneksi lalu coba lagi.');
                 return;
@@ -981,11 +989,16 @@
             document.getElementById('exam-view').classList.remove('hidden');
             document.getElementById('active-exam-title').textContent = `${pkg.code} — ${pkg.title}`;
             document.getElementById('quick-switcher').value = id;
-            const frame = document.getElementById('exam-frame');
-            frame.onload = () => PortalHistory.attach(frame, {
-                packageId: id, source: 'builtin', code: pkg.code, title: pkg.title, htmlHash
-            }, reviewRecord);
-            frame.srcdoc = htmlStr;
+            const frame = PortalRuntime.freshFrame(document.getElementById('exam-frame'));
+            frame.onload = () => {
+                PortalHistory.attach(frame, {
+                    packageId: id, source: 'builtin', code: pkg.code, title: pkg.title, htmlHash
+                }, reviewRecord);
+                PortalRuntime.enhance(frame);
+            };
+            frame.srcdoc = PortalRuntime.prepareHtml(htmlStr);
+            PortalRuntime.enter(teardownExam);
+            window.syncExamTheme();
             updateActiveDoneBtn();
         }
 
@@ -994,9 +1007,13 @@
         }
 
         function closeExam() {
+            PortalRuntime.requestClose();
+        }
+
+        function teardownExam() {
+            openRequest++;
             document.getElementById('exam-view').classList.add('hidden');
-            document.getElementById('exam-frame').onload = null;
-            document.getElementById('exam-frame').removeAttribute('srcdoc');
+            PortalRuntime.freshFrame(document.getElementById('exam-frame'));
             document.getElementById('portal-view').classList.remove('hidden');
             renderCards();
         }
@@ -1076,33 +1093,28 @@
                 });
             }
 
+            // Filter dipasang pada elemen iframe (bukan di dalam dokumennya) agar header/modal
+            // "fixed" di paket tetap pada posisinya.
             function syncExamFrameTheme(isDark) {
-                const frame = document.getElementById('exam-frame');
-                if (!frame) return;
-                try {
-                    const doc = frame.contentDocument || (frame.contentWindow && frame.contentWindow.document);
-                    if (!doc || !doc.head) return;
-                    let styleEl = doc.getElementById('portal-injected-dark-theme');
-                    if (isDark) {
-                        if (!styleEl) {
+                ['exam-frame', 'gh-runner-frame'].forEach((id) => {
+                    const frame = document.getElementById(id);
+                    if (!frame) return;
+                    frame.style.filter = isDark ? 'invert(0.92) hue-rotate(180deg)' : '';
+                    try {
+                        const doc = frame.contentDocument;
+                        let styleEl = doc.getElementById('portal-injected-dark-theme');
+                        if (isDark && !styleEl) {
                             styleEl = doc.createElement('style');
                             styleEl.id = 'portal-injected-dark-theme';
-                            styleEl.textContent = `
-                                html {
-                                    filter: invert(0.92) hue-rotate(180deg);
-                                    background-color: #09090b !important;
-                                }
-                                img, svg, video, canvas, picture {
-                                    filter: invert(1) hue-rotate(180deg);
-                                }
-                            `;
+                            styleEl.textContent = 'img, svg, video, canvas, picture { filter: invert(1) hue-rotate(180deg); }';
                             doc.head.appendChild(styleEl);
+                        } else if (!isDark && styleEl) {
+                            styleEl.remove();
                         }
-                    } else if (styleEl) {
-                        styleEl.remove();
-                    }
-                } catch (e) {}
+                    } catch (e) {}
+                });
             }
+            window.syncExamTheme = () => syncExamFrameTheme(document.documentElement.classList.contains('dark'));
 
             window.togglePortalTheme = function () {
                 const isDark = document.documentElement.classList.toggle('dark');
@@ -1116,16 +1128,10 @@
             window.addEventListener('DOMContentLoaded', () => {
                 const isDark = document.documentElement.classList.contains('dark');
                 updateAllThemeButtons(isDark);
-
-                const frame = document.getElementById('exam-frame');
-                if (frame) {
-                    frame.addEventListener('load', () => {
-                        syncExamFrameTheme(document.documentElement.classList.contains('dark'));
-                    });
-                }
             });
         })();
     </script>
+    <script src="./runtime.js"></script>
     <script src="./history.js"></script>
     <script src="./github-sync.js"></script>
 </body>
