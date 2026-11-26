@@ -405,9 +405,13 @@
   }
 
   // ==================== BUKA PAKET CLOUD DI WORKSPACE ====================
-  async function openCloudPackage(pkgId) {
+  async function openCloudPackage(pkgId, reviewRecord) {
+    if (reviewRecord && !cloudPackages.length) await loadCloudManifest(false);
     const pkg = cloudPackages.find((p) => p.id === pkgId);
-    if (!pkg) return;
+    if (!pkg) {
+      if (reviewRecord) alert('Paket soal ini sudah dihapus atau belum bisa dimuat.');
+      return;
+    }
 
     const cfg = getEffectiveConfig();
     const filePath = `${cfg.packagesDir}/${pkg.fileName}`;
@@ -439,6 +443,9 @@
       .split('https://cdn.tailwindcss.com')
       .join(new URL('./tailwind.js', window.location.href).href);
 
+    const htmlHash = window.PortalHistory.hashText(htmlContent);
+    if (!window.PortalHistory.confirmSameContent(reviewRecord, htmlHash)) return;
+
     const overlay = ensureCloudRunnerOverlay();
     const titleEl = overlay.querySelector('#gh-runner-title');
     const iframe = overlay.querySelector('#gh-runner-frame');
@@ -453,6 +460,9 @@
       } catch (e) {}
     }
     iframe.dataset.blobUrl = blobUrl;
+    iframe.onload = () => window.PortalHistory.attach(iframe, {
+      packageId: pkg.id, source: 'cloud', code: pkg.code, title: pkg.title, htmlHash
+    }, reviewRecord);
     iframe.src = blobUrl;
 
     overlay.classList.remove('hidden');
@@ -1190,6 +1200,8 @@
       modal.classList.remove('hidden');
     });
   }
+
+  window.PortalCloud = { open: openCloudPackage };
 
   // ==================== INISIALISASI ====================
   async function init() {

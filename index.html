@@ -293,6 +293,13 @@
                         <span class="theme-toggle-text hidden sm:inline">Mode Gelap</span>
                     </button>
 
+                    <button type="button" onclick="PortalHistory.openModal()"
+                        class="btn-secondary inline-flex items-center gap-1.5 px-2.5 sm:px-3 h-9 rounded-lg text-xs font-semibold" title="Riwayat Pengerjaan">
+                        <span>🕘</span>
+                        <span class="hidden sm:inline">Riwayat</span>
+                        <span id="history-count"></span>
+                    </button>
+
                     <button type="button" id="btn-admin-settings" onclick="openAdminSettingsModal()"
                         class="hidden btn-secondary inline-flex items-center gap-1.5 px-2.5 sm:px-3 h-9 rounded-lg text-xs font-semibold" title="Pengaturan PIN Admin">
                         <span>🔑</span>
@@ -680,11 +687,14 @@
             document.getElementById('exam-view').classList.add('hidden');
             document.getElementById('portal-view').classList.remove('hidden');
             renderCards();
+            PortalHistory.refreshCount();
         }
 
         function logoutUser() {
             currentSession = null;
             activePackageId = null;
+            PortalHistory.closeModal();
+            document.getElementById('exam-frame').onload = null;
             try {
                 sessionStorage.removeItem(SESSION_KEY);
                 localStorage.removeItem(REMEMBER_KEY); // keluar = lupakan perangkat; progres tetap tersimpan
@@ -947,15 +957,21 @@
         }
 
         // ==================== NAVIGASI EXAM ====================
-        async function openExam(id) {
+        async function openExam(id, reviewRecord) {
             const pkg = getAllPackages().find(p => p.id === id);
-            if (!pkg) return;
+            if (!pkg) {
+                if (reviewRecord) alert('Paket soal ini sudah tidak tersedia di portal.');
+                return;
+            }
 
             const htmlStr = await getPackageHtml(id);
             if (!htmlStr) {
                 alert('Konten simulasi tidak ditemukan. Periksa koneksi lalu coba lagi.');
                 return;
             }
+
+            const htmlHash = PortalHistory.hashText(htmlStr);
+            if (!PortalHistory.confirmSameContent(reviewRecord, htmlHash)) return;
 
             activePackageId = id;
             progress.lastOpened = id;
@@ -965,7 +981,11 @@
             document.getElementById('exam-view').classList.remove('hidden');
             document.getElementById('active-exam-title').textContent = `${pkg.code} — ${pkg.title}`;
             document.getElementById('quick-switcher').value = id;
-            document.getElementById('exam-frame').srcdoc = htmlStr;
+            const frame = document.getElementById('exam-frame');
+            frame.onload = () => PortalHistory.attach(frame, {
+                packageId: id, source: 'builtin', code: pkg.code, title: pkg.title, htmlHash
+            }, reviewRecord);
+            frame.srcdoc = htmlStr;
             updateActiveDoneBtn();
         }
 
@@ -975,6 +995,7 @@
 
         function closeExam() {
             document.getElementById('exam-view').classList.add('hidden');
+            document.getElementById('exam-frame').onload = null;
             document.getElementById('exam-frame').removeAttribute('srcdoc');
             document.getElementById('portal-view').classList.remove('hidden');
             renderCards();
@@ -1105,6 +1126,7 @@
             });
         })();
     </script>
+    <script src="./history.js"></script>
     <script src="./github-sync.js"></script>
 </body>
 </html>
