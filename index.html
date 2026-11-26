@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-KR4S7CM5"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-WW3VBD3M0Z"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-WW3VBD3M0Z');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Portal Simulasi CBT &amp; OSCE UKMPPDH 2026</title>
@@ -509,7 +511,7 @@
             "undikma": "./data/builtin/undikma.html",
             "extra_html_mwwav94x_6pfzx": "./data/extra/extra_html_mwwav94x_6pfzx.html",
             "extra_html_mwwat7dt_w5okd": "./data/extra/extra_html_mwwat7dt_w5okd.html"
-};
+        };
 
         // Soal dimuat per paket (lazy) dari file terpisah, bukan ditanam di index.html
         async function getPackageHtml(id) {
@@ -979,6 +981,16 @@
         }
 
         // ==================== NAVIGASI EXAM ====================
+        function trackPackageOpen(pkg) {
+            if (typeof window.gtag === 'function' && pkg) {
+                window.gtag('event', 'buka_paket_soal', {
+                    package_id: pkg.id,
+                    package_code: pkg.code,
+                    package_title: pkg.title
+                });
+            }
+        }
+
         let openRequest = 0;
         async function openExam(id, reviewRecord) {
             const pkg = getAllPackages().find(p => p.id === id);
@@ -989,6 +1001,7 @@
             if (pkg.source === 'cloud') {
                 progress.lastOpened = id;
                 saveUserProgress();
+                trackPackageOpen(pkg);
                 return window.PortalCloud.open(id, reviewRecord);
             }
 
@@ -1011,6 +1024,7 @@
             activePackageId = id;
             progress.lastOpened = id;
             saveUserProgress();
+            trackPackageOpen(pkg);
 
             document.getElementById('portal-view').classList.add('hidden');
             document.getElementById('exam-view').classList.remove('hidden');
