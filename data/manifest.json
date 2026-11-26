@@ -1,6 +1,18 @@
 {
-  "updatedAt": "2026-11-26T13:04:56.479Z",
+  "updatedAt": "2026-11-26T13:05:59.753Z",
   "packages": [
+    {
+      "id": "gh_mwxkfrv5",
+      "code": "BARU",
+      "name": "Try Out Nasional",
+      "title": "Simulasi CBT VETUP SIGAP — Volume 1",
+      "fileName": "gh_mwxkfrv5_simulasi_cbt_vetup_sigap_volume_1_osce_veteriner.html",
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
+      "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
+      "uploadedAt": "2026-11-26T13:05:59.753Z"
+    },
     {
       "id": "gh_mwxkee21",
       "code": "BARU",
