@@ -1,36 +1,144 @@
-/* Stabilitas & tampilan saat paket dikerjakan: konfirmasi keluar, tombol Back HP,
- * perbaikan header di layar sempit, anti-flash tema, dan pendaftaran cache offline. */
+/* Stabilitas, performa render, & tampilan adaptif Desktop + Mobile saat paket dikerjakan:
+ * konfirmasi keluar, tombol Back HP, tabel/SVG responsif, target sentuh mobile,
+ * isolasi render daftar pembahasan, timer akurat saat tab tidur, dan anti-flash tema. */
 (function () {
   'use strict';
 
-  const START = ['startSimulation', 'startNewSimulation', 'startNewSession', 'startQuiz', 'startSession', 'resumeSavedSession'];
-  const STOP = ['finishExam', 'finishSimulation', 'finishQuiz', 'finalizeExam',
-    'goToSetup', 'backToSetup', 'backToLobby', 'goHomeFromResult', 'goToMenu', 'goToHome', 'resetToHome', 'resetToSetup', 'backToHome'];
+  const START = [
+    'startSimulation', 'startNewSimulation', 'startNewSession',
+    'startQuiz', 'startSession', 'resumeSavedSession'
+  ];
+  const STOP = [
+    'finishExam', 'finishSimulation', 'finishQuiz', 'finalizeExam',
+    'goToSetup', 'backToSetup', 'backToLobby', 'goHomeFromResult',
+    'goToMenu', 'goToHome', 'resetToHome', 'resetToSetup', 'backToHome'
+  ];
 
   const FRAME_CSS = `
-    html, body { overscroll-behavior-y: contain; }
-    button, label, select { touch-action: manipulation; }
-    @media (max-width: 639px) {
-      header.sticky > div.h-16 { height: auto !important; flex-wrap: wrap; row-gap: 6px; padding-top: 8px; padding-bottom: 8px; }
-      header.sticky > div.h-16 > div:first-child { flex: 1 1 100%; }
-      header.sticky > div.h-16 > div:last-child { flex: 1 1 100%; justify-content: flex-end; }
-      input, select, textarea { font-size: 16px !important; } /* cegah zoom otomatis iOS */
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
     }
+    html, body {
+      overscroll-behavior-y: contain;
+      overflow-x: clip;
+    }
+    body {
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
+      text-rendering: optimizeLegibility;
+    }
+    button, label, select, a {
+      touch-action: manipulation;
+    }
+
+    /* Media, diagram SVG, dan tabel klinis tidak pernah menyebabkan scroll horizontal rusak */
+    img, svg, canvas, video {
+      max-width: 100%;
+      height: auto;
+    }
+    table {
+      display: block;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-collapse: collapse;
+    }
+
+    /* Performa render daftar pembahasan panjang (100-185 soal) tetap 60fps */
+    #review-container > div,
+    #review-list > div,
+    #discussion-list > div,
+    .review-item,
+    .question-review-card {
+      content-visibility: auto;
+      contain-intrinsic-size: auto 280px;
+    }
+
+    /* Keterbacaan teks soal & kenyamanan navigasi pada layar Desktop */
+    @media (min-width: 1024px) {
+      main p, .question-text, #question-text {
+        line-height: 1.72;
+      }
+      aside, .nav-panel, #question-nav-panel {
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+      }
+      button:focus-visible, input:focus-visible, select:focus-visible {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+    }
+
+    /* Ergonomi Mobile & Thumb Zone */
+    @media (max-width: 767px) {
+      header.sticky > div.h-16,
+      header.sticky > div.h-14 {
+        height: auto !important;
+        min-height: 52px;
+        flex-wrap: wrap;
+        row-gap: 6px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+      }
+      header.sticky > div.h-16 > div:first-child {
+        flex: 1 1 100%;
+      }
+      header.sticky > div.h-16 > div:last-child {
+        flex: 1 1 100%;
+        justify-content: flex-end;
+      }
+      /* Cegah auto-zoom pada iOS Safari */
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+      /* Target sentuh nyaman minimal 46px pada pilihan jawaban */
+      #options-container button,
+      #options-container label,
+      .option-btn,
+      .option-card {
+        min-height: 46px;
+        padding-top: 11px !important;
+        padding-bottom: 11px !important;
+      }
+      /* Kurangi padding kontainer agar ruang baca soal di layar kecil lebih lega */
+      main.max-w-7xl, main.max-w-6xl, main.max-w-5xl {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+      }
+      /* Matikan efek backdrop blur berat pada perangkat mobile kelas menengah */
+      header.sticky, .backdrop-blur, .backdrop-blur-md, .backdrop-blur-lg {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
+    }
+
     @media (max-width: 360px) {
       header div.flex.items-center.gap-2 { flex-wrap: wrap; }
       #cbt-timer-wrapper + button, div:has(> #cbt-timer-wrapper) { flex-wrap: wrap; }
-    }`;
+    }
 
-  let teardown = null;   // fungsi penutup paket yang sedang terbuka
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  `;
+
+  let teardown = null;
   let inProgress = false;
   let canResume = false;
   let ignorePop = false;
+  let activeCleanup = null;
 
   function confirmLeave() {
     if (!teardown || !inProgress) return true;
-    return confirm(canResume
-      ? 'Ujian belum selesai. Progres tersimpan dan bisa dilanjutkan nanti. Keluar sekarang?'
-      : 'Ujian belum selesai. Paket ini TIDAK menyimpan progres, jawaban akan hilang. Tetap keluar?');
+    return confirm(
+      canResume
+        ? 'Ujian belum selesai. Progres tersimpan dan bisa dilanjutkan nanti. Keluar sekarang?'
+        : 'Ujian belum selesai. Paket ini TIDAK menyimpan progres, jawaban akan hilang. Tetap keluar?'
+    );
   }
 
   function pushEntry() {
@@ -38,7 +146,11 @@
   }
 
   function close() {
-    if (window.PortalProgress) window.PortalProgress.flush(); // simpan posisi terakhir sebelum paket ditutup
+    if (window.PortalProgress) window.PortalProgress.flush();
+    if (activeCleanup) {
+      try { activeCleanup(); } catch (e) {}
+      activeCleanup = null;
+    }
     const fn = teardown;
     teardown = null;
     inProgress = false;
@@ -63,16 +175,15 @@
     }
   });
 
-  // Entri sisa dari muat ulang saat ujian terbuka.
   if (history.state && history.state.exam) history.replaceState(null, '');
 
   /** Timer paket menghitung dengan mengurangi 1 detik per tick. Saat tab di latar belakang, layar HP mati,
-   *  atau browser menahan timer, tick terlewat dan waktu "berhenti". Di sini tick yang terlewat dikejar
-   *  berdasarkan jam sebenarnya, sehingga sisa waktu ujian selalu benar. */
+   *  atau browser menahan timer, tick terlewat dikejar berdasarkan jam sebenarnya. */
   function fixTimers(win) {
     const rawSet = win.setInterval;
     const rawClear = win.clearInterval;
     const cleared = new Set();
+    const listeners = [];
 
     win.clearInterval = function (id) {
       cleared.add(id);
@@ -80,7 +191,9 @@
     };
 
     win.setInterval = function (fn, ms) {
-      if (typeof fn !== 'function' || !(ms >= 900 && ms <= 1100)) return rawSet.apply(win, arguments);
+      if (typeof fn !== 'function' || !(ms >= 900 && ms <= 1100)) {
+        return rawSet.apply(win, arguments);
+      }
       const extra = Array.prototype.slice.call(arguments, 2);
       const startedAt = Date.now();
       let delivered = 0;
@@ -95,27 +208,32 @@
           fn.apply(win, extra);
         }
       };
+
       const onVisible = () => { if (!win.document.hidden) tick(); };
       win.document.addEventListener('visibilitychange', onVisible);
+      listeners.push(() => win.document.removeEventListener('visibilitychange', onVisible));
+
       id = rawSet.call(win, () => {
         tick();
         if (cleared.has(id)) win.document.removeEventListener('visibilitychange', onVisible);
       }, ms);
       return id;
     };
+
+    return () => {
+      listeners.forEach((off) => { try { off(); } catch (e) {} });
+    };
   }
 
   window.PortalRuntime = {
     confirmLeave,
 
-    /** Dipanggil saat paket dibuka; onClose membersihkan tampilannya. */
     enter(onClose) {
       teardown = onClose;
       inProgress = false;
       if (!ignorePop) pushEntry();
     },
 
-    /** Tombol "Portal" di dalam tampilan ujian. */
     requestClose() {
       if (!confirmLeave()) return;
       close();
@@ -125,10 +243,8 @@
       }
     },
 
-    /** Menutup tanpa konfirmasi (logout). */
     reset: close,
 
-    /** Iframe baru untuk tiap paket, agar tidak menambah entri riwayat browser. */
     freshFrame(frame) {
       const next = frame.cloneNode(false);
       next.removeAttribute('src');
@@ -163,17 +279,41 @@
       return out.replace(/<\/head>/i, `${preloadStyle}</head>`);
     },
 
-    /** Dipanggil setelah iframe paket selesai dimuat (sesudah PortalHistory.attach). */
     enhance(frame) {
       if (window.syncExamTheme) window.syncExamTheme();
       try {
         const win = frame.contentWindow;
         const style = win.document.createElement('style');
+        style.id = 'portal-runtime-responsive-css';
         style.textContent = FRAME_CSS;
         win.document.head.appendChild(style);
-        canResume = typeof win.resumeSavedSession === 'function' || typeof win.loadSavedProgress === 'function' ||
+
+        canResume =
+          typeof win.resumeSavedSession === 'function' ||
+          typeof win.loadSavedProgress === 'function' ||
           !!win.__portalGenericResume;
-        fixTimers(win);
+
+        const cleanTimers = fixTimers(win);
+
+        // Shortcut keyboard desktop (Panah Kiri/Kanan) saat tidak mengetik di input
+        const onKeyDown = (e) => {
+          const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+          if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.altKey || e.ctrlKey || e.metaKey) return;
+          if (e.key === 'ArrowRight' && typeof win.nextQuestion === 'function') {
+            e.preventDefault();
+            win.nextQuestion();
+          } else if (e.key === 'ArrowLeft' && typeof win.prevQuestion === 'function') {
+            e.preventDefault();
+            win.prevQuestion();
+          }
+        };
+        win.document.addEventListener('keydown', onKeyDown);
+
+        activeCleanup = () => {
+          cleanTimers();
+          win.document.removeEventListener('keydown', onKeyDown);
+        };
+
         const track = (names, value) => names.forEach((name) => {
           const fn = win[name];
           if (typeof fn !== 'function') return;

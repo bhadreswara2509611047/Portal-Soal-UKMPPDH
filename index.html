@@ -183,6 +183,41 @@
         }
         .pkg-arrow { transition: transform .15s ease; }
         .pkg-card:hover .pkg-arrow { transform: translateX(3px); }
+
+        /* Optimasi performa render kartu paket & kenyamanan Desktop/Mobile */
+        .pkg-card {
+            content-visibility: auto;
+            contain-intrinsic-size: 0 215px;
+        }
+        @media (hover: none) and (pointer: coarse) {
+            .pkg-card:hover {
+                transform: none;
+                box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            }
+            .pkg-card:active {
+                transform: scale(0.985);
+                border-color: var(--border-strong);
+            }
+            nav.sticky {
+                -webkit-backdrop-filter: none !important;
+                backdrop-filter: none !important;
+            }
+        }
+        :focus-visible {
+            outline: 2px solid var(--border-strong);
+            outline-offset: 2px;
+        }
+        #exam-view {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
 </head>
 <body class="antialiased min-h-[100dvh] flex flex-col">
@@ -309,7 +344,7 @@
     <div id="portal-view" class="hidden flex-1 flex flex-col fade-in">
         <!-- Top Bar Sticky (Ringkas & Responsif Mobile) -->
         <nav class="sticky top-0 z-30 surface border-b backdrop-blur-md">
-            <div class="max-w-6xl mx-auto px-3.5 sm:px-6 h-13 py-2 flex items-center justify-between gap-2">
+            <div class="max-w-6xl mx-auto px-3.5 sm:px-6 min-h-[52px] py-2 flex items-center justify-between gap-2">
                 <div class="flex items-center gap-2 min-w-0">
                     <span id="session-role-badge" class="inline-flex items-center gap-1 px-2 py-1 rounded-md font-bold text-[11px] subtle border text-main shrink-0">
                         🎓 Peserta
@@ -403,7 +438,7 @@
                     <svg class="w-4 h-4 text-mute absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
-                    <input type="search" id="search-input" oninput="renderCards()" placeholder="Cari kampus atau paket..."
+                    <input type="search" id="search-input" oninput="debouncedRenderCards()" placeholder="Cari kampus atau paket... (/)"
                         class="input-clean w-full pl-10 pr-4 h-10 rounded-xl text-base sm:text-sm">
                 </div>
 
@@ -466,7 +501,7 @@
     </div>
 
     <!-- ==================== 3. MODAL PENGATURAN PIN ADMIN ==================== -->
-    <div id="admin-settings-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
+    <div id="admin-settings-modal" class="fixed inset-0 z-50 bg-black/50 sm:backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
         <div class="surface border w-full max-w-md rounded-t-2xl sm:rounded-2xl overflow-hidden fade-in">
             <div class="px-5 py-4 border-b flex items-center justify-between" style="border-color: var(--border-color);">
                 <h3 class="text-base font-bold text-main">Pengaturan PIN Admin</h3>
@@ -553,6 +588,25 @@
             } catch (e) {
                 return '';
             }
+        }
+
+        // Prefetch paket saat hover (desktop) atau sentuh awal (mobile) agar terbuka instan
+        const prefetchedIds = new Set();
+        function prefetchPackage(id) {
+            if (!id || prefetchedIds.has(id) || memoryHtmlCache[id]) return;
+            if (navigator.connection && navigator.connection.saveData) return;
+            prefetchedIds.add(id);
+            if (PKG_PATHS[id]) {
+                getPackageHtml(id).catch(() => {});
+            } else if (window.PortalCloud && typeof window.PortalCloud.prefetch === 'function') {
+                window.PortalCloud.prefetch(id);
+            }
+        }
+
+        let searchDebounceTimer = null;
+        function debouncedRenderCards() {
+            clearTimeout(searchDebounceTimer);
+            searchDebounceTimer = setTimeout(() => renderCards(), 120);
         }
 
         // ==================== HELPER STORAGE ====================
@@ -950,11 +1004,13 @@
                 return;
             }
 
+            const frag = document.createDocumentFragment();
             filtered.forEach(p => {
                 const isDone = !!progress.done[p.id];
                 const isLast = progress.lastOpened === p.id;
 
                 const card = document.createElement('div');
+                card.dataset.pkgId = p.id;
                 card.className = 'pkg-card surface border rounded-2xl overflow-hidden flex flex-col fade-in' + (isDone ? ' is-done' : '');
 
                 const iconDoc = '<svg class="w-4 h-4 shrink-0 text-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>';
@@ -997,8 +1053,9 @@
                         </button>
                     </div>
                 `;
-                grid.appendChild(card);
+                frag.appendChild(card);
             });
+            grid.appendChild(frag);
         }
 
         function setFilterStylesOnly() {
@@ -1157,14 +1214,56 @@
                     }
                 } catch (e) {}
             }
+
+            // Prefetch otomatis saat kursor hover (desktop) atau sentuh awal (mobile)
+            const grid = document.getElementById('packages-grid');
+            if (grid) {
+                const triggerPrefetch = (e) => {
+                    const card = e.target && e.target.closest ? e.target.closest('[data-pkg-id]') : null;
+                    if (card) prefetchPackage(card.dataset.pkgId);
+                };
+                grid.addEventListener('pointerenter', triggerPrefetch, true);
+                grid.addEventListener('touchstart', triggerPrefetch, { passive: true, capture: true });
+            }
+
+            // Shortcut "/" untuk fokus pencarian di desktop & Escape untuk menutup modal/reset fokus
+            document.addEventListener('keydown', (e) => {
+                const tag = (e.target && e.target.tagName || '').toLowerCase();
+                if (e.key === 'Escape') {
+                    const adminModal = document.getElementById('admin-settings-modal');
+                    if (adminModal && !adminModal.classList.contains('hidden')) {
+                        closeAdminSettingsModal();
+                        return;
+                    }
+                    const searchEl = document.getElementById('search-input');
+                    if (searchEl && document.activeElement === searchEl) {
+                        if (searchEl.value) {
+                            searchEl.value = '';
+                            renderCards();
+                        } else {
+                            searchEl.blur();
+                        }
+                    }
+                    return;
+                }
+                if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+                if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+                const portalView = document.getElementById('portal-view');
+                const searchEl = document.getElementById('search-input');
+                if (portalView && !portalView.classList.contains('hidden') && searchEl) {
+                    e.preventDefault();
+                    searchEl.focus();
+                    searchEl.select();
+                }
+            });
         });
     </script>
 
     <!-- Pengontrol Tema Gelap / Terang & Sinkronisasi Iframe -->
-    <script src="./exam-theme.js?v=5"></script>
-    <script src="./runtime.js?v=5"></script>
-    <script src="./history.js"></script>
-    <script src="./progress.js"></script>
-    <script src="./github-sync.js"></script>
+    <script src="./exam-theme.js?v=6"></script>
+    <script src="./runtime.js?v=6"></script>
+    <script src="./history.js?v=6"></script>
+    <script src="./progress.js?v=6"></script>
+    <script src="./github-sync.js?v=6"></script>
 </body>
 </html>

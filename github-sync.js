@@ -405,7 +405,43 @@
   }
 
   // ==================== BUKA PAKET CLOUD DI WORKSPACE ====================
+  const cloudHtmlCache = {};
   let cloudRequest = 0;
+
+  async function fetchCloudPackageHtml(pkg, forceFresh) {
+    if (!pkg) return '';
+    if (!forceFresh && cloudHtmlCache[pkg.id]) return cloudHtmlCache[pkg.id];
+
+    const cfg = getEffectiveConfig();
+    const filePath = `${cfg.packagesDir}/${pkg.fileName}`;
+    const candidateUrls = [
+      forceFresh ? `./${filePath}?t=${Date.now()}` : `./${filePath}`,
+      cfg.owner && cfg.repo
+        ? `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${filePath}`
+        : null
+    ].filter(Boolean);
+
+    for (const url of candidateUrls) {
+      try {
+        const res = await fetch(url, forceFresh ? { cache: 'no-store' } : undefined);
+        if (res.ok) {
+          const txt = (await res.text())
+            .split('https://cdn.tailwindcss.com')
+            .join(new URL('./tailwind.js', window.location.href).href);
+          cloudHtmlCache[pkg.id] = txt;
+          return txt;
+        }
+      } catch (e) {}
+    }
+    return '';
+  }
+
+  function prefetchCloudPackage(pkgId) {
+    if (!pkgId || cloudHtmlCache[pkgId]) return;
+    if (navigator.connection && navigator.connection.saveData) return;
+    const pkg = cloudPackages.find((p) => p.id === pkgId);
+    if (pkg) fetchCloudPackageHtml(pkg, false).catch(() => {});
+  }
 
   async function openCloudPackage(pkgId, reviewRecord) {
     const request = ++cloudRequest;
@@ -416,35 +452,11 @@
       return;
     }
 
-    const cfg = getEffectiveConfig();
-    const filePath = `${cfg.packagesDir}/${pkg.fileName}`;
-    const ts = Date.now();
-    const candidateUrls = [
-      `./${filePath}?t=${ts}`,
-      cfg.owner && cfg.repo
-        ? `https://raw.githubusercontent.com/${cfg.owner}/${cfg.repo}/${cfg.branch}/${filePath}?t=${ts}`
-        : null
-    ].filter(Boolean);
-
-    let htmlContent = '';
-    for (const url of candidateUrls) {
-      try {
-        const res = await fetch(url, { cache: 'no-store' });
-        if (res.ok) {
-          htmlContent = await res.text();
-          break;
-        }
-      } catch (e) {}
-    }
-
+    const htmlContent = await fetchCloudPackageHtml(pkg, false);
     if (!htmlContent) {
       alert('Gagal memuat file soal. Silakan muat ulang halaman beberapa saat lagi.');
       return;
     }
-
-    htmlContent = htmlContent
-      .split('https://cdn.tailwindcss.com')
-      .join(new URL('./tailwind.js', window.location.href).href);
 
     const htmlHash = window.PortalHistory.hashText(htmlContent);
     if (!window.PortalHistory.confirmSameContent(reviewRecord, htmlHash)) return;
@@ -501,6 +513,8 @@
     el = document.createElement('div');
     el.id = 'gh-cloud-runner';
     el.className = 'hidden fixed inset-0 z-[90] h-[100dvh] flex flex-col surface';
+    el.style.paddingTop = 'env(safe-area-inset-top)';
+    el.style.paddingBottom = 'env(safe-area-inset-bottom)';
     el.innerHTML = `
       <div class="h-12 sm:h-14 surface border-b px-3 sm:px-5 flex items-center justify-between gap-2 shrink-0">
         <div class="flex items-center gap-2 min-w-0">
@@ -1181,13 +1195,20 @@
     });
   }
 
-  window.PortalCloud = { open: openCloudPackage, list: () => cloudPackages.slice() };
+  window.PortalCloud = {
+    open: openCloudPackage,
+    prefetch: prefetchCloudPackage,
+    list: () => cloudPackages.slice()
+  };
 
   // ==================== INISIALISASI ====================
   async function init() {
     bindAdminButton();
-    await loadRepoConfig(false);
-    await loadCloudManifest(false);
+    const prevManifestPath = repoConfig.manifestPath;
+    await Promise.all([loadRepoConfig(false), loadCloudManifest(false)]);
+    if (repoConfig.manifestPath !== prevManifestPath) {
+      await loadCloudManifest(false);
+    }
   }
 
   if (document.readyState === 'loading') {

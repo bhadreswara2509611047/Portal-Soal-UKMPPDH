@@ -11,9 +11,20 @@
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
     }
-    body, header, main, section, article, aside, nav, footer,
-    .bg-white, .bg-slate-50, .bg-slate-100, button, label, input, select, textarea {
-      transition: background-color 0.2s ease, color 0.16s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    body, header, main, aside, nav {
+      transition: background-color 0.18s ease, color 0.15s ease, border-color 0.18s ease;
+    }
+    button, label, input, select {
+      transition: background-color 0.12s ease, border-color 0.12s ease;
+    }
+    @media (max-width: 767px) {
+      html.portal-light header.sticky.bg-white,
+      html.portal-light header.fixed.bg-white,
+      html.portal-dark header.sticky,
+      html.portal-dark header.fixed {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+      }
     }
     ::-webkit-scrollbar, .custom-scroll::-webkit-scrollbar { width: 7px; height: 7px; }
     ::-webkit-scrollbar-thumb, .custom-scroll::-webkit-scrollbar-thumb { border-radius: 9999px; }
