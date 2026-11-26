@@ -7,8 +7,8 @@
   const PBKDF2_ITERATIONS = 200000;
 
   let repoConfig = {
-    owner: '',
-    repo: '',
+    owner: 'bhadreswara2509611047',
+    repo: 'Portal-Soal-UKMPPDH',
     branch: 'main',
     manifestPath: 'data/manifest.json',
     packagesDir: 'data/packages',
