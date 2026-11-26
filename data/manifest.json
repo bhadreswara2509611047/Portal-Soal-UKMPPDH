@@ -1,4 +1,17 @@
 {
-  "updatedAt": "",
-  "packages": []
+  "updatedAt": "2026-11-26T08:03:36.159Z",
+  "packages": [
+    {
+      "id": "gh_mwx9mv87",
+      "code": "BARU",
+      "name": "Paket Cloud",
+      "title": "Simulasi CBT UKMPPDH — Batch 6",
+      "fileName": "gh_mwx9mv87_simulasi_cbt_ukmppdh_batch_6.html",
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
+      "highlights": "Paket soal CBT tambahan.",
+      "uploadedAt": "2026-11-26T08:03:36.158Z"
+    }
+  ]
 }
