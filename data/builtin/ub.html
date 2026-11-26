@@ -1,0 +1,2859 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi CBT Kompilasi TO Nasional PPDH — Universitas Brawijaya (2026)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            800: '#16284c',
+                            900: '#0f1d3a',
+                            950: '#091327',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#d99b26',
+                            600: '#b87d14',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #f8fafc;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .fade-in {
+            animation: fadeIn 0.22s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- ========================================================= -->
+    <!-- 1. HALAMAN AWAL (SETUP SIMULASI)                          -->
+    <!-- ========================================================= -->
+    <main id="screen-setup" class="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 fade-in">
+        <div class="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+            <!-- Header Banner Tema UB (Navy & Emas Akademis) -->
+            <div class="bg-gradient-to-br from-navy-950 via-navy-900 to-blue-950 p-6 sm:p-8 text-white relative overflow-hidden border-b-4 border-amber-500">
+                <div class="absolute -right-14 -top-14 w-60 h-60 bg-amber-400/15 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute left-1/3 -bottom-20 w-56 h-56 bg-blue-400/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-navy-950 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 border border-amber-300/60">
+                        <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold tracking-wide bg-amber-500/20 border border-amber-400/40 text-amber-200 mb-2">
+                            <span>KOMPILASI TO NASIONAL 2026</span>
+                            <span>•</span>
+                            <span>FKH UNIVERSITAS BRAWIJAYA</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight leading-tight">
+                            Simulasi CBT Kompilasi TO Nasional PPDH — Universitas Brawijaya
+                        </h1>
+                        <p class="text-slate-300 text-sm sm:text-base mt-1.5">
+                            120 Soal Pilihan Ganda Terkurasi • 6 Kategori Veteriner • Skor, Analisis &amp; Pembahasan Lengkap
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Banner Auto-Save Sesi Tersimpan -->
+            <div id="resume-banner" class="hidden mx-6 sm:mx-8 mt-6 p-4 rounded-xl bg-amber-50 border border-amber-300 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-amber-500 text-navy-950 flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-bold text-navy-950 text-sm">Sesi Tersimpan Otomatis Ditemukan</div>
+                        <div id="resume-info" class="text-xs text-slate-700 mt-0.5">Progres terakhir Anda siap dilanjutkan.</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" onclick="resumeSavedSession()"
+                        class="px-4 py-2 rounded-lg bg-navy-900 hover:bg-navy-800 text-amber-300 font-bold text-xs sm:text-sm transition-colors shadow-xs">
+                        Lanjutkan Sesi
+                    </button>
+                    <button type="button" onclick="openConfirmClearSession()"
+                        class="px-3.5 py-2 rounded-lg border border-amber-400 bg-white hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 text-slate-700 font-semibold text-xs sm:text-sm transition-colors">
+                        Mulai Baru
+                    </button>
+                </div>
+            </div>
+
+            <!-- Panel Konfigurasi -->
+            <div class="p-6 sm:p-8 space-y-6">
+                <!-- 1. Pilih Mode -->
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                        1. Pilih Mode Pengerjaan
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <!-- Mode Ujian (CBT) -->
+                        <button type="button" onclick="selectMode('exam')" id="btn-mode-exam"
+                            class="text-left p-4 rounded-xl border-2 border-navy-900 bg-blue-50/70 transition-all focus:outline-none">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-navy-950 flex items-center gap-2 text-sm sm:text-base">
+                                    <svg class="w-5 h-5 text-navy-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Mode Ujian (CBT)
+                                </span>
+                                <span id="check-mode-exam" class="w-5 h-5 rounded-full bg-navy-900 text-amber-400 flex items-center justify-center text-xs font-bold">✓</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Timer hitung mundur (30/60/90/120 menit) + Pause/Resume. Skor &amp; pembahasan muncul setelah klik <strong>Selesai Ujian</strong>.
+                            </p>
+                        </button>
+
+                        <!-- Mode Latihan -->
+                        <button type="button" onclick="selectMode('practice')" id="btn-mode-practice"
+                            class="text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all focus:outline-none">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="font-bold text-slate-800 flex items-center gap-2 text-sm sm:text-base">
+                                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                    Mode Latihan (Belajar)
+                                </span>
+                                <span id="check-mode-practice" class="w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs font-bold text-transparent">✓</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Tanpa timer. Koreksi <strong>Benar/Salah</strong> &amp; pembahasan medis/veteriner langsung tampil setelah memilih jawaban.
+                            </p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Pilihan Paket Soal & Kategori -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <!-- Paket Rentang Soal -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                            2. Pilih Paket Soal
+                        </label>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <button type="button" onclick="selectPackage('all')" id="btn-pkg-all"
+                                class="p-3 rounded-xl border-2 border-navy-900 bg-blue-50/70 text-left transition-all">
+                                <div class="font-bold text-navy-950 text-sm">Semua Soal</div>
+                                <div class="text-xs text-slate-600 mt-0.5">No. 1 – 120 (120 soal)</div>
+                            </button>
+                            <button type="button" onclick="selectPackage('p1')" id="btn-pkg-p1"
+                                class="p-3 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 text-left transition-all">
+                                <div class="font-bold text-slate-800 text-sm">Paket 1</div>
+                                <div class="text-xs text-slate-600 mt-0.5">No. 1 – 40 (40 soal)</div>
+                            </button>
+                            <button type="button" onclick="selectPackage('p2')" id="btn-pkg-p2"
+                                class="p-3 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 text-left transition-all">
+                                <div class="font-bold text-slate-800 text-sm">Paket 2</div>
+                                <div class="text-xs text-slate-600 mt-0.5">No. 41 – 80 (40 soal)</div>
+                            </button>
+                            <button type="button" onclick="selectPackage('p3')" id="btn-pkg-p3"
+                                class="p-3 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 text-left transition-all">
+                                <div class="font-bold text-slate-800 text-sm">Paket 3</div>
+                                <div class="text-xs text-slate-600 mt-0.5">No. 81 – 120 (40 soal)</div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Kategori -->
+                    <div>
+                        <label for="select-category" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
+                            3. Filter Kategori Topik
+                        </label>
+                        <select id="select-category" onchange="onCategoryChange()"
+                            class="w-full px-4 py-3 rounded-xl border-2 border-slate-200 bg-white text-slate-800 font-semibold text-sm focus:border-navy-900 focus:ring-2 focus:ring-navy-900/15 outline-none transition-all cursor-pointer">
+                            <option value="ALL">Semua Kategori (Lengkap)</option>
+                            <option value="Klinik & Bedah">Klinik &amp; Bedah</option>
+                            <option value="Reproduksi">Reproduksi</option>
+                            <option value="Penyakit Menular & Zoonosis">Penyakit Menular &amp; Zoonosis</option>
+                            <option value="Kesmavet & Regulasi">Kesmavet &amp; Regulasi</option>
+                            <option value="Etika & Leadership">Etika &amp; Leadership</option>
+                            <option value="Unggas, Akuatik & Satwa">Unggas, Akuatik &amp; Satwa</option>
+                        </select>
+                        <div class="mt-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                            <span class="text-slate-600">Total soal sesuai pilihan:</span>
+                            <span id="setup-question-count" class="font-extrabold text-navy-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-md">120 Soal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Durasi Timer & Acak Urutan Soal -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <!-- Pilihan Durasi Timer (Mode Ujian) -->
+                    <div id="duration-setting-box" class="space-y-2">
+                        <div class="text-xs font-bold text-slate-700 uppercase tracking-wider">Durasi Ujian (Menit)</div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button type="button" onclick="selectDuration(30)" id="btn-dur-30"
+                                class="py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all">30 mnt</button>
+                            <button type="button" onclick="selectDuration(60)" id="btn-dur-60"
+                                class="py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all">60 mnt</button>
+                            <button type="button" onclick="selectDuration(90)" id="btn-dur-90"
+                                class="py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all">90 mnt</button>
+                            <button type="button" onclick="selectDuration(120)" id="btn-dur-120"
+                                class="py-2 rounded-lg border-2 border-navy-900 bg-navy-900 text-amber-300 font-bold text-xs transition-all shadow-xs">120 mnt</button>
+                        </div>
+                    </div>
+
+                    <!-- Toggle Acak Urutan Soal -->
+                    <label class="flex items-center justify-between gap-3 cursor-pointer select-none md:border-l md:border-slate-200 md:pl-4 py-1">
+                        <div>
+                            <div class="text-sm font-bold text-slate-800">Acak Urutan Soal</div>
+                            <div class="text-xs text-slate-500">Acak nomor tampil soal untuk simulasi realistis</div>
+                        </div>
+                        <div class="relative inline-flex items-center">
+                            <input type="checkbox" id="chk-shuffle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-navy-900"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Info Kelulusan & Shortcut -->
+                <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 px-1">
+                    <span>Passing Grade Simulasi: <strong class="text-navy-900">≥ 70 / 100</strong></span>
+                    <span>Shortcut: <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-slate-700">A–E</kbd> Jawab • <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-slate-700">←/→</kbd> Navigasi • <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono text-slate-700">F</kbd> Ragu-ragu</span>
+                </div>
+
+                <!-- Peringatan jika 0 soal -->
+                <div id="setup-empty-warning" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold text-center">
+                    Tidak ada soal pada kombinasi Paket dan Kategori yang dipilih. Silakan ubah ke "Semua Soal" atau kategori lain.
+                </div>
+
+                <!-- Tombol Mulai -->
+                <button type="button" id="btn-start-sim" onclick="startNewSimulation()"
+                    class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-navy-950 via-navy-900 to-blue-950 hover:from-navy-900 hover:to-blue-900 active:scale-[0.99] text-amber-300 font-extrabold text-base shadow-lg shadow-navy-900/20 border border-amber-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                    <span>Mulai Simulasi CBT</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- 2. HALAMAN PENGERJAAN CBT                                 -->
+    <!-- ========================================================= -->
+    <div id="screen-cbt" class="hidden flex-1 flex flex-col min-h-screen">
+        <!-- Sticky Header -->
+        <header class="sticky top-0 z-30 bg-navy-950 text-white border-b-2 border-amber-500 shadow-md">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+                <!-- Logo & Judul -->
+                <div class="flex items-center gap-3 min-w-0">
+                    <button type="button" onclick="confirmBackToSetup()" title="Kembali ke Menu Utama"
+                        class="w-9 h-9 rounded-lg bg-amber-500 hover:bg-amber-400 text-navy-950 font-extrabold flex items-center justify-center text-xs shrink-0 transition-colors shadow-xs">
+                        UB
+                    </button>
+                    <div class="min-w-0">
+                        <h2 class="font-bold text-white text-sm sm:text-base truncate">
+                            CBT TO Nasional PPDH — UB 2026
+                        </h2>
+                        <div class="flex items-center gap-2 text-xs text-slate-300">
+                            <span id="cbt-mode-badge" class="font-semibold text-amber-300">Mode Ujian</span>
+                            <span>•</span>
+                            <span id="cbt-answered-count">Terjawab 0 / 120</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timer, Pause, Drawer Mobile, Selesai -->
+                <div class="flex items-center gap-2 shrink-0">
+                    <!-- Timer Wrapper (Khusus Mode Ujian) -->
+                    <div id="cbt-timer-wrapper" class="flex items-center gap-1.5">
+                        <div id="cbt-timer-box" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 font-mono font-bold text-sm sm:text-base text-amber-300">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span id="cbt-timer-display">120:00</span>
+                        </div>
+                        <button type="button" id="btn-pause-timer" onclick="togglePauseTimer()" title="Jeda / Lanjutkan Timer"
+                            class="p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-white transition-colors">
+                            <svg id="icon-pause" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <svg id="icon-play" class="w-4 h-4 hidden text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Tombol Drawer Navigasi Mobile -->
+                    <button type="button" onclick="toggleMobileNav(true)"
+                        class="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-white"
+                        title="Navigasi Nomor Soal">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Tombol Selesai Ujian -->
+                    <button type="button" onclick="openFinishModal()"
+                        class="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-navy-950 font-bold text-xs sm:text-sm shadow-xs transition-colors">
+                        Selesai Ujian
+                    </button>
+                </div>
+            </div>
+            <!-- Progress Bar -->
+            <div class="w-full h-1.5 bg-navy-900">
+                <div id="cbt-progress-bar" class="h-full bg-gradient-to-r from-amber-400 to-emerald-400 transition-all duration-300" style="width: 0%;"></div>
+            </div>
+        </header>
+
+        <!-- Overlay Saat Timer Dijeda -->
+        <div id="pause-overlay" class="hidden fixed inset-0 z-40 bg-navy-950/85 backdrop-blur-md flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 text-center fade-in border border-slate-200">
+                <div class="w-14 h-14 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-extrabold text-navy-950">Simulasi Dijeda</h3>
+                <p class="text-sm text-slate-600 mt-1.5">Waktu hitung mundur dihentikan sementara dan soal disembunyikan. Klik tombol di bawah untuk melanjutkan.</p>
+                <button type="button" onclick="togglePauseTimer()"
+                    class="mt-5 w-full py-2.5 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-amber-300 font-bold text-sm transition-colors">
+                    Lanjutkan Ujian
+                </button>
+            </div>
+        </div>
+
+        <!-- Konten Utama 2 Kolom -->
+        <div class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Kolom Kiri: Panel Soal -->
+            <section class="lg:col-span-8 space-y-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-7">
+                    <!-- Header Soal: Nomor & Badge Kategori -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="question-number-badge" class="px-3 py-1 rounded-lg bg-navy-900 text-amber-300 font-bold text-sm">
+                                Soal No. 1
+                            </span>
+                            <span id="question-category-badge" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-900 border border-blue-200 font-semibold text-xs">
+                                Klinik &amp; Bedah
+                            </span>
+                            <span id="question-orig-badge" class="hidden px-2 py-1 rounded-lg bg-slate-100 text-slate-500 font-medium text-xs">
+                                Asli #1
+                            </span>
+                            <span id="question-doubt-badge" class="hidden px-2.5 py-1 rounded-lg bg-amber-100 text-amber-900 border border-amber-300 font-bold text-xs">
+                                ★ Ragu-ragu
+                            </span>
+                        </div>
+                        <span id="question-total-info" class="text-xs sm:text-sm font-semibold text-slate-400">
+                            1 / 120
+                        </span>
+                    </div>
+
+                    <!-- Teks Pertanyaan -->
+                    <p id="question-text" class="text-slate-800 text-base sm:text-lg leading-relaxed font-medium mb-6">
+                        <!-- Dirender via JS -->
+                    </p>
+
+                    <!-- Opsi Jawaban A-E -->
+                    <div id="options-container" class="space-y-3">
+                        <!-- Dirender via JS -->
+                    </div>
+
+                    <!-- Kotak Pembahasan Instan (Khusus Mode Latihan) -->
+                    <div id="practice-explanation-box" class="hidden mt-6 p-4 sm:p-5 rounded-xl border fade-in">
+                        <div class="flex items-center gap-2 font-bold text-sm sm:text-base mb-1.5" id="practice-status-title"></div>
+                        <p class="text-sm text-slate-700 leading-relaxed" id="practice-explanation-text"></p>
+                    </div>
+                </div>
+
+                <!-- Bar Navigasi Bawah -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
+                    <button type="button" id="btn-prev" onclick="prevQuestion()"
+                        class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        Sebelumnya
+                    </button>
+
+                    <button type="button" id="btn-doubt" onclick="toggleDoubt()"
+                        class="px-4 py-2.5 rounded-xl border-2 border-amber-400 bg-amber-50 hover:bg-amber-100 text-amber-950 font-semibold text-sm flex items-center gap-2 transition-colors">
+                        <span id="doubt-checkbox" class="w-4 h-4 rounded border border-amber-600 bg-white flex items-center justify-center text-[10px] font-bold"></span>
+                        Tandai Ragu-ragu <span class="hidden sm:inline text-xs opacity-70">(F)</span>
+                    </button>
+
+                    <button type="button" id="btn-next" onclick="nextQuestion()"
+                        class="px-5 py-2.5 rounded-xl bg-navy-900 hover:bg-navy-800 text-amber-300 font-bold text-sm flex items-center gap-1.5 transition-colors">
+                        <span id="btn-next-label">Selanjutnya</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Kolom Kanan: Panel Navigasi Nomor Soal (Desktop) -->
+            <aside class="hidden lg:block lg:col-span-4 sticky top-24">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <h3 class="font-bold text-navy-950 text-xs uppercase tracking-wider">Navigasi Nomor Soal</h3>
+                        <span id="sidebar-summary" class="text-xs font-bold text-navy-900 bg-amber-100 border border-amber-300 px-2.5 py-1 rounded-md">0 / 120</span>
+                    </div>
+
+                    <!-- Grid Nomor Soal -->
+                    <div id="nav-grid-desktop" class="grid grid-cols-6 xl:grid-cols-8 gap-1.5 max-h-[55vh] overflow-y-auto pr-1">
+                        <!-- Tombol nomor dirender via JS -->
+                    </div>
+
+                    <!-- Legenda Kode Warna -->
+                    <div id="nav-legend-desktop" class="mt-4 pt-3.5 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                        <!-- Legenda dinamis -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Drawer Navigasi Nomor Soal (Mobile) -->
+    <div id="mobile-nav-drawer" class="hidden fixed inset-0 z-50 lg:hidden">
+        <div class="absolute inset-0 bg-navy-950/60 backdrop-blur-xs" onclick="toggleMobileNav(false)"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 max-w-[88vw] bg-white shadow-2xl p-5 flex flex-col">
+            <div class="flex items-center justify-between pb-3.5 border-b border-slate-200">
+                <h3 class="font-bold text-navy-950 text-sm uppercase tracking-wider">Navigasi Nomor Soal</h3>
+                <button type="button" onclick="toggleMobileNav(false)" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div id="nav-grid-mobile" class="grid grid-cols-6 gap-1.5 py-4 overflow-y-auto flex-1 content-start"></div>
+            <div id="nav-legend-mobile" class="pt-3.5 border-t border-slate-200 grid grid-cols-2 gap-2 text-xs text-slate-600"></div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Selesai Ujian -->
+    <div id="finish-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-navy-950/60 backdrop-blur-xs" onclick="closeFinishModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 fade-in border border-slate-200">
+            <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-extrabold text-navy-950 text-center">Selesaikan Ujian &amp; Hitung Skor?</h3>
+            <p id="finish-modal-summary" class="text-sm text-slate-600 text-center mt-2 leading-relaxed"></p>
+            <div class="mt-6 grid grid-cols-2 gap-3">
+                <button type="button" onclick="closeFinishModal()"
+                    class="py-2.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm">
+                    Periksa Lagi
+                </button>
+                <button type="button" onclick="finishSimulation()"
+                    class="py-2.5 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-amber-300 font-bold text-sm shadow-xs">
+                    Ya, Selesai
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Umum (Pengganti confirm/alert) -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-navy-950/60 backdrop-blur-xs" onclick="closeConfirmModal()"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 fade-in border border-slate-200">
+            <h3 id="confirm-modal-title" class="text-lg font-extrabold text-navy-950 text-center">Konfirmasi</h3>
+            <p id="confirm-modal-desc" class="text-sm text-slate-600 text-center mt-2 leading-relaxed"></p>
+            <div class="mt-6 grid grid-cols-2 gap-3">
+                <button type="button" onclick="closeConfirmModal()"
+                    class="py-2.5 px-4 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm">
+                    Batal
+                </button>
+                <button type="button" id="confirm-modal-action"
+                    class="py-2.5 px-4 rounded-xl bg-navy-900 hover:bg-navy-800 text-amber-300 font-bold text-sm">
+                    Lanjutkan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- 3. HALAMAN HASIL, ANALISIS KATEGORI & PEMBAHASAN          -->
+    <!-- ========================================================= -->
+    <main id="screen-result" class="hidden flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6 fade-in">
+        <!-- Kartu Ringkasan Skor -->
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="p-6 sm:p-8 text-white bg-gradient-to-br from-navy-950 via-navy-900 to-blue-950 border-b-4 border-amber-500">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    <div>
+                        <span id="result-status-badge" class="inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2.5">
+                            LULUS SIMULASI (≥ 70)
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Hasil &amp; Evaluasi CBT PPDH</h2>
+                        <p id="result-subtitle" class="text-slate-300 text-sm mt-1">
+                            Kompilasi TO Nasional PPDH — Universitas Brawijaya (2026)
+                        </p>
+                    </div>
+
+                    <!-- SVG Progress Ring Skor (0-100) -->
+                    <div class="flex items-center gap-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-4 shrink-0 self-start sm:self-center">
+                        <div class="relative w-20 h-20 flex items-center justify-center">
+                            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+                                <circle cx="40" cy="40" r="34" stroke="rgba(255,255,255,0.18)" stroke-width="7" fill="none"></circle>
+                                <circle id="score-ring-circle" cx="40" cy="40" r="34" stroke="#fbbf24" stroke-width="7" fill="none"
+                                    stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                                    style="transition: stroke-dashoffset 0.85s ease-out;"></circle>
+                            </svg>
+                            <span id="result-score-value" class="absolute text-2xl font-extrabold text-white">0</span>
+                        </div>
+                        <div>
+                            <div class="text-xs uppercase tracking-wider text-amber-300 font-bold">Skor Akhir</div>
+                            <div class="text-xs text-slate-300 mt-0.5">Passing Grade ≥ 70</div>
+                            <div id="result-accuracy" class="text-xs font-semibold text-white mt-1">Akurasi: 0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistik 4 Kolom -->
+            <div class="p-6 grid grid-cols-2 sm:grid-cols-4 gap-4 border-b border-slate-100">
+                <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-center">
+                    <div class="text-xs font-bold text-emerald-700 uppercase">Benar</div>
+                    <div id="stat-correct" class="text-2xl font-extrabold text-emerald-800 mt-1">0</div>
+                </div>
+                <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-center">
+                    <div class="text-xs font-bold text-rose-700 uppercase">Salah</div>
+                    <div id="stat-wrong" class="text-2xl font-extrabold text-rose-800 mt-1">0</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                    <div class="text-xs font-bold text-slate-600 uppercase">Kosong</div>
+                    <div id="stat-unanswered" class="text-2xl font-extrabold text-slate-700 mt-1">0</div>
+                </div>
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-center">
+                    <div class="text-xs font-bold text-amber-800 uppercase">Waktu</div>
+                    <div id="stat-duration" class="text-2xl font-extrabold text-navy-950 mt-1 font-mono">00:00</div>
+                </div>
+            </div>
+
+            <!-- Breakdown Akurasi per Kategori Topik (Bar Chart Horizontal CSS) -->
+            <div class="p-6 border-b border-slate-100">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-navy-950 text-sm uppercase tracking-wider">Breakdown Akurasi per Kategori Topik</h3>
+                    <span class="text-xs text-slate-500">Target penguasaan ≥ 70%</span>
+                </div>
+                <div id="category-breakdown-list" class="space-y-3.5">
+                    <!-- Dirender via JS -->
+                </div>
+            </div>
+
+            <!-- Tombol Aksi Hasil -->
+            <div class="p-5 bg-slate-50 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap gap-2.5">
+                    <button type="button" id="btn-retry-wrong" onclick="retryWrongQuestions()"
+                        class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-navy-950 font-bold text-sm shadow-xs transition-colors disabled:opacity-45 disabled:cursor-not-allowed flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span id="btn-retry-wrong-label">Ulangi Soal Salah Saja</span>
+                    </button>
+                    <button type="button" onclick="backToSetup()"
+                        class="px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-semibold text-sm transition-colors">
+                        Kembali ke Menu Utama
+                    </button>
+                </div>
+                <span class="text-xs text-slate-500 font-medium">Status Lulus: <strong class="text-navy-900">Skor ≥ 70</strong></span>
+            </div>
+        </div>
+
+        <!-- Bar Filter & Pencarian Pembahasan -->
+        <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="filterReview('all')" id="filter-all"
+                    class="px-3.5 py-2 rounded-lg text-xs font-bold bg-navy-900 text-amber-300 transition-colors">
+                    Semua
+                </button>
+                <button type="button" onclick="filterReview('correct')" id="filter-correct"
+                    class="px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+                    Benar
+                </button>
+                <button type="button" onclick="filterReview('wrong')" id="filter-wrong"
+                    class="px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+                    Salah
+                </button>
+                <button type="button" onclick="filterReview('unanswered')" id="filter-unanswered"
+                    class="px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors">
+                    Belum Dijawab
+                </button>
+            </div>
+
+            <div class="relative w-full md:w-72">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input type="text" id="review-search" oninput="renderReviewList()"
+                    placeholder="Cari kata kunci soal/kategori/pembahasan..."
+                    class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-sm text-slate-800 focus:ring-2 focus:ring-navy-900/20 focus:border-navy-900 outline-none">
+            </div>
+        </div>
+
+        <!-- Daftar Pembahasan Lengkap -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between px-1">
+                <h3 class="text-lg font-extrabold text-navy-950">Daftar Pembahasan Lengkap</h3>
+                <span id="review-count-label" class="text-xs font-semibold text-slate-500">Menampilkan 0 soal</span>
+            </div>
+            <div id="review-list" class="space-y-4">
+                <!-- Kartu pembahasan dirender via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- SCRIPT LOGIKA APLIKASI & BANK 120 SOAL LENGKAP UB 2026    -->
+    <!-- ========================================================= -->
+    <script>
+        const STORAGE_KEY = 'cbt_ppdh_ub_2026_session_v1';
+        const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+
+        // ==========================================
+        // BANK SOAL LENGKAP: SELURUH 120 SOAL (1-120)
+        // ==========================================
+        const QUESTION_BANK = [
+            {
+                id: 1,
+                category: "Klinik & Bedah",
+                question: "Jantung terdiri atas 4 ruang. Katup yang memisahkan ventrikel kiri dan atrium kiri adalah...",
+                options: ["Mitral (Bikuspidalis)", "Trikuspidalis", "Aorta", "Pulmonalis", "Semilunaris"],
+                correct: 0,
+                explanation: "Katup mitral (bikuspidalis) memisahkan atrium kiri dan ventrikel kiri; katup trikuspidalis memisahkan atrium kanan dan ventrikel kanan."
+            },
+            {
+                id: 2,
+                category: "Klinik & Bedah",
+                question: "Seekor anjing mengalami trauma dengan luka terbuka seluas 0,4 cm dan kedalaman 0,3 cm. Luka tersebut terus mengeluarkan darah bahkan setelah 2 jam. Pemeriksaan aPTT menunjukkan hasil > 45 detik. Anjing tersebut kemungkinan mengalami...",
+                options: ["Hemoragi fisiologis", "Hemofilia", "Septikemia", "Polisitemia vera", "Anemia bulan sabit"],
+                correct: 1,
+                explanation: "Perdarahan berkepanjangan pada luka kecil disertai pemanjangan aPTT (Activated Partial Thromboplastin Time) mengindikasikan gangguan jalur koagulasi intrinsik seperti Hemofilia A (defisiensi faktor VIII) atau B (faktor IX)."
+            },
+            {
+                id: 3,
+                category: "Kesmavet & Regulasi",
+                question: "Seorang peternak unggas/kambing melaporkan kematian ternak mendadak kepada dokter hewan di Puskeswan. Setelah dokter hewan memasukkan laporan ke iSIKHNAS, langkah selanjutnya yang perlu dilakukan adalah...",
+                options: ["Menunggu respon pusat tanpa tindakan lapang", "Mengambil sampel dan mengirimkannya ke laboratorium sesuai prosedur", "Membiarkan kejadian hingga mereda", "Langsung menjual ternak yang masih hidup", "Menutup laporan tanpa verifikasi"],
+                correct: 1,
+                explanation: "Setelah pelaporan dini melalui iSIKHNAS, dokter hewan wajib melakukan investigasi lapang, pengambilan sampel diagnostik, dan pengiriman ke laboratorium rujukan sesuai biosekuriti."
+            },
+            {
+                id: 4,
+                category: "Etika & Leadership",
+                question: "Bagaimana sikap yang tepat sebagai dokter hewan jika dihadapkan pada klien dengan kondisi pasien yang tidak tertolong (mati)?",
+                options: ["Tidak memberikan komentar apapun", "Mengatakan bahwa hal tersebut bukan masalah besar", "Menjelaskan hanya dengan istilah medis rumit tanpa empati", "Bersikap penuh empati, jujur, dan profesional", "Menyalahkan pemilik karena terlambat datang"],
+                correct: 3,
+                explanation: "Komunikasi kabar buruk (breaking bad news) menuntut sikap empati, kejujuran, dan profesionalisme untuk menghargai duka klien."
+            },
+            {
+                id: 5,
+                category: "Klinik & Bedah",
+                question: "Anjing dengan riwayat batuk, lemas, dan sesak pasca dititipkan di penitipan hewan selama 10 hari dibawa ke klinik. Dokter memberikan antibiotik selama 7 hari sekaligus memberikan vaksin intranasal Bordetella bronchiseptica. Setelah terapi, lemas dan sesak berkurang namun batuk masih berfrekuensi. Pernyataan yang benar terkait kasus ini adalah...",
+                options: [
+                    "Antibiotik dapat mempengaruhi/menginaktivasi kerja vaksin bakteri hidup yang diberikan secara intranasal",
+                    "Antibodi maternal selalu menginaktivasi vaksin intranasal",
+                    "Pemberian antibiotik sama sekali tidak bekerja",
+                    "Vaksinasi intranasal menyebabkan pneumonia",
+                    "Pemberian vaksin intranasal tidak memerlukan respons mukosa"
+                ],
+                correct: 0,
+                explanation: "Vaksin intranasal Bordetella umumnya berupa bakteri hidup yang dilemahkan (live attenuated). Pemberian antibiotik sistemik secara bersamaan dapat membunuh bakteri vaksin sehingga efektivitas imunisasi menurun."
+            },
+            {
+                id: 6,
+                category: "Klinik & Bedah",
+                question: "Posisi radiografi yang direkomendasikan untuk evaluasi kasus anjing yang diduga menelan benda asing berupa tulang adalah...",
+                options: ["Left lateral + DV", "Left lateral + VD", "Right lateral + DV", "Right lateral + VD", "Hanya proyeksi AP"],
+                correct: 3,
+                explanation: "Proyeksi Right Lateral dan Ventrodorsal (VD) memberikan visualisasi anatomis esofagus, lambung, dan saluran pencernaan yang optimal dengan posisi organ lebih konsisten."
+            },
+            {
+                id: 7,
+                category: "Kesmavet & Regulasi",
+                question: "Daftar resmi penyakit hewan (termasuk penyakit zoonosis strategis) yang wajib dilaporkan secara cepat oleh negara anggota serta standar kesehatan hewan perdagangan global dikelola oleh...",
+                options: [
+                    "World Health Organization (WHO)",
+                    "Food and Agriculture Organization (FAO)",
+                    "World Organisation for Animal Health (WOAH / OIE)",
+                    "International Society for Infectious Diseases",
+                    "Codex Alimentarius Commission (CAC)"
+                ],
+                correct: 2,
+                explanation: "WOAH (dahulu OIE) adalah organisasi kesehatan hewan dunia yang mengelola daftar penyakit wajib lapor (WOAH-listed diseases) dan standar kesehatan hewan internasional."
+            },
+            {
+                id: 8,
+                category: "Kesmavet & Regulasi",
+                question: "Pada pemeriksaan post-mortem di RPH, ditemukan hati sapi mengalami sirosis, penebalan dan kalsifikasi dinding saluran empedu (pipe-stem liver), serta banyak cacing pipih seperti daun di dalam saluran empedu. Diagnosis yang paling tepat adalah...",
+                options: ["Fasciolosis", "Dicrocoeliosis", "Schistosomosis hepatika", "Hidatidosis", "Paramphistomosis"],
+                correct: 0,
+                explanation: "Pipe-stem liver (kolangitis kronis, fibrosis, dan kalsifikasi duktus biliaris) dengan temuan cacing pipih daun besar merupakan lesi patognomonik Fasciolosis (Fasciola gigantica / F. hepatica)."
+            },
+            {
+                id: 9,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Anak anjing Pomeranian usia 3 bulan belum pernah divaksin dibawa dengan keluhan muntah profus, anoreksia, lesu, dan diare berdarah berbau amis khas menyengat, turgor lambat, dan hipotermia ringan. Diagnosis kerja yang paling tepat adalah...",
+                options: ["Canine Distemper Virus (CDV) sistemik", "Canine Parvovirus (CPV) enteritis", "Salmonellosis akut", "Intususepsi intestinalis", "Infeksi Toxocara canis"],
+                correct: 1,
+                explanation: "Anak anjing belum divaksin dengan muntah profus dan diare hemoragik berbau amis khas sangat klasik untuk infeksi Canine Parvovirus (CPV-2)."
+            },
+            {
+                id: 10,
+                category: "Kesmavet & Regulasi",
+                question: "Bogor merupakan wilayah endemik antraks dengan populasi unggulan Domba Garut. Dinas Peternakan secara proaktif melakukan pengawasan terarah di area berisiko tinggi (seperti menjelang kontes/hari raya). Metode surveilans yang tepat adalah...",
+                options: ["Surveilans berbasis risiko (risk-based surveillance)", "Surveilans kontaminasi", "Surveilans silang", "Surveilans pasif semata", "Surveilans acak tanpa stratifikasi"],
+                correct: 0,
+                explanation: "Surveilans berbasis risiko memfokuskan sumber daya pada populasi, lokasi, atau periode dengan probabilitas kejadian penyakit tertinggi sehingga lebih efisien dan sensitif."
+            },
+            {
+                id: 11,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Seorang anak tergigit anjing yang beberapa hari kemudian mati di daerah dengan fasilitas kesehatan terbatas. Langkah pengendalian paling tepat yang dilakukan oleh Dinas terkait dengan pendekatan One Health adalah...",
+                options: [
+                    "Membuat shelter tanpa vaksinasi",
+                    "Melakukan eliminasi massal seluruh anjing liar",
+                    "Melakukan vaksinasi minimal 70% populasi anjing dan memberikan edukasi masyarakat",
+                    "Hanya melapor ke lembaga lebih tinggi tanpa aksi lapang",
+                    "Menutup akses desa secara permanen"
+                ],
+                correct: 2,
+                explanation: "Standar WHO/WOAH untuk memutus rantai penularan rabies adalah cakupan vaksinasi anjing minimal 70% untuk mencapai herd immunity, disertai edukasi penanganan luka gigitan (cuci sabun + PEP)."
+            },
+            {
+                id: 12,
+                category: "Kesmavet & Regulasi",
+                question: "Sebelumnya Indonesia mensyaratkan deboning dan deglanding untuk daging impor dari Brazil karena status PMK. Saat Brazil telah resmi dinyatakan bebas PMK (tanpa vaksinasi) oleh WOAH, maka kebijakan terhadap daging asal Brazil adalah...",
+                options: [
+                    "Tidak perlu dilakukan deboning dan deglanding lagi karena sudah dinyatakan bebas PMK",
+                    "Tetap wajib deboning dan deglanding tanpa batas waktu",
+                    "Hanya dilakukan deboning saja",
+                    "Hanya dilakukan deglanding saja",
+                    "Ditolak seluruhnya untuk menjaga keamanan"
+                ],
+                correct: 0,
+                explanation: "Persyaratan mitigasi risiko deboning (pemisahan tulang) dan deglanding (pembuangan kelenjar getah bening) diterapkan untuk negara/zona belum bebas PMK. Jika sudah berstatus bebas PMK sesuai standar WOAH, perlakuan khusus tersebut tidak lagi dipersyaratkan."
+            },
+            {
+                id: 13,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Mahasiswa melakukan survei ke peternakan ayam dengan kondisi lantai/tanah lembab dan kepadatan tinggi. Aspek utama yang perlu diperhatikan saat evaluasi adalah...",
+                options: ["Hanya catatan pertumbuhan ayam", "Kondisi lingkungan kandang dan kondisi fisik ayam", "Hanya jumlah kematian harian", "Harga jual daging di pasar", "Jenis pakan starter saja"],
+                correct: 1,
+                explanation: "Kepadatan tinggi dan litter lembab memicu amonia tinggi, koksidiosis, serta stres panas; evaluasi menyeluruh harus mencakup kondisi lingkungan kandang dan kondisi fisik/kesehatan ayam."
+            },
+            {
+                id: 14,
+                category: "Reproduksi",
+                question: "Seorang peternak memanggil dokter hewan ke kandang untuk memeriksa kebuntingan sapinya. Metode pemeriksaan kebuntingan yang paling praktis dan umum digunakan dokter hewan di lapang adalah...",
+                options: ["Palpasi rektal", "USG Doppler", "Radiografi (X-ray)", "Laparoskopi", "Uji hormon RIA laboratorium"],
+                correct: 0,
+                explanation: "Palpasi rektal adalah metode diagnostik kebuntingan sapi paling praktis, cepat, ekonomis, dan tidak memerlukan peralatan khusus di lapang."
+            },
+            {
+                id: 15,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Ayam dinekropsi menunjukkan gejala ngorok, diare hijau, Bursa Fabricius mengecil/nekrotik, petekie pada proventrikulus dan mukosa usus, serta didiagnosis Newcastle Disease (ND). Gambaran histopatologi khas pada kasus ND tersebut adalah...",
+                options: [
+                    "Nekrosis dan deplesi limfoid pada Bursa Fabricius, perdarahan sistemik, dan hemoragi trakea",
+                    "Inklusi intranuklear pada hepatosit saja",
+                    "Granuloma tuberkel pada paru",
+                    "Kista skizon pada otot dada",
+                    "Hiperplasia epitel kulit"
+                ],
+                correct: 0,
+                explanation: "Virus ND velogenik visserotropik menyebabkan deplesi limfoid/nekrosis organ limfoid (Bursa Fabricius, limpa, seka tonsil), hemoragi/ulserasi saluran cerna, serta hemoragi trakea."
+            },
+            {
+                id: 16,
+                category: "Etika & Leadership",
+                question: "Bentuk komunikasi dan penjelasan terkait pemeriksaan penunjang yang paling baik dari dokter hewan kepada klien adalah...",
+                options: [
+                    "Langsung menyarankan uji termahal tanpa diskusi",
+                    "Memaksa klien menyetujui seluruh pemeriksaan",
+                    "Memberikan penjelasan secara logis mengenai tujuan pemeriksaan penunjang dan berdiskusi tentang kesanggupan klien",
+                    "Tidak menjelaskan biaya hingga pemeriksaan selesai",
+                    "Menghindari pemeriksaan penunjang agar klien senang"
+                ],
+                correct: 2,
+                explanation: "Informed consent yang baik membutuhkan komunikasi transparan, penjelasan rasional klinis setiap tes, serta diskusi opsi sesuai kemampuan finansial klien."
+            },
+            {
+                id: 17,
+                category: "Reproduksi",
+                question: "Deteksi kebuntingan dini pada sapi dara melalui palpasi rektal umumnya mulai dapat teraba pada usia kebuntingan...",
+                options: ["5–15 hari", "10–15 hari", "15–25 hari", "30–45 hari", "90–120 hari"],
+                correct: 3,
+                explanation: "Pada usia 30–45 hari kebuntingan, palpasi rektal oleh praktisi terampil mulai dapat mendeteksi asimetri kornua uteri, fluktuasi cairan, dan fetal membrane slip."
+            },
+            {
+                id: 18,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Beberapa sapi perah mengalami pembengkakan ambing, kemerahan, nyeri saat diperah, dan susu encer menggumpal. Lantai kandang basah, kotoran jarang dibersihkan, dan ventilasi buruk. Faktor utama tingginya kejadian mastitis tersebut adalah...",
+                options: [
+                    "Pemberian pakan konsentrat tinggi",
+                    "Faktor genetik semata",
+                    "Kondisi kandang kotor dan lembap, sanitasi buruk, serta prosedur pemerahan tidak higienis",
+                    "Pemberian air minum berlebihan",
+                    "Kurangnya aktivitas olahraga sapi"
+                ],
+                correct: 2,
+                explanation: "Lingkungan kandang yang basah dan kotor meningkatkan paparan bakteri penyebab mastitis lingkungan (E. coli, Streptococcus uberis) dan mastitis menular saat pemerahan tidak higienis."
+            },
+            {
+                id: 19,
+                category: "Reproduksi",
+                question: "Seekor sapi potong menunjukkan estrus dan dilakukan IB namun tidak berhasil bunting. Berapa rata-rata lama siklus estrus sapi hingga menunjukkan birahi kembali?",
+                options: ["7 hari", "14 hari", "21 hari", "35 hari", "60 hari"],
+                correct: 2,
+                explanation: "Siklus estrus normal pada sapi rata-rata berlangsung 21 hari (kisaran 18–24 hari)."
+            },
+            {
+                id: 20,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Seekor beruang yang baru didatangkan ke lembaga konservasi menunjukkan perilaku berjalan mondar-mandir berulang dengan pola sama (pacing). Berdasarkan Five Freedoms, penyebab utama perilaku stereotipik tersebut adalah...",
+                options: [
+                    "Peningkatan nafsu makan akibat pakan baru",
+                    "Adaptasi normal terhadap suhu tropis",
+                    "Kandang terlalu kecil sehingga membatasi ruang gerak dan menghambat ekspresi perilaku alami",
+                    "Peningkatan rasa nyaman di kandang baru",
+                    "Perilaku bermain normal"
+                ],
+                correct: 2,
+                explanation: "Pacing merupakan perilaku stereotipik akibat stres kronis, kebosanan, dan kegagalan memenuhi kebebasan mengekspresikan perilaku alami (Freedom to express normal behavior)."
+            },
+            {
+                id: 21,
+                category: "Klinik & Bedah",
+                question: "Meningkatnya kadar asam (asidosis rumen) pada sapi dapat menimbulkan beberapa dampak berikut, KECUALI...",
+                options: ["Asidosis metabolik", "Dehidrasi", "Toksemia", "Hipermotilitas rumen", "Distensi abdomen"],
+                correct: 3,
+                explanation: "Pada asidosis rumen (lactic acidosis), pH rumen yang sangat rendah justru menyebabkan hipomotilitas hingga atonia (stasis) rumen, bukan hipermotilitas."
+            },
+            {
+                id: 22,
+                category: "Etika & Leadership",
+                question: "Di sebuah klinik hewan/unit pelayanan, staf paramedis dan administrasi sering datang terlambat dan kinerjanya buruk. Gaya kepemimpinan yang sesuai untuk menegakkan disiplin, SOP, serta sistem reward dan punishment adalah...",
+                options: ["Kepemimpinan Concertive", "Kepemimpinan Kharismatik", "Kepemimpinan Transformasional", "Kepemimpinan Transaksional", "Kepemimpinan Laissez-faire"],
+                correct: 3,
+                explanation: "Kepemimpinan transaksional berfokus pada struktur kerja yang jelas, kepatuhan terhadap aturan/SOP, serta sistem imbalan (reward) dan sanksi (punishment) untuk memperbaiki kedisiplinan."
+            },
+            {
+                id: 23,
+                category: "Klinik & Bedah",
+                question: "Komposisi diet yang paling tepat untuk penanganan kucing/hewan yang mengalami hepatik lipidosis (fatty liver) adalah...",
+                options: ["Tinggi energi dan tinggi protein", "Rendah lemak dan tinggi serat", "Rendah protein dan tinggi serat", "Tinggi natrium dan tinggi fosfor", "Tinggi karbohidrat dan rendah protein"],
+                correct: 0,
+                explanation: "Hepatik lipidosis dipicu anoreksia berkepanjangan dan mobilisasi lemak berlebih ke hati. Terapi nutrisi membutuhkan diet tinggi energi dan tinggi protein (kecuali bila ada ensefalopati hepatik) untuk menghentikan lipolisis dan mendukung sintesis lipoprotein hati."
+            },
+            {
+                id: 24,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Ikan mas koi memiliki bintik-bintik putih seperti butiran pasir pada sisik, sirip, dan insang, serta malas berenang (White Spot Disease / Ich). Penyakit ini disebabkan oleh...",
+                options: ["Bakteri", "Jamur", "Virus", "Protozoa", "Alga"],
+                correct: 3,
+                explanation: "White Spot Disease (Ichthyophthiriasis) pada ikan air tawar disebabkan oleh protozoa bersilia Ichthyophthirius multifiliis."
+            },
+            {
+                id: 25,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Seekor kucing mengalami demam tinggi, muntah, diare berat, dehidrasi, dan leukopenia berat, lalu didiagnosis panleukopenia. Agen penyebab penyakit ini adalah...",
+                options: ["Feline Coronavirus", "Feline Parvovirus (Feline Panleukopenia Virus)", "Feline Calicivirus", "Salmonella enterica", "Leptospira sp."],
+                correct: 1,
+                explanation: "Feline Panleukopenia disebabkan oleh Feline Panleukopenia Virus (FPV) yang termasuk famili Parvoviridae (Feline Parvovirus)."
+            },
+            {
+                id: 26,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Seekor burung macau baru saja menjalani operasi pemasangan intramedullary pin pada os humerus. Saran pemeliharaan pasca operasi yang tepat adalah...",
+                options: [
+                    "Dimasukkan ke kandang luas agar segera berlatih terbang",
+                    "Tempat bertengger diturunkan/dilepas dan kandang dibatasi agar burung tidak terbang atau terjatuh",
+                    "Dibiarkan bebas di ruangan terbuka",
+                    "Digabung dengan burung lain agar tidak stres",
+                    "Tidak perlu pembatasan gerak sama sekali"
+                ],
+                correct: 1,
+                explanation: "Pasca fiksasi fraktur humerus pada burung, pergerakan sayap dan risiko jatuh harus diminimalkan dengan kandang terbatas/tenang dan menurunkan atau melepas tenggeran (perch)."
+            },
+            {
+                id: 27,
+                category: "Klinik & Bedah",
+                question: "Seekor anjing berusia 9 tahun datang dengan keluhan mata keruh dan tampak tidak nyaman, lalu didiagnosis katarak. Gejala klinis khas katarak adalah...",
+                options: [
+                    "Lensa mata tampak keruh berwarna putih keabuan seperti awan",
+                    "Konjungtiva hiperemis tanpa perubahan lensa",
+                    "Perubahan warna mukosa mulut menjadi pucat",
+                    "Prolaps kelenjar air mata (cherry eye)",
+                    "Kornea berlubang tanpa kekeruhan lensa"
+                ],
+                correct: 0,
+                explanation: "Katarak adalah opasitas (kekeruhan) pada lensa mata atau kapsulnya yang tampak berwarna putih keabuan dan mengganggu transmisi cahaya ke retina."
+            },
+            {
+                id: 28,
+                category: "Kesmavet & Regulasi",
+                question: "Dokter hewan memeriksa kualitas telur menggunakan uji Haugh Unit (HU). Semakin tinggi nilai HU, semakin baik kualitas telur. Nilai HU terutama ditentukan oleh...",
+                options: [
+                    "Ketebalan dan kekuatan kerabang telur",
+                    "Warna pigmen kuning telur",
+                    "Ukuran kuning telur",
+                    "Kekentalan/tinggi albumen (putih telur) dan bobot telur",
+                    "Kebersihan permukaan kerabang"
+                ],
+                correct: 3,
+                explanation: "Haugh Unit (HU) mengukur kesegaran dan kualitas protein telur berdasarkan korelasi antara tinggi putih telur kental (thick albumen) dan berat telur utuh."
+            },
+            {
+                id: 29,
+                category: "Klinik & Bedah",
+                question: "Pada pembuatan preparat ulas darah, terdapat artefak bentuk eritrosit yang sering keliru diinterpretasikan sebagai kondisi patologis (akantosit). Artefak yang dimaksud adalah...",
+                options: ["Ekinosit (krenasi)", "Sel target (kodiosit)", "Siderosit", "Schistosit", "Sferosit"],
+                correct: 0,
+                explanation: "Ekinosit (sel krenasi dengan tonjolan tumpul merata) sangat sering muncul sebagai artefak akibat pengeringan preparat lambat, kelebihan EDTA, atau pH kaca objek, dan sering tertukar dengan akantosit."
+            },
+            {
+                id: 30,
+                category: "Kesmavet & Regulasi",
+                question: "Negara X yang memiliki riwayat wabah PMK mengajukan permohonan impor daging sapi ke Indonesia. Tahap pertama dalam analisis risiko impor (import risk analysis) menurut standar WOAH adalah...",
+                options: [
+                    "Langsung mengizinkan masuk tanpa pemeriksaan",
+                    "Identifikasi bahaya (membuat daftar patogen yang berpotensi masuk bersama daging)",
+                    "Langsung menghitung kerugian ekonomi",
+                    "Mengabaikan status penyakit negara asal",
+                    "Melakukan vaksinasi massal di pelabuhan"
+                ],
+                correct: 1,
+                explanation: "Kerangka Analisis Risiko Impor WOAH diawali dengan Identifikasi Bahaya (Hazard Identification), diikuti Penilaian Risiko (Risk Assessment), Manajemen Risiko, dan Komunikasi Risiko."
+            },
+            {
+                id: 31,
+                category: "Reproduksi",
+                question: "Sapi betina usia 3 tahun mengalami prolapsus uteri 2 jam pasca melahirkan. Jaringan uterus masih segar tanpa nekrosis dan kondisi umum stabil. Penanganan yang paling tepat adalah...",
+                options: [
+                    "Histerektomi segera",
+                    "Anestesi epidural, reposisi manual uterus, fiksasi vulva, serta pemberian oksitosin",
+                    "Reposisi tanpa anestesi dan tanpa pembersihan",
+                    "Amputasi uterus",
+                    "Dibiarkan masuk sendiri"
+                ],
+                correct: 1,
+                explanation: "Pada prolapsus uteri segar tanpa nekrosis, dilakukan anestesi epidural untuk menghentikan perejanan, pembersihan uterus, reposisi manual hati-hati, jahitan penahan vulva (mis. Buhner), dan oksitosin untuk membantu involusi uterus."
+            },
+            {
+                id: 32,
+                category: "Kesmavet & Regulasi",
+                question: "Sebuah RPH dikomplain warga sekitar karena bau menyengat, banyak lalat, lantai kotor licin, jeroan menumpuk di saluran, dan IPAL tidak berfungsi. Tindakan perbaikan yang paling tepat adalah...",
+                options: [
+                    "Mempercepat pemotongan tanpa membersihkan area",
+                    "Menerapkan prinsip 5R, membersihkan saluran limbah, serta memperbaiki dan mengoperasikan IPAL sesuai ketentuan",
+                    "Hanya melakukan fogging insektisida mingguan",
+                    "Memberikan antibiotik profilaksis pada sapi sebelum potong",
+                    "Membuang limbah langsung ke sungai"
+                ],
+                correct: 1,
+                explanation: "Penanganan masalah sanitasi RPH harus menyasar akar masalah melalui higiene sanitasi (5R/SSOP), pengelolaan limbah padat, dan pemulihan fungsi IPAL."
+            },
+            {
+                id: 33,
+                category: "Kesmavet & Regulasi",
+                question: "Produk susu dari peternakan sapi tradisional sering tidak memenuhi syarat mutu karena ditemukan residu antibiotik dan strain bakteri resisten. Penyebab utama kondisi tersebut di tingkat lapang adalah...",
+                options: [
+                    "Kurangnya pengawasan, edukasi masa henti obat, dan kontrol mutu terhadap peternak",
+                    "Sapi tradisional tidak mampu menghasilkan susu sehat",
+                    "Kurangnya pemberian pakan hijauan",
+                    "Suhu tubuh sapi terlalu tinggi",
+                    "Warna susu yang terlalu putih"
+                ],
+                correct: 0,
+                explanation: "Minimnya pengawasan veteriner dan ketidaktahuan peternak mengenai withdrawal time antibiotik menyebabkan susu tetap diperah dan dipasarkan selama periode residu obat."
+            },
+            {
+                id: 34,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Seekor anjing/sapi mengalami demam dan ikterus, sementara pemiliknya mengeluhkan demam dan nyeri otot betis setelah kontak dengan urin hewan tersebut. Agen zoonosis penyebabnya adalah...",
+                options: ["Leptospira interrogans", "Brucella abortus", "Listeria monocytogenes", "Coxiella burnetii", "Salmonella enteritidis"],
+                correct: 0,
+                explanation: "Leptospirosis (Leptospira interrogans) ditularkan melalui urin hewan terinfeksi, menyebabkan ikterus/gangguan ginjal pada hewan serta demam dan nyeri otot betis (myalgia) khas pada manusia."
+            },
+            {
+                id: 35,
+                category: "Klinik & Bedah",
+                question: "Faktor utama yang berperan dalam kejadian Canine Hip Dysplasia (CHD) pada anjing adalah...",
+                options: [
+                    "Tidak berhubungan sama sekali dengan genetik",
+                    "Faktor genetik, predisposisi ras besar, pertumbuhan cepat/nutrisi berlebih, dan aktivitas/olahraga berlebihan saat masa pertumbuhan",
+                    "Hanya akibat kekurangan air minum",
+                    "Infeksi virus pada sendi",
+                    "Pemberian vaksin rabies"
+                ],
+                correct: 1,
+                explanation: "Hip dysplasia bersifat poligenik (herediter) yang sangat dipengaruhi ras besar, serta diperparah faktor lingkungan seperti kelebihan kalori/kalsium dan beban olahraga berlebihan saat pertumbuhan tulang."
+            },
+            {
+                id: 36,
+                category: "Etika & Leadership",
+                question: "Praktik \"sapi gelonggongan\" (memaksa sapi minum air berlebihan sebelum disembelih) untuk menambah bobot karkas tidak hanya merugikan konsumen tetapi juga menyakiti hewan. Praktik ini merupakan pelanggaran serius terhadap prinsip...",
+                options: ["Animal Welfare (Kesejahteraan Hewan)", "Animal Use", "Animal Liberation", "Animal Productivity", "Animal Domestication"],
+                correct: 0,
+                explanation: "Gelonggongan menyebabkan penderitaan fisik, stres berat, dan kesakitan pada hewan yang secara langsung melanggar prinsip kesejahteraan hewan (Animal Welfare / Five Freedoms) serta UU Peternakan dan Kesehatan Hewan."
+            },
+            {
+                id: 37,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Suatu peternakan babi mengalami kematian mendadak massal dengan gejala demam tinggi, sianosis pada telinga dan ekstremitas, kejang, limfopenia, edema paru, serta splenomegali dan perdarahan limfonodus. Diagnosis yang paling mungkin adalah...",
+                options: ["African Swine Fever (ASF)", "Colibacillosis", "Erysipelas kronis", "Salmonellosis ringan", "Koksidiosis"],
+                correct: 0,
+                explanation: "Demam hemoragik akut dengan mortalitas sangat tinggi (mendekati 100%), sianosis ekstremitas, limfopenia, dan splenomegali hiperemik adalah gambaran khas African Swine Fever (ASF), dengan diagnosis banding utama CSF."
+            },
+            {
+                id: 38,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Lokasi pengambilan sampel darah yang tepat dan aman pada ular Python reticulatus untuk pemeriksaan hematologi adalah...",
+                options: ["Vena coccygealis ventralis (ventral tail vein)", "Vena retroorbitalis", "Vena saphena", "Vena cephalica", "Vena aurikularis"],
+                correct: 0,
+                explanation: "Pada ular (serpentes), pengambilan darah klinis rutin dilakukan melalui vena coccygealis ventralis (di bagian ventral ekor, kaudal dari kloaka/hemipenis)."
+            },
+            {
+                id: 39,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Prion memiliki ketahanan yang sangat tinggi terhadap panas, radiasi, dan proses disinfeksi rutin dibandingkan bakteri atau virus. Faktor utama penyebab ketahanan tersebut adalah...",
+                options: [
+                    "Memiliki struktur protein normal yang mudah terdenaturasi",
+                    "Memiliki sistem metabolisme yang kompleks",
+                    "Memiliki lapisan lipid yang sangat tebal",
+                    "Memiliki struktur protein abnormal kaya beta-pleated sheet (β-sheet) yang sangat stabil dan tahan protease",
+                    "Membentuk endospora berdinding ganda"
+                ],
+                correct: 3,
+                explanation: "Prion (PrP^Sc) tidak memiliki asam nukleat dan memiliki konformasi dominan beta-pleated sheet yang membentuk agregat amiloid sangat stabil serta resisten terhadap protease dan panas standar."
+            },
+            {
+                id: 40,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Pada kolam budidaya ikan ditemukan infeksi bakteri yang memerlukan terapi antibiotik. Manakah antibiotik berikut yang diperbolehkan/efektif digunakan pada ikan (dengan resep dan withdrawal time)?",
+                options: ["Enrofloxacin", "Chloramphenicol", "Nitrofuran", "Malachite green", "Nafcillin"],
+                correct: 0,
+                explanation: "Enrofloxacin (golongan fluorokuinolon) digunakan secara selektif pada budidaya ikan dengan pengawasan dokter hewan, sedangkan Chloramphenicol dan Nitrofuran dilarang keras pada hewan pangan karena efek toksik (anemia aplastik/karsinogenik)."
+            },
+            {
+                id: 41,
+                category: "Klinik & Bedah",
+                question: "Squamous Cell Carcinoma (SCC) akibat paparan sinar UV paling sering ditemukan pada hewan...",
+                options: ["Kadal bearded dragon", "Kucing (terutama berbulu putih pada telinga/hidung)", "Ikan koi", "Kelinci laboratorium", "Hamster"],
+                correct: 1,
+                explanation: "SCC kutaneus sangat sering terjadi pada kucing berbulu putih/tidak berpigmen di area pinna telinga, planum nasale, dan kelopak mata akibat paparan radiasi ultraviolet kronis."
+            },
+            {
+                id: 42,
+                category: "Klinik & Bedah",
+                question: "Seekor kuda lompat terpeleset mengalami robekan otot di antara sendi patella dan tarsus sehingga kaki belakangnya dapat ditarik lurus jauh ke belakang (ekstensi tarsus saat stifles fleksi). Otot yang mengalami ruptur adalah...",
+                options: ["M. gluteus medius", "M. peroneus profundus", "M. peroneus tertius", "M. tibialis cranialis", "M. biceps femoris"],
+                correct: 2,
+                explanation: "Ruptur Musculus peroneus tertius (bagian dari reciprocal apparatus kuda) mengakibatkan hilangnya koordinasi fleksi sendi lutut dan tarsus, sehingga sendi tarsus dapat diekstensikan penuh sementara lutut fleksi."
+            },
+            {
+                id: 43,
+                category: "Klinik & Bedah",
+                question: "Seekor kuda mengalami pembengkakan lunak (edema/distensi terisi cairan sinovial) pada aspek dorsomedial sendi tarsus. Kondisi ini dikenal sebagai...",
+                options: ["Ringbone", "Sidebone", "Bog spavin", "Stringhalt", "Thrush"],
+                correct: 2,
+                explanation: "Bog spavin adalah sinovitis kronis disertai distensi kapsul sendi tibiotarsal oleh cairan sinovial berlebih pada sendi tarsus (hock) kuda."
+            },
+            {
+                id: 44,
+                category: "Klinik & Bedah",
+                question: "Hati merupakan organ vital dengan berbagai fungsi metabolik. Berikut ini yang BUKAN merupakan fungsi hati adalah...",
+                options: ["Memproduksi protrombin", "Sekresi garam empedu", "Memproduksi imunoglobulin", "Memproduksi globulin plasma (alfa/beta)", "Sintesis albumin dan protein plasma"],
+                correct: 2,
+                explanation: "Imunoglobulin (antibodi) disintesis oleh sel plasma (hasil diferensiasi limfosit B) pada jaringan limfoid, bukan oleh hepatosit hati."
+            },
+            {
+                id: 45,
+                category: "Klinik & Bedah",
+                question: "Sapi tiba-tiba sempoyongan, kejang/lemah, ambruk tidak bisa berdiri dengan suhu tubuh normal, dan sering terjadi pada musim kemarau/pakan kering atau padang penggembalaan muda. Penyebab metabolik yang paling sering mendasari kondisi ini adalah...",
+                options: [
+                    "Kekurangan magnesium (hipomagnesemia) atau kalsium (hipokalsemia)",
+                    "Kelebihan vitamin C",
+                    "Suhu lingkungan dingin saja",
+                    "Kelebihan karbohidrat murni",
+                    "Infeksi jamur kulit"
+                ],
+                correct: 0,
+                explanation: "Gangguan keseimbangan elektrolit/mineral seperti hipomagnesemia (grass tetany) dan hipokalsemia (milk fever) menyebabkan kelemahan neuromuskular, ataksia, hingga ambruk (recumbency) tanpa demam."
+            },
+            {
+                id: 46,
+                category: "Kesmavet & Regulasi",
+                question: "Indonesia merupakan negara bebas African Horse Sickness (AHS) yang ditularkan vektor Culicoides. Jika ada rencana impor kuda pacu dari negara tertular, bahaya (hazard) utama yang harus diidentifikasi adalah...",
+                options: ["African Horse Sickness Virus (AHSV)", "Iklim tropis Indonesia", "Kandang kuda pacu", "Jenis pakan kuda", "Warna bulu kuda"],
+                correct: 0,
+                explanation: "Dalam analisis risiko impor, bahaya (hazard) adalah agen patogen penyebab penyakit itu sendiri, yaitu African Horse Sickness Virus (AHSV)."
+            },
+            {
+                id: 47,
+                category: "Kesmavet & Regulasi",
+                question: "Ditemukan kontaminasi bakteri Listeria monocytogenes pada sosis sapi di pasar. Pernyataan berikut yang SALAH mengenai Listeria monocytogenes adalah...",
+                options: [
+                    "Merupakan bakteri Gram positif batang pendek, fakultatif anaerob, dan mampu tumbuh pada suhu refrigerasi",
+                    "Mampu membentuk biofilm persisten pada peralatan pengolahan pangan",
+                    "Berisiko tinggi pada ibu hamil, neonatus, lansia, dan individu imunokompromais",
+                    "Merupakan bakteri pembentuk spora sehingga tahan pasteurisasi dan desinfeksi",
+                    "Bersifat intraseluler fakultatif dengan penyebaran antarsel melalui protein ActA"
+                ],
+                correct: 3,
+                explanation: "Listeria monocytogenes adalah bakteri NON-pembentuk spora (tidak berspora). Kemampuannya bertahan di pangan dingin disebabkan sifat psikrotrofik dan biofilm, bukan karena spora."
+            },
+            {
+                id: 48,
+                category: "Kesmavet & Regulasi",
+                question: "Seorang peternak unggas mengevaluasi usaha tahunan dengan biaya operasional Rp 2.000.000.000, pendapatan Rp 2.500.000.000, dan tingkat diskonto 10% untuk menghitung rasio nilai sekarang manfaat terhadap biaya. Metode analisis ekonomi tersebut adalah...",
+                options: ["Partial budgeting", "Gross margin analysis", "Cost-Benefit Analysis (Benefit-Cost Ratio)", "Fixed cost analysis", "Break-even quantity"],
+                correct: 2,
+                explanation: "Cost-Benefit Analysis / Benefit-Cost Ratio (BCR) membandingkan nilai sekarang (present value) pendapatan/manfaat dengan biaya menggunakan tingkat diskonto (discount rate) tertentu."
+            },
+            {
+                id: 49,
+                category: "Kesmavet & Regulasi",
+                question: "Sapi perah dicurigai menderita Brucellosis. Faktor utama yang menentukan risiko penularan Brucella melalui konsumsi susu di tingkat rumah tangga adalah...",
+                options: ["Warna susu", "Merek kemasan susu", "Proses pemanasan/pasteurisasi susu sebelum dikonsumsi", "Ukuran gelas yang digunakan", "Waktu pemerahan pagi atau sore"],
+                correct: 2,
+                explanation: "Brucella abortus mati pada proses pasteurisasi atau perebusan yang benar. Konsumsi susu mentah (tidak dipasteurisasi) adalah jalur penularan utama brucellosis ke manusia."
+            },
+            {
+                id: 50,
+                category: "Kesmavet & Regulasi",
+                question: "Seorang inspektur veteriner memeriksa kelengkapan dokumen administrasi sebelum pemeriksaan antemortem sapi di RPH. Dokumen wajib yang harus diperiksa adalah...",
+                options: ["Surat Keterangan Kesehatan Hewan (SKKH)", "Struk pembelian pakan", "Daftar harga jual daging", "Brosur obat hewan", "KTP sopir saja"],
+                correct: 0,
+                explanation: "Setiap hewan ternak yang dilalulintaskan dan masuk ke RPH wajib disertai Surat Keterangan Kesehatan Hewan (SKKH) dari dokter hewan berwenang daerah asal."
+            },
+            {
+                id: 51,
+                category: "Klinik & Bedah",
+                question: "Seekor kelinci menjadi letargi setelah tidak sengaja memakan pakan yang mengandung bawang bombay, dan pada ulas darah ditemukan Heinz body. Apa yang dimaksud dengan Heinz body?",
+                options: [
+                    "Parasit darah intraseluler",
+                    "Presipitasi hemoglobin terdenaturasi pada eritrosit akibat kerusakan oksidatif",
+                    "Fragmen inti eritrosit muda (Howell-Jolly body)",
+                    "Kumpulan trombosit raksasa",
+                    "Artefak pewarnaan Giemsa"
+                ],
+                correct: 1,
+                explanation: "Senyawa organosulfur (tiosulfat/disulfida) dalam bawang menyebabkan stres oksidatif pada hemoglobin sehingga terdenaturasi dan mengendap membentuk Heinz bodies, memicu anemia hemolitik."
+            },
+            {
+                id: 52,
+                category: "Etika & Leadership",
+                question: "Dalam manajemen konflik dan komunikasi profesional, terdapat dua tipe/pendekatan utama dalam negosiasi, yaitu...",
+                options: ["Distributif dan Integratif", "Otoriter dan Pasif", "Agresif dan Defensif", "Formal dan Informal", "Vertikal dan Horizontal"],
+                correct: 0,
+                explanation: "Dua pendekatan klasik negosiasi adalah Distributif (win-lose, membagi sumber daya tetap) dan Integratif (win-win, kolaboratif untuk kepentingan bersama)."
+            },
+            {
+                id: 53,
+                category: "Kesmavet & Regulasi",
+                question: "Produsen obat hewan memproduksi sediaan tablet untuk terapi penyakit infeksius. Salah satu uji fisik mutu sediaan tablet yang wajib dilakukan adalah...",
+                options: ["Uji keseimbangan lemak-air", "Uji kekerasan tablet (hardness test)", "Uji indeks bias", "Uji titik leleh minyak", "Uji daya sebar krim"],
+                correct: 1,
+                explanation: "Uji mutu fisik tablet meliputi keseragaman bobot, kekerasan tablet (hardness), kerapuhan (friability), dan waktu hancur (disintegration time)."
+            },
+            {
+                id: 54,
+                category: "Reproduksi",
+                question: "Dokter hewan konsultan mengatur ransum sapi perah pada masa kering kandang (close-up dry period) untuk mencegah hipokalsemia (milk fever) pasca melahirkan. Prinsip pengaturan mineral (DCAD) yang tepat adalah...",
+                options: [
+                    "Penambahan Kalium (K) dan Natrium (Na) tinggi",
+                    "Pengurangan Kalium (K) dan Natrium (Na) serta penambahan garam anionik (Cl, S)",
+                    "Menghilangkan kalsium total sepanjang laktasi",
+                    "Pengurangan Klorida (Cl) dan Sulfur (S)",
+                    "Penambahan Fosfor berlebih"
+                ],
+                correct: 1,
+                explanation: "Menurunkan kation (K, Na) dan meningkatkan anion (Cl, S) menghasilkan DCAD (Dietary Cation-Anion Difference) negatif, memicu asidosis metabolik ringan yang meningkatkan respons PTH dan mobilisasi kalsium tulang."
+            },
+            {
+                id: 55,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Pada hewan coba marmut (guinea pig), lokasi pengambilan sampel darah volume sedikit tanpa anestesi yang umum digunakan adalah...",
+                options: [
+                    "Vena aurikularis medial / vena saphena lateral",
+                    "Pungsi jantung tanpa anestesi",
+                    "Vena kava kranial tanpa anestesi",
+                    "Vena coccygealis ventralis",
+                    "Vena brakhialis sayap"
+                ],
+                correct: 0,
+                explanation: "Pengambilan darah volume kecil tanpa anestesi pada marmut dilakukan melalui vena saphena lateral atau vena aurikularis; pengambilan volume besar (vena kava kranial/jugularis) wajib dilakukan di bawah anestesi."
+            },
+            {
+                id: 56,
+                category: "Klinik & Bedah",
+                question: "Pada pemeriksaan hematologi rutin (CBC), ditemukan istilah \"Left Shift\". Interpretasi klinis dari temuan tersebut adalah...",
+                options: [
+                    "Pergeseran preparat mikroskop ke arah kiri",
+                    "Peningkatan jumlah leukosit/neutrofil imatur (band neutrophils) dalam sirkulasi darah",
+                    "Penurunan drastis jumlah trombosit",
+                    "Peningkatan eritrosit mikrositik",
+                    "Kelebihan eosinofil matang"
+                ],
+                correct: 1,
+                explanation: "Left shift menandakan sumsum tulang melepaskan neutrofil muda (neutrofil batang/band) ke darah tepi sebagai respons terhadap infeksi akut atau inflamasi berat."
+            },
+            {
+                id: 57,
+                category: "Reproduksi",
+                question: "Hormon yang paling umum digunakan untuk menginduksi superovulasi pada induk donor sapi dalam program Transfer Embrio (TE) adalah...",
+                options: ["Estrogen", "Progesteron", "PMSG (eCG) atau FSH", "Oksitosin", "Prolaktin"],
+                correct: 2,
+                explanation: "Superovulasi bertujuan mematangkan banyak folikel secara bersamaan menggunakan hormon gonadotropin dengan aktivitas FSH, seperti FSH murni atau PMSG (Pregnant Mare Serum Gonadotropin / eCG)."
+            },
+            {
+                id: 58,
+                category: "Etika & Leadership",
+                question: "Seorang dokter hewan diminta berpartisipasi dalam program penanggulangan wabah Brucellosis oleh pemerintah, namun menolak hanya karena tidak ada insentif tambahan. Sikap tersebut dinilai...",
+                options: [
+                    "Sepenuhnya benar secara profesional",
+                    "Melanggar kode etik profesi dan semangat pengabdian/bela negara",
+                    "Hanya masalah administrasi biasa",
+                    "Dibenarkan karena alasan ekonomi",
+                    "Menunjukkan kemandirian profesi"
+                ],
+                correct: 1,
+                explanation: "Sumpah dan kode etik dokter hewan menekankan pengabdian ilmu demi kesehatan hewan dan kesehatan masyarakat (terutama pada penyakit zoonosis strategis seperti Brucellosis)."
+            },
+            {
+                id: 59,
+                category: "Klinik & Bedah",
+                question: "Kelinci datang ke klinik dengan keluhan diare 2 hari dan dicurigai infeksi parasit saluran cerna. Hal yang tepat untuk dicatat dalam rekam medis pasien adalah...",
+                options: [
+                    "Hanya menuliskan nama pemilik",
+                    "Menuliskan anamnesis, temuan pemeriksaan fisik, diagnosa banding, rencana pemeriksaan penunjang, dan terapi (SOAP)",
+                    "Hanya menuliskan gejala diare tanpa pemeriksaan",
+                    "Tidak perlu menulis rekam medis untuk hewan eksotik",
+                    "Hanya menuliskan biaya obat"
+                ],
+                correct: 1,
+                explanation: "Rekam medis yang baik mengikuti kaidah SOAP (Subjective, Objective, Assessment/diagnosa banding, Plan/pemeriksaan penunjang & terapi) secara lengkap dan legal."
+            },
+            {
+                id: 60,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Seekor ikan budidaya menunjukkan lesi berupa nodul menyerupai bisul (furunkel) dengan nekrosis pada lapisan kutis dan subkutis. Diagnosis yang paling tepat adalah...",
+                options: ["Furunkulosis", "Edwardsiellosis", "Saprolegniasis", "White Spot Disease", "Argulosis"],
+                correct: 0,
+                explanation: "Furunkulosis (disebabkan bakteri Aeromonas salmonicida) ditandai terbentuknya lesi furunkel/bisul nekrotik pada kulit dan otot subkutis ikan."
+            },
+            {
+                id: 61,
+                category: "Kesmavet & Regulasi",
+                question: "Pada pemeriksaan post-mortem hewan kurban ditemukan lesi lokal pada hati, saluran empedu menebal dengan beberapa cacing pipih, sedangkan karkas dan organ lainnya tampak normal. Keputusan akhir post-mortem yang tepat adalah...",
+                options: [
+                    "Diafkir seluruh karkas dan jeroan",
+                    "Diafkir seluruh hati (organ yang terinfeksi), sedangkan karkas tetap layak diedarkan",
+                    "Hati tetap dibagikan mentah",
+                    "Karkas wajib dimusnahkan",
+                    "Seluruh hewan dikembalikan ke peternak"
+                ],
+                correct: 1,
+                explanation: "Pada kasus fasciolosis tanpa ikterus sistemik atau kekurusan berat (kaheksia), karkas tetap aman dan layak dikonsumsi, sedangkan hati yang mengalami kerusakan/parasitosis diafkir."
+            },
+            {
+                id: 62,
+                category: "Klinik & Bedah",
+                question: "Proses penyembuhan luka (wound healing) terdiri dari beberapa fase biologis berurutan. Manakah di bawah ini yang BUKAN termasuk fase penyembuhan luka?",
+                options: ["Hemostasis", "Inflamasi", "Proliferasi", "Remodelling (Maturasi)", "Krusta"],
+                correct: 4,
+                explanation: "Empat fase klasik penyembuhan luka adalah Hemostasis, Inflamasi, Proliferasi, dan Remodelling. Krusta (keropeng) adalah bentukan eksudat kering di permukaan luka, bukan fase penyembuhan."
+            },
+            {
+                id: 63,
+                category: "Reproduksi",
+                question: "Kondisi gangguan reproduksi pejantan di mana konsentrasi spermatozoa dalam ejakulat berada di bawah batas normal disebut...",
+                options: ["Azoospermia", "Oligospermia", "Aspermia", "Teratozoospermia", "Nekrozoospermia"],
+                correct: 1,
+                explanation: "Oligospermia = jumlah/konsentrasi sperma rendah; Azoospermia = tidak ada sperma dalam semen; Aspermia = tidak ada ejakulat; Teratozoospermia = banyak sperma abnormal."
+            },
+            {
+                id: 64,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Penyakit Jembrana merupakan penyakit viral spesifik yang menyerang sapi Bali. Manakah pernyataan di bawah ini yang TIDAK TEPAT mengenai penyakit Jembrana?",
+                options: [
+                    "Disebabkan oleh Lentivirus (Jembrana Disease Virus)",
+                    "Merupakan penyakit akut dan hewan sembuh dapat berperan sebagai karier",
+                    "Gambaran hematologi menunjukkan leukopenia dan trombositopenia",
+                    "Pemeriksaan diagnostik rutin dilakukan dengan menyuntikkan sampel pada tikus percobaan hingga timbul gejala 3–7 hari",
+                    "Gejala klinis parah secara alami terjadi pada sapi Bali (Bos javanicus)"
+                ],
+                correct: 3,
+                explanation: "Virus Jembrana bersifat spesifik spesies pada sapi Bali dan tidak didiagnosis menggunakan uji biologis pada tikus percobaan; diagnosis konfirmatif menggunakan RT-PCR, ELISA, atau histopatologi."
+            },
+            {
+                id: 65,
+                category: "Kesmavet & Regulasi",
+                question: "Provinsi Kalimantan Timur berencana memasukkan daging babi beku dari wilayah yang sedang terdampak wabah penyakit babi. Penyakit prioritas utama dalam penilaian risiko impor tersebut adalah...",
+                options: ["Brucellosis", "African Swine Fever (ASF)", "Avian Influenza", "Tuberculosis", "Rabies"],
+                correct: 1,
+                explanation: "Virus ASF sangat tahan dalam daging babi beku hingga berbulan-bulan/bertahun-tahun sehingga menjadi ancaman risiko tertinggi pada lalu lintas daging babi beku."
+            },
+            {
+                id: 66,
+                category: "Klinik & Bedah",
+                question: "Seekor anjing mengalami nyeri abdomen hebat dan muntah berulang, lalu didiagnosis pankreatitis akut. Rancangan nutrisi yang paling tepat setelah muntah terkendali adalah...",
+                options: [
+                    "Tinggi lemak dan tinggi protein",
+                    "Rendah lemak, mudah dicerna, dan serat moderat/tinggi",
+                    "Rendah karbohidrat dan tinggi natrium",
+                    "Tinggi lemak dan rendah serat",
+                    "Rendah protein dan tinggi fosfor"
+                ],
+                correct: 1,
+                explanation: "Lemak merangsang sekresi kolesistokinin (CCK) dan enzim pankreas yang memperparah autodigesti pankreas; oleh karena itu diet rendah lemak sangat krusial pada pankreatitis anjing."
+            },
+            {
+                id: 67,
+                category: "Klinik & Bedah",
+                question: "Seekor kuda mengalami kepincangan kronis dengan nyeri pada sendi falang (pastern/coffin) bahkan saat digerakkan pasif. Hasil radiografi menunjukkan pertumbuhan tulang baru (eksostosis/osteoartritis). Diagnosis yang tepat adalah...",
+                options: ["Ringbone", "Bog spavin", "Hygroma", "Curb", "Thrush"],
+                correct: 0,
+                explanation: "Ringbone adalah osteoartritis/periostitis kronis disertai proliferasi tulang baru pada sendi interphalangeal proksimal (high ringbone) atau distal (low ringbone) kuda."
+            },
+            {
+                id: 68,
+                category: "Klinik & Bedah",
+                question: "Kuda pekerja yang sering berada di lingkungan berlumpur mengalami pincang dengan bau busuk menyengat dan eksudat hitam pada celah frog kuku. Kondisi ini disebut...",
+                options: ["Thrush", "Laminitis", "Sole ulcer", "Sidebone", "White line disease"],
+                correct: 0,
+                explanation: "Thrush adalah infeksi bakteri anaerob (umumnya Fusobacterium necrophorum) pada sulkus frog kuku kuda akibat lingkungan basah, kotor, dan berlumpur."
+            },
+            {
+                id: 69,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Pada peternakan ayam petelur grower, ayam mengalami dispnea, gangguan pernapasan tanpa suara ngorok keras, penurunan nafsu makan, kurus, dan kematian meningkat. Diagnosis laboratoris menunjukkan Brooder Pneumonia. Agen penyebabnya adalah...",
+                options: ["Mycobacterium avium", "Salmonella pullorum", "Aspergillus fumigatus", "Mycoplasma gallisepticum", "Infectious Bronchitis Virus"],
+                correct: 2,
+                explanation: "Brooder pneumonia (Aspergillosis) disebabkan oleh infeksi jamur Aspergillus fumigatus yang sporanya terhirup dari litter atau penetasan yang lembab dan berjamur."
+            },
+            {
+                id: 70,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Swollen Head Syndrome (SHS) akibat Avian Metapneumovirus (dan infeksi sekunder E. coli) pada ayam pedaging/grower umumnya sering menyerang pada usia...",
+                options: ["1–2 minggu", "4–6 minggu (3–6 minggu)", "12 minggu", "24 minggu", "> 40 minggu"],
+                correct: 1,
+                explanation: "Pada broiler/grower, SHS paling sering muncul pada umur 4–6 minggu (3–6 minggu), sedangkan pada ayam petelur/breeder dapat muncul saat puncak produksi (>18 minggu)."
+            },
+            {
+                id: 71,
+                category: "Reproduksi",
+                question: "Seekor sapi betina pasca melahirkan mengalami anestrus kronis dengan skor kondisi tubuh (BCS) rendah dan didiagnosis hipofungsi ovarium akibat malnutrisi. Terapi yang paling tepat dilakukan adalah...",
+                options: [
+                    "Hanya pemberian antibiotik intrauterin",
+                    "Pemberian hormon gonadotropin (PMSG/GnRH) disertai perbaikan kualitas dan kuantitas nutrisi",
+                    "Pemberian oksitosin dosis tunggal",
+                    "Pemotongan paksa",
+                    "Penyuntikan PGF2a tanpa perbaikan pakan"
+                ],
+                correct: 1,
+                explanation: "Hipofungsi ovarium akibat keseimbangan energi negatif harus diatasi dengan perbaikan nutrisi (flushing energi & mineral) sebagai terapi utama, dapat didukung stimulasi hormon (GnRH/PMSG)."
+            },
+            {
+                id: 72,
+                category: "Kesmavet & Regulasi",
+                question: "Ditemukan peternak menyuntikkan antibiotik tetrasiklin pada ayam pedaging menjelang panen. Untuk mencegah residu antibiotik dan risiko AMR (Antimicrobial Resistance), tindakan yang tepat adalah...",
+                options: [
+                    "Daging ayam tetap boleh dijual asal dicuci bersih",
+                    "Ayam tidak boleh dipanen/diedarkan sampai masa henti obat (withdrawal time) selesai, disertai edukasi peternak",
+                    "Menambah dosis antibiotik agar bakteri mati",
+                    "Mencampur daging dengan ayam sehat",
+                    "Membekukan daging untuk menghilangkan antibiotik"
+                ],
+                correct: 1,
+                explanation: "Residu antibiotik tidak hilang dengan pencucian atau pembekuan. Kepatuhan terhadap masa henti obat (withdrawal time) wajib dipenuhi sebelum produk hewan dikonsumsi."
+            },
+            {
+                id: 73,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Infeksi Canine Parvovirus (CPV) memiliki angka mortalitas sangat tinggi pada anak anjing jika tidak ditangani. Mekanisme utama penyebab kematian pada kasus CPV enteritis adalah...",
+                options: [
+                    "Gagal jantung kongestif kronis",
+                    "Hemotoraks akibat pleuritis",
+                    "Dehidrasi berat, syok hipovolemik, ketidakseimbangan elektrolit, dan sepsis akibat kerusakan mukosa usus",
+                    "Ensefalitis primer",
+                    "Gagal hati kronis"
+                ],
+                correct: 2,
+                explanation: "CPV merusak sel kripta usus halus sehingga menyebabkan muntah-diare hemoragik masif, kehilangan cairan/elektrolit (syok hipovolemik), serta translokasi bakteri yang memicu sepsis/endotoksemia."
+            },
+            {
+                id: 74,
+                category: "Kesmavet & Regulasi",
+                question: "Peraturan perundang-undangan utama di Indonesia yang mengatur tentang Peternakan dan Kesehatan Hewan (termasuk larangan peredaran obat hewan ilegal pada Pasal 52) adalah...",
+                options: ["UU No. 18 Tahun 2009 jo. UU No. 41 Tahun 2014", "UU No. 36 Tahun 2009", "UU No. 18 Tahun 2012", "UU No. 32 Tahun 2009", "UU No. 23 Tahun 2014"],
+                correct: 0,
+                explanation: "Penyelenggaraan peternakan, kesehatan hewan, dan obat hewan diatur dalam UU No. 18 Tahun 2009 beserta perubahannya pada UU No. 41 Tahun 2014 (Pasal 52 terkait larangan obat hewan tidak terdaftar/ilegal)."
+            },
+            {
+                id: 75,
+                category: "Klinik & Bedah",
+                question: "Seekor sapi perah diberi pakan hijauan leguminosa segar dalam jumlah banyak tanpa hijauan kering, kemudian mengalami sesak napas dan pembesaran abdomen sebelah kiri (fossa paralumbalis). Jenis kembung (bloat) yang terjadi adalah...",
+                options: ["Free gas bloat", "Frothy bloat (bloat berbusa)", "Postpartum bloat", "Secondary bloat akibat obstruksi esofagus", "Abomasal volvulus"],
+                correct: 1,
+                explanation: "Leguminosa segar kaya protein terlarut dan saponin yang membentuk busa stabil di dalam rumen sehingga gas terperangkap (frothy bloat / primary tympany)."
+            },
+            {
+                id: 76,
+                category: "Klinik & Bedah",
+                question: "Berikut ini merupakan faktor penyebab umum terjadinya urtikaria (biduran/hives) pada anjing, KECUALI...",
+                options: ["Memakan alergen pakan", "Reaksi pasca injeksi vaksin atau obat", "Kontak kulit dengan alergen", "Gigitan serangga", "Perubahan fisiologis normal tubuh"],
+                correct: 4,
+                explanation: "Urtikaria merupakan reaksi hipersensitivitas tipe I (degranulasi sel mast) yang dipicu alergen makanan, obat/vaksin, kontak, atau gigitan serangga, bukan perubahan fisiologis normal."
+            },
+            {
+                id: 77,
+                category: "Kesmavet & Regulasi",
+                question: "Saat pemeriksaan post-mortem sapi di RPH, ditemukan pembengkakan limfoglandula daerah kepala dan leher serta nodul-nodul kaseosa berisi eksudat putih kekuningan di paru-paru. Penyakit yang paling dicurigai adalah...",
+                options: ["Brucellosis", "Leptospirosis", "Tuberculosis (TBC)", "Anemia kronis", "Mastitis"],
+                correct: 2,
+                explanation: "Limfadenopati kepala/leher (retrofaringeal, mandibula) dan nodul granulomatosa kaseosa (tuberkel) di paru merupakan lesi khas Bovine Tuberculosis (Mycobacterium bovis)."
+            },
+            {
+                id: 78,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Seekor kucing datang dengan gejala lemas, konjungtivitis, gingivitis, dan ulkus (sariawan) yang jelas pada lidah dan rongga mulut. Agen penyebab yang paling mungkin adalah...",
+                options: ["Feline Herpesvirus (FHV)", "Feline Calicivirus (FCV)", "Chlamydia felis", "Bordetella bronchiseptica", "Toxoplasma gondii"],
+                correct: 1,
+                explanation: "Ulserasi oral/lidah (stomatitis/gingivitis ulseratif) disertai infeksi saluran napas atas adalah tanda klinis yang sangat khas pada Feline Calicivirus (FCV)."
+            },
+            {
+                id: 79,
+                category: "Kesmavet & Regulasi",
+                question: "Berdasarkan UU No. 18 Tahun 2009 jo. UU No. 41 Tahun 2014 dan PP No. 47 Tahun 2014, urutan tahapan regulasi penanganan wabah penyakit eksotik (seperti ASF) yang benar adalah...",
+                options: [
+                    "Depopulasi → Pelaporan daerah → Penetapan pusat → Penutupan wilayah",
+                    "Pelaporan pemerintah daerah → Penetapan status wabah oleh pemerintah pusat (Menteri) → Penutupan dan pengamanan wilayah tertular → Pengendalian dan pemberantasan wabah",
+                    "Penutupan wilayah → Depopulasi → Tanpa laporan pusat",
+                    "Pemberantasan → Pengobatan → Pelaporan daerah",
+                    "Penetapan oleh asosiasi peternak → Pelaporan ke RPH"
+                ],
+                correct: 1,
+                explanation: "Regulasi wabah diawali deteksi dan pelaporan berjenjang dari daerah ke pusat, penetapan status wabah oleh Menteri, penutupan/pembatasan lalu lintas wilayah tertular, serta pengendalian dan pemberantasan."
+            },
+            {
+                id: 80,
+                category: "Reproduksi",
+                question: "Berdasarkan SNI 4869-1:2021 tentang semen beku sapi, standar minimal motilitas progresif spermatozoa pasca thawing (PTM) dan konsentrasi spermatozoa per dosis adalah...",
+                options: [
+                    "30% pada konsentrasi 25 juta sel",
+                    "40% pada konsentrasi 25 juta sel",
+                    "50% pada konsentrasi 25 juta sel",
+                    "60% pada konsentrasi 25 juta sel",
+                    "70% pada konsentrasi 25 juta sel"
+                ],
+                correct: 1,
+                explanation: "Sesuai SNI 4869-1:2021, semen beku sapi berkualitas wajib memiliki motilitas pasca thawing (PTM) minimal 40% dengan konsentrasi minimal 25 juta spermatozoa per dosis (straw 0,25 ml)."
+            },
+            {
+                id: 81,
+                category: "Reproduksi",
+                question: "Tanda khas kebuntingan sapi usia 2 bulan (60 hari) yang dapat dirasakan saat pemeriksaan palpasi rektal adalah...",
+                options: [
+                    "Cornua uteri asimetris disertai fluktuasi cairan dan fetal membrane slip",
+                    "Cornua uteri simetris dan keras",
+                    "Tidak ada perbedaan dengan sapi tidak bunting",
+                    "Vulva selalu pucat dan bengkak",
+                    "Teraba fremitus arteri uterina sangat kuat seperti bulan ke-7"
+                ],
+                correct: 0,
+                explanation: "Pada kebuntingan 60 hari, kornua uteri bunting membesar nyata (asimetris), dinding menipis, terasa fluktuasi cairan amnion/alantois, dan fetal membrane slip positif."
+            },
+            {
+                id: 82,
+                category: "Klinik & Bedah",
+                question: "Polisitemia vera merupakan penyakit mieloproliferatif klonal yang jarang terjadi pada hewan. Karakteristik patofisiologi dan diagnostik yang tepat adalah...",
+                options: [
+                    "Peningkatan massa eritrosit akibat peningkatan kadar eritropoietin (EPO) darah",
+                    "Kondisi sekunder akibat hipoksia kronis",
+                    "Ditandai penurunan PCV dan hemoglobin",
+                    "Proliferasi otonom progenitor eritroid di sumsum tulang sehingga kadar eritropoietin (EPO) serum normal atau menurun",
+                    "Selalu disebabkan oleh dehidrasi berat"
+                ],
+                correct: 3,
+                explanation: "Polisitemia vera (polisitemia primer) terjadi akibat proliferasi otonom sel induk eritroid tanpa stimulasi EPO, sehingga PCV sangat tinggi sementara kadar EPO serum normal atau rendah (berbeda dengan polisitemia sekunder)."
+            },
+            {
+                id: 83,
+                category: "Klinik & Bedah",
+                question: "Pemberian ransum dengan kadar protein berlebih secara kronis pada sapi dapat memberikan beban metabolik berat dan menyebabkan gangguan pada organ...",
+                options: ["Ginjal (dan hati)", "Sistem kardiovaskular saja", "Pankreas eksokrin", "Kelenjar tiroid", "Limpa"],
+                correct: 0,
+                explanation: "Kelebihan protein meningkatkan produksi amonia yang diubah menjadi urea di hati dan diekskresikan melalui ginjal, sehingga membebani fungsi ginjal serta mengganggu keseimbangan energi dan reproduksi."
+            },
+            {
+                id: 84,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Ayam usia 1–7 minggu menunjukkan gejala ataksia, mengantuk, pertumbuhan terhambat, penebalan/bengkak kelopak mata, serta leleran dari mata dan hidung. Ayam tersebut kemungkinan mengalami defisiensi...",
+                options: ["Vitamin A", "Vitamin D", "Vitamin E", "Vitamin C", "Vitamin K"],
+                correct: 0,
+                explanation: "Vitamin A esensial untuk integritas jaringan epitel (mata, saluran pernapasan, pencernaan). Defisiensi vitamin A menyebabkan xeroftalmia, eksudat kaseosa mata/hidung, ataksia, dan pertumbuhan terhambat."
+            },
+            {
+                id: 85,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Apabila biji kacang hijau ditumbuhkan di tempat yang gelap tanpa cahaya matahari, kemungkinan pertumbuhan yang terjadi (etiolasi) adalah...",
+                options: [
+                    "Tumbuh pendek, kokoh, dan hijau segar",
+                    "Tumbuh panjang/tinggi tetapi lemah dan berwarna pucat kekuningan",
+                    "Tidak berkecambah sama sekali",
+                    "Langsung berbunga",
+                    "Langsung berbuah"
+                ],
+                correct: 1,
+                explanation: "Tanpa cahaya matahari, hormon auksin tidak terurai sehingga pemanjangan batang berlangsung sangat cepat, namun pembentukan klorofil terhambat (etiolasi: panjang, kurus, pucat kekuningan)."
+            },
+            {
+                id: 86,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Sebagai dokter hewan lapang yang menemukan sapi dengan gejala demam, hipersalivasi, lesi vesikuler di mulut, lidah, dan kuku, serta penurunan produksi susu (dugaan PMK), langkah diagnostik yang paling tepat adalah...",
+                options: [
+                    "Inspeksi gejala klinis dan pengambilan sampel epitel vesikel, cairan vesikel, atau serum untuk pemeriksaan RT-PCR",
+                    "Hanya pemeriksaan hematologi rutin",
+                    "Biopsi nodul kulit untuk imunohistokimia",
+                    "Menunggu hewan mati tanpa pengambilan sampel",
+                    "Langsung memberikan antibiotik tanpa pelaporan"
+                ],
+                correct: 0,
+                explanation: "Konfirmasi laboratorium standar emas (gold standard) untuk PMK adalah uji RT-PCR dari sampel epitel/cairan vesikel atau swab mulut, disertai pengujian serologi (ELISA NSP)."
+            },
+            {
+                id: 87,
+                category: "Klinik & Bedah",
+                question: "Seekor anjing menjalani penjahitan luka terbuka di kaki belakang. Dua minggu pasca operasi luka menutup, namun pergerakan sendi kaki menjadi terbatas akibat jaringan parut (scar) berlebih yang menarik kulit. Kondisi ini disebut...",
+                options: ["Dehisensi", "Eschar", "Kontraktur luka (konstruksi luka)", "Granulasi normal", "Scab"],
+                correct: 2,
+                explanation: "Kontraktur luka (wound contracture) terjadi ketika kontraksi miofibroblas dan jaringan parut berlebih melintasi sendi sehingga membatasi rentang gerak (range of motion)."
+            },
+            {
+                id: 88,
+                category: "Kesmavet & Regulasi",
+                question: "Dokter hewan menemukan peternak ayam masih menggunakan Antibiotic Growth Promoter (AGP) yang berisiko memicu AMR. Sikap profesional dokter hewan yang paling tepat adalah...",
+                options: [
+                    "Membiarkan demi keuntungan peternak",
+                    "Mengganti dengan antibiotik dosis lebih tinggi",
+                    "Mengedukasi peternak untuk menghentikan AGP dan menggantinya dengan probiotik, vitamin, vaksinasi, serta biosekuriti",
+                    "Menurunkan dosis antibiotik menjadi subterapeutik",
+                    "Melarang peternak memelihara ayam"
+                ],
+                correct: 2,
+                explanation: "Penggunaan AGP telah dilarang di Indonesia (Permentan 14/2017) untuk mencegah AMR. Solusinya adalah edukasi penggantian AGP dengan imbuhan pakan non-antibiotik (probiotik, prebiotik, fitobiotik) dan peningkatan biosekuriti."
+            },
+            {
+                id: 89,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Pada bedah bangkai sapi betina yang mengalami abortus ditemukan plasentitis nekrotik, sedangkan pada fetus ditemukan pembuluh darah kongesti dan edema subkutan. Diagnosis yang paling mungkin adalah...",
+                options: ["Brucellosis", "Tuberculosis", "Paratuberculosis", "Anthrax", "Tetanus"],
+                correct: 0,
+                explanation: "Plasentitis berat (kotiledon nekrotik/bercak kekuningan), edema subkutan fetus, dan abortus trimester akhir sangat khas untuk Brucellosis (Brucella abortus)."
+            },
+            {
+                id: 90,
+                category: "Etika & Leadership",
+                question: "Dokter hewan X menemukan wabah penyakit menular strategis di sebuah peternakan. Pemilik meminta drh. X merahasiakannya, namun drh. X tetap melapor ke dokter hewan dinas setempat. Bagaimana penilaian tindakan drh. X?",
+                options: [
+                    "Tidak tepat karena melanggar privasi klien",
+                    "Tidak tepat karena drh. X bekerja di swasta",
+                    "Tepat, karena kewajiban melaporkan penyakit menular strategis kepada otoritas berwenang berada di atas kerahasiaan klien demi kesehatan masyarakat",
+                    "Tepat hanya jika pemilik memberi izin tertulis",
+                    "Tidak tepat karena harus menunggu hewan mati semua"
+                ],
+                correct: 2,
+                explanation: "Dalam etika veteriner dan peraturan kesehatan hewan, kewajiban pelaporan penyakit menular strategis/zoonosis kepada otoritas veteriner mengesampingkan kerahasiaan klien demi melindungi populasi hewan dan masyarakat."
+            },
+            {
+                id: 91,
+                category: "Klinik & Bedah",
+                question: "Seekor anjing dengan berat badan 20 kg akan menjalani operasi fraktur. Premedikasi yang diberikan adalah Atropin sulfat dengan dosis 0,02–0,04 mg/kg BB, sedangkan sediaan yang tersedia adalah 0,25 mg/ml. Berapa volume pemberian dosis minimum atropin untuk anjing tersebut?",
+                options: ["1,0 ml", "1,2 ml", "1,4 ml", "1,6 ml", "2,0 ml"],
+                correct: 3,
+                explanation: "Dosis minimum = 20 kg × 0,02 mg/kg = 0,4 mg. Volume = 0,4 mg ÷ 0,25 mg/ml = 1,6 ml."
+            },
+            {
+                id: 92,
+                category: "Klinik & Bedah",
+                question: "Seekor anjing mengalami hematuria persisten dan sulit urinasi. Radiografi dari klinik sebelumnya menunjukkan massa radiopaque berdiameter 1 cm di vesica urinaria (urolit). Pemeriksaan penunjang lanjutan yang penting sebelum tindakan bedah adalah...",
+                options: ["Pemeriksaan feses natif", "Complete Blood Count (CBC) dan profil biokimia/urinalisis", "Uji tuberkulin", "Swab telinga", "Uji Woods lamp"],
+                correct: 1,
+                explanation: "Sebelum sistotomi pengangkatan urolit 1 cm, pemeriksaan CBC, kimia darah (fungsi ginjal BUN/kreatinin), dan urinalisis esensial untuk menilai anemia, infeksi saluran kemih, serta kelayakan anestesi."
+            },
+            {
+                id: 93,
+                category: "Kesmavet & Regulasi",
+                question: "Seorang peternak ingin mengirim sapi dari zona wabah PMK ke zona bebas PMK. Berdasarkan regulasi lalu lintas hewan saat wabah PMK (Permentan No. 17 Tahun 2023), ketentuan yang berlaku adalah...",
+                options: [
+                    "Bebas dikirim untuk budidaya tanpa syarat",
+                    "Diperbolehkan khusus untuk langsung dipotong di RPH terstandar dengan syarat ketat dan tidak untuk dibudidaya",
+                    "Boleh dipelihara sementara di pasar hewan",
+                    "Tidak perlu SKKH maupun uji lab",
+                    "Boleh dikirim berapa ekor saja untuk pembibitan"
+                ],
+                correct: 1,
+                explanation: "Pengeluaran ternak rentan PMK dari daerah wabah menuju daerah bebas sangat dibatasi; pengecualian hanya dimungkinkan untuk pemotongan langsung di RPH terstandar dengan protokol biosekuriti ketat, bukan untuk budidaya."
+            },
+            {
+                id: 94,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Pada pemeriksaan histopatologi otak hewan yang terinfeksi virus Rabies, temuan patognomonik berupa benda inklusi (Negri bodies) terletak di...",
+                options: [
+                    "Intranuklear eosinofilik pada astrosit",
+                    "Intrasitoplasmik eosinofilik pada sel neuron (terutama hipokampus dan sel Purkinje serebelum)",
+                    "Intranuklear basofilik pada makrofag",
+                    "Ekstraseluler pada pembuluh darah",
+                    "Intrasitoplasmik basofilik pada eritrosit"
+                ],
+                correct: 1,
+                explanation: "Negri bodies adalah benda inklusi intrasitoplasmik eosinofilik pada sitoplasma sel neuron (hipokampus karnivora, sel Purkinje ruminansia) yang patognomonik untuk rabies."
+            },
+            {
+                id: 95,
+                category: "Etika & Leadership",
+                question: "Tokoh komunikasi yang mencetuskan Teori Determinisme Teknologi (bahwa teknologi dan media membentuk cara berpikir serta perilaku manusia) adalah...",
+                options: ["Marshall McLuhan", "Abraham Maslow", "Max Weber", "Sigmund Freud", "Ivan Pavlov"],
+                correct: 0,
+                explanation: "Marshall McLuhan (1962) dikenal sebagai pencetus teori determinisme teknologi dengan semboyan terkenalnya \"the medium is the message\"."
+            },
+            {
+                id: 96,
+                category: "Etika & Leadership",
+                question: "Seekor anjing dibawa ke klinik dalam kondisi luka emergensi yang mengancam nyawa, namun pemiliknya belum tiba di lokasi. Sikap dokter hewan yang tepat adalah...",
+                options: [
+                    "Menolak tindakan sampai pembayaran lunas",
+                    "Segera memberikan tindakan emergensi/stabilisasi nyawa terlebih dahulu sambil menunggu pemilik datang",
+                    "Hanya membersihkan permukaan luka luar",
+                    "Menunggu pemilik datang meski hewan kritis",
+                    "Menyuruh pengantar membawa ke klinik lain"
+                ],
+                correct: 1,
+                explanation: "Berdasarkan kode etik kedokteran hewan, penyelamatan nyawa dan pengurangan penderitaan pada kasus gawat darurat (emergensi) merupakan prioritas utama dokter hewan."
+            },
+            {
+                id: 97,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Seekor sapi ditemukan mati mendadak dengan darah berwarna merah kehitaman tidak membeku keluar dari lubang-lubang alami tubuh (hidung, mulut, anus). Ciri ini merupakan tanda khas penyakit...",
+                options: ["Brucellosis", "Leptospirosis", "Anthrax", "Tuberculosis", "Mastitis"],
+                correct: 2,
+                explanation: "Kematian mendadak disertai keluarnya darah gelap tak membeku dari lubang alami adalah tanda klasik Anthrax (Bacillus anthracis). Bangkai dilarang dibuka/dinekropsi untuk mencegah sporulasi."
+            },
+            {
+                id: 98,
+                category: "Kesmavet & Regulasi",
+                question: "Metode analisis ekonomi peternakan yang menghitung selisih antara total penerimaan/penjualan ternak dengan total biaya variabel (produksi dan pemeliharaan) disebut...",
+                options: ["Benefit Cost Ratio", "Gross Margin Analysis", "Partial Budgeting", "Fixed Cost Analysis", "Depreciation Analysis"],
+                correct: 1,
+                explanation: "Gross Margin (margin kotor) dihitung dari Total Pendapatan dikurangi Total Biaya Variabel, berguna untuk membandingkan efisiensi usaha tani/ternak."
+            },
+            {
+                id: 99,
+                category: "Kesmavet & Regulasi",
+                question: "Pada pemeriksaan antemortem feses sapi ditemukan telur trematoda berbentuk oval, berwarna kuning kecokelatan, beroperkulum dengan ukuran sekitar 130 × 80 μm. Pemeriksaan post-mortem organ yang paling relevan untuk temuan tersebut adalah...",
+                options: [
+                    "Pemeriksaan parenkim paru untuk Dictyocaulus",
+                    "Pemeriksaan omasum untuk Fasciola sp.",
+                    "Pemeriksaan saluran empedu/hati untuk Fasciola sp.",
+                    "Pemeriksaan usus halus untuk Ascaris",
+                    "Pemeriksaan ginjal untuk Stephanurus"
+                ],
+                correct: 2,
+                explanation: "Telur trematoda besar beroperkulum (130–150 × 63–90 μm) berwarna kuning emas khas untuk Fasciola sp. yang berpredileksi di saluran empedu dan parenkim hati."
+            },
+            {
+                id: 100,
+                category: "Klinik & Bedah",
+                question: "Seekor anjing berusia 10 tahun menderita osteoarthritis kronis. Manajemen suplementasi zat gizi yang paling tepat untuk mendukung kesehatan sendinya adalah...",
+                options: [
+                    "Glukosamin, kondroitin, dan asam lemak Omega-3 (EPA/DHA)",
+                    "Tinggi kalsium dan tinggi fosfor",
+                    "Rendah protein dan tinggi natrium",
+                    "Tinggi karbohidrat sederhana dan rendah serat",
+                    "Tinggi lemak jenuh"
+                ],
+                correct: 0,
+                explanation: "Glukosamin dan kondroitin berperan sebagai kondroprotektor (mendukung tulang rawan sendi), sedangkan asam lemak Omega-3 (EPA/DHA) efektif menurunkan inflamasi sendi."
+            },
+            {
+                id: 101,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Hewan sosial seperti tikus laboratorium yang dikandangkan sendirian (isolasi sosial) sering menunjukkan perilaku stereotipik. Contoh perilaku stereotipik yang paling umum pada tikus dalam kandang tunggal adalah...",
+                options: [
+                    "Urinasi merata di seluruh litter",
+                    "Menggigit jeruji kandang (bar-biting) atau melompat berulang menyentuh tutup kandang",
+                    "Tidur tenang di sarang",
+                    "Makan secara teratur",
+                    "Merawat anak"
+                ],
+                correct: 1,
+                explanation: "Isolasi dan kurangnya pengayaan lingkungan pada rodensia memicu stereotipi seperti bar-biting (menggigit jeruji), jumping berulang, atau barbering."
+            },
+            {
+                id: 102,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Ikan salmon melakukan migrasi anadromous dari perairan laut (asin) menuju hulu sungai (air tawar). Tujuan utama migrasi tersebut adalah...",
+                options: [
+                    "Bertelur dan berkembang biak (spawning)",
+                    "Mencari suhu air lebih panas",
+                    "Menghindari pasang surut harian",
+                    "Migrasi nomaden tanpa tujuan tetap",
+                    "Berhibernasi di dasar sungai"
+                ],
+                correct: 0,
+                explanation: "Salmon adalah ikan anadromous yang tumbuh dewasa di laut dan bermigrasi kembali ke sungai air tawar asalnya khusus untuk memijah/bertelur (spawning)."
+            },
+            {
+                id: 103,
+                category: "Etika & Leadership",
+                question: "Kompetensi dasar seorang dokter hewan dalam ranah Veterinary Leadership yang patut dan wajib ditunjukkan adalah...",
+                options: [
+                    "Bersikap arogan dalam setiap keputusan",
+                    "Mampu memberikan keteladanan (role model) dan selalu selaras antara perkataan serta perbuatan",
+                    "Menjaga jarak kaku dengan bawahan agar ditakuti",
+                    "Hanya melaporkan kabar baik kepada atasan",
+                    "Menghindari tanggung jawab tim"
+                ],
+                correct: 1,
+                explanation: "Integritas dan keteladanan (lead by example) merupakan fondasi utama kepemimpinan veteriner untuk membangun kepercayaan tim dan masyarakat."
+            },
+            {
+                id: 104,
+                category: "Etika & Leadership",
+                question: "Seorang dokter hewan memimpin tim program vaksinasi rabies di medan sulit dan menganalisis kepribadian staf berdasarkan Big Five. Sifat kepribadian dominan yang paling tepat untuk staf vaksinator agar proyek berjalan akurat, disiplin, dan aman adalah...",
+                options: [
+                    "Neuroticism (emosional tinggi)",
+                    "Conscientiousness (kehati-hatian, ketelitian, dan tanggung jawab)",
+                    "Pasif",
+                    "Impulsivitas",
+                    "Introversi ekstrem"
+                ],
+                correct: 1,
+                explanation: "Conscientiousness mencerminkan kedisiplinan, ketelitian dosis/rantai dingin, kepatuhan SOP, dan ketangguhan kerja yang krusial bagi vaksinator lapang."
+            },
+            {
+                id: 105,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Seekor kucing dibawa ke klinik dengan gejala hipersalivasi dan sangat agresif (curiga rabies), sementara ruang tunggu sedang penuh pasien periksa dan vaksin. Tindakan resepsionis yang tepat adalah...",
+                options: [
+                    "Meminta pemilik menunggu antrean di ruang tunggu umum",
+                    "Segera mengarahkan/membawa pasien ke ruang isolasi/karantina dan melaporkannya kepada dokter hewan berwenang",
+                    "Langsung memegang kucing tanpa APD",
+                    "Menolak dan mengusir keluar tanpa arahan",
+                    "Memberikan obat penenang sendiri"
+                ],
+                correct: 1,
+                explanation: "Pasien suspek penyakit menular zoonosis berbahaya (rabies) harus segera diisolasi dari pasien/klien lain untuk mencegah penularan dan cedera gigitan, lalu ditangani dokter hewan berwenang."
+            },
+            {
+                id: 106,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Penggunaan antibiotik pada ikan budidaya harus sangat selektif untuk mencegah residu dan pencemaran lingkungan. Metode pemberian antibiotik yang paling tepat dan ideal pada populasi ikan adalah...",
+                options: [
+                    "Ditebar langsung ke air kolam dalam dosis tinggi",
+                    "Dicampur ke air dan pakan secara sembarangan",
+                    "Penggunaan berdasarkan resep populasi (medicated feed terukur sesuai biomassa ikan)",
+                    "Diberikan dosis berlipat dalam satu kali pemberian",
+                    "Diberikan terus-menerus sebagai pencegahan rutin"
+                ],
+                correct: 2,
+                explanation: "Terapi antibiotik ikan idealnya diberikan melalui pakan berobat (medicated feed) berdasarkan resep populasi yang dihitung akurat dari total biomassa ikan, diagnosis pasti, dan kepatuhan withdrawal time."
+            },
+            {
+                id: 107,
+                category: "Reproduksi",
+                question: "Pada hewan bunting, fetus dapat mengalami kematian di dalam uterus sementara serviks tetap tertutup rapat tanpa kontaminasi bakteri sehingga cairan fetus terserap dan mengering. Kondisi ini disebut...",
+                options: ["Mumifikasi fetus", "Abortus", "Stillbirth", "Maserasi fetus", "Distokia"],
+                correct: 0,
+                explanation: "Mumifikasi terjadi saat fetus mati dalam uterus dengan serviks tertutup (bebas bakteri), cairan plasenta/fetus direabsorpsi sehingga fetus mengeras dan kering. Jika serviks terbuka dan masuk bakteri terjadi maserasi."
+            },
+            {
+                id: 108,
+                category: "Unggas, Akuatik & Satwa",
+                question: "Agen penyebab utama penyakit Chronic Respiratory Disease (CRD) pada ayam adalah...",
+                options: ["Mycoplasma gallisepticum", "Avibacterium paragallinarum", "Salmonella enteritidis", "Escherichia coli", "Pasteurella multocida"],
+                correct: 0,
+                explanation: "Chronic Respiratory Disease (ngorok kronis) pada unggas disebabkan secara primer oleh bakteri tanpa dinding sel Mycoplasma gallisepticum."
+            },
+            {
+                id: 109,
+                category: "Kesmavet & Regulasi",
+                question: "Pedagang di pasar menjual ikan dengan ciri insang berwarna cokelat kusam, mata cekung berkabut, daging lembek bila ditekan, dan berbau asam. Interpretasi hasil pemeriksaan fisik tersebut adalah...",
+                options: [
+                    "Ikan segar normal dan layak konsumsi",
+                    "Ikan dalam fase rigor mortis awal",
+                    "Ikan mengalami awal pembusukan dan tidak layak konsumsi",
+                    "Ikan pasti mengandung formalin",
+                    "Mutu ikan sangat prima"
+                ],
+                correct: 2,
+                explanation: "Ciri ikan segar adalah mata jernih cembung, insang merah cerah, daging kenyal, dan bau segar laut/air. Insang cokelat, mata keruh, daging lembek, dan bau asam menandakan pembusukan."
+            },
+            {
+                id: 110,
+                category: "Kesmavet & Regulasi",
+                question: "Dalam penetapan status wilayah penyakit hewan menular strategis/zoonosis (daerah wabah, tertular, penyangga, bebas) secara nasional menurut UU Peternakan dan Kesehatan Hewan, pihak yang berwenang menetapkan adalah...",
+                options: [
+                    "Menteri Pertanian (otoritas tingkat pusat berdasarkan rekomendasi otoritas veteriner)",
+                    "Hanya keputusan rapat peternak",
+                    "Hanya keputusan asosiasi profesi",
+                    "Kepala desa setempat",
+                    "Pemilik RPH"
+                ],
+                correct: 0,
+                explanation: "Berdasarkan Pasal 61 UU No. 18 Tahun 2009 jo. UU No. 41 Tahun 2014, Menteri menetapkan dan mencabut pernyataan wabah serta status situasi penyakit hewan secara nasional."
+            },
+            {
+                id: 111,
+                category: "Kesmavet & Regulasi",
+                question: "Aspek yang paling kritis dan wajib dijaga selama proses penyimpanan serta distribusi vaksin hewan agar potensi/efikasi vaksin tidak rusak adalah...",
+                options: [
+                    "Rantai dingin (cold chain) sesuai suhu rekomendasi (umumnya 2–8°C)",
+                    "Semua vaksin harus dibekukan dalam freezer",
+                    "Vaksin harus habis dalam 24 jam setelah diproduksi",
+                    "Warna kotak kemasan",
+                    "Ukuran spuit"
+                ],
+                correct: 0,
+                explanation: "Vaksin bersifat termolabil; menjaga rantai dingin (cold chain) secara konsisten dari produsen hingga saat penyuntikan sangat vital menjaga viabilitas dan efektivitas imunogenik vaksin."
+            },
+            {
+                id: 112,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Penyakit Mulut dan Kuku (PMK) di Indonesia dikategorikan sebagai re-emerging disease karena...",
+                options: [
+                    "Menular langsung ke manusia secara masif",
+                    "Pernah berhasil diberantas/berstatus bebas selama puluhan tahun, namun muncul kembali",
+                    "Hanya menyerang hewan liar",
+                    "Tidak menimbulkan kerugian ekonomi",
+                    "Hanya menular melalui vektor nyamuk"
+                ],
+                correct: 1,
+                explanation: "Re-emerging disease adalah penyakit menular yang sebelumnya sudah terkendali atau tereradikasi (Indonesia bebas PMK sejak 1986/1990), kemudian muncul kembali (wabah 2022)."
+            },
+            {
+                id: 113,
+                category: "Reproduksi",
+                question: "Urutan mekanisme fisiologis proses keluarnya air susu (milk let down) beserta hormon utamanya adalah...",
+                options: [
+                    "Rangsangan puting → Impuls saraf → Hipotalamus → Hipofisis posterior melepaskan Oksitosin → Kontraksi sel mioepitel alveolus → Milk let down",
+                    "Rangsangan puting → Hipofisis anterior melepaskan Oksitosin → Milk let down",
+                    "Rangsangan puting → Ovarium melepaskan Estrogen → Milk let down",
+                    "Rangsangan puting → Korteks adrenal melepaskan Adrenalin → Milk let down",
+                    "Rangsangan puting → Pankreas melepaskan Insulin → Milk let down"
+                ],
+                correct: 0,
+                explanation: "Refleks neuroendokrin milk let down dipicu rangsangan pemerahan/hisapan menuju hipotalamus, memicu sekresi oksitosin dari hipofisis posterior yang mengontraksikan sel mioepitel di sekitar alveoli ambing."
+            },
+            {
+                id: 114,
+                category: "Etika & Leadership",
+                question: "Seorang pemilik memaksa membawa pulang hewannya yang masih dalam kondisi sakit dan membutuhkan rawat inap (pulang paksa). Tindakan dokter hewan yang tepat adalah...",
+                options: [
+                    "Membiarkan pulang tanpa catatan apapun",
+                    "Mengunci pintu klinik dan memaksa klien membayar",
+                    "Memberikan edukasi jelas mengenai risiko medis pulang paksa serta meminta klien menandatangani surat penolakan tindakan/pulang paksa (informed refusal/consent)",
+                    "Memarahi pemilik di depan klien lain",
+                    "Membuang rekam medis pasien"
+                ],
+                correct: 2,
+                explanation: "Klien memiliki hak otonomi atas hewannya; dokter hewan wajib menjelaskan risiko secara jujur dan mendokumentasikannya melalui surat persetujuan pulang paksa (Against Medical Advice / informed refusal) demi perlindungan hukum."
+            },
+            {
+                id: 115,
+                category: "Reproduksi",
+                question: "Seekor sapi menunjukkan gejala nimfomania (birahi terus-menerus). Temuan palpasi rektal yang paling sesuai untuk kondisi kista folikuler tersebut adalah...",
+                options: [
+                    "Kedua ovarium kecil dan licin, uterus keras",
+                    "Uterus lunak/atoni dan teraba benjolan berdinding tipis berfluktuasi pada ovarium berdiameter > 2,5 cm",
+                    "Terdapat fetus usia 5 bulan",
+                    "Ovarium mengeras seperti batu tanpa fluktuasi",
+                    "Serviks menutup rapat tanpa cairan"
+                ],
+                correct: 1,
+                explanation: "Kista folikuler ditandai adanya struktur folikel persisten berdiameter >2,5 cm yang berfluktuasi di ovarium, menghasilkan estrogen terus-menerus sehingga memicu nimfomania dan tonus uterus menurun/lunak."
+            },
+            {
+                id: 116,
+                category: "Klinik & Bedah",
+                question: "Penulisan resep tablet Amoxicillin-Clavulanic acid (Amoxiclav) untuk terapi 2 kali sehari sesudah makan selama 7 hari (per oral, 1 tablet sekali minum) yang benar adalah...",
+                options: [
+                    "R/ Amoxicillin-Clavulanic acid Tab. No. XIV / S. 2. d. d. Tab. I p.c. (habiskan)",
+                    "R/ Amoxicillin-Clavulanic acid Tab. No. VII / S. 2. d. d. Tab. I a.c.",
+                    "R/ Amoxicillin-Clavulanic acid Tab. No. X / S. 1. d. d. Tab. II p.c.",
+                    "R/ Amoxicillin-Clavulanic acid Inj. No. XIV / S. 3. d. d.",
+                    "R/ Amoxicillin-Clavulanic acid Tab. No. XXI / S. 2. d. d. Tab. I p.c."
+                ],
+                correct: 0,
+                explanation: "Dosis 2 kali sehari (S.2.d.d.) selama 7 hari membutuhkan total 2 × 7 = 14 tablet (No. XIV), diberikan 1 tablet tiap minum (Tab. I) sesudah makan (p.c. = post coenam) dan dihabiskan."
+            },
+            {
+                id: 117,
+                category: "Klinik & Bedah",
+                question: "Seekor kuda mengalami lesi kulit berupa pustula, krusta, dan edema yang awalnya sedikit lalu meluas ke seluruh tubuh. Penyakit autoimun kulit ini didiagnosis sebagai...",
+                options: [
+                    "Pemphigus foliaceus akibat autoantibodi terhadap protein adhesi kulit (desmoglein) dengan mekanisme hipersensitivitas tipe II",
+                    "Pemphigus foliaceus akibat hipersensitivitas tipe I",
+                    "Dermatofitosis bakteri",
+                    "Urtikaria fisiologis",
+                    "Scabies sarkoptik"
+                ],
+                correct: 0,
+                explanation: "Pemphigus foliaceus adalah penyakit kulit autoimun (hipersensitivitas tipe II) di mana autoantibodi menyerang desmosom (desmoglein-1) antarkeratinosit, memicu akantolisis dan pustula/krusta luas."
+            },
+            {
+                id: 118,
+                category: "Reproduksi",
+                question: "Waktu terbaik untuk melakukan Inseminasi Buatan (IB) pada sapi setelah pertama kali teramati tanda estrus (standing heat) adalah...",
+                options: [
+                    "Langsung saat menit pertama terlihat gelisah",
+                    "6–12 jam setelah awal estrus (aturan AM–PM)",
+                    "48 jam setelah estrus selesai",
+                    "7 hari setelah estrus",
+                    "Saat fase diestrus"
+                ],
+                correct: 1,
+                explanation: "Ovulasi sapi terjadi sekitar 10–14 jam setelah akhir estrus; IB optimal dilakukan 6–12 jam setelah onset estrus (jika estrus pagi di-IB sore, jika estrus sore di-IB pagi berikutnya)."
+            },
+            {
+                id: 119,
+                category: "Kesmavet & Regulasi",
+                question: "Dalam sistem keamanan pangan HACCP, apa yang dimaksud dengan Critical Control Point (CCP)?",
+                options: [
+                    "Titik penjualan daging di pasar tradisional",
+                    "Tahap/titik pengendalian kritis di mana bahaya keamanan pangan dapat dicegah, dihilangkan, atau dikurangi hingga tingkat yang dapat diterima",
+                    "Biaya operasional pemotongan hewan",
+                    "Jumlah pekerja dalam satu shift",
+                    "Daftar menu pangan olahan"
+                ],
+                correct: 1,
+                explanation: "CCP (Titik Kendali Kritis) adalah langkah operasional spesifik dalam alur produksi pangan yang mutlak dikendalikan untuk mencegah atau mengeliminasi bahaya biologis, kimia, maupun fisik."
+            },
+            {
+                id: 120,
+                category: "Penyakit Menular & Zoonosis",
+                question: "Metode aplikasi uji tuberkulin (Tuberculin Test) untuk skrining Bovine Tuberculosis pada sapi dilakukan secara...",
+                options: ["Uji serologis serum", "Injeksi intradermal (intradermal test)", "Injeksi intramuskular", "Injeksi intravena", "Pewarnaan Gram feses"],
+                correct: 1,
+                explanation: "Uji tuberkulin (PPD bovis) dilakukan dengan penyuntikan intradermal (di lipatan kulit kaudal atau leher) untuk mendeteksi reaksi hipersensitivitas tipe IV (pembengkakan kulit setelah 72 jam)."
+            }
+        ];
+
+        // ==========================================
+        // STATE APLIKASI
+        // ==========================================
+        let appState = {
+            mode: 'exam',           // 'exam' | 'practice'
+            pkg: 'all',             // 'all' | 'p1' | 'p2' | 'p3'
+            category: 'ALL',        // 'ALL' atau nama kategori
+            durationMinutes: 120,   // 30 | 60 | 90 | 120
+            shuffle: false,
+            questionIds: [],        // Array ID soal aktif
+            currentIndex: 0,
+            answers: {},            // { idx: optionIndex }
+            doubts: {},             // { idx: boolean }
+            remainingSeconds: 7200,
+            elapsedSeconds: 0,
+            isPaused: false,
+            isFinished: false,
+            reviewFilter: 'all',    // 'all' | 'correct' | 'wrong' | 'unanswered'
+            wrongQuestionIds: []    // Untuk fitur "Ulangi Soal Salah Saja"
+        };
+
+        let timerInterval = null;
+        let pendingConfirmAction = null;
+
+        // ==========================================
+        // INISIALISASI & LOCALSTORAGE AUTO-SAVE
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            updateSetupQuestionCount();
+            checkSavedSession();
+            setupKeyboardShortcuts();
+        });
+
+        function saveProgress() {
+            if (!appState.questionIds.length) return;
+            try {
+                const payload = {
+                    mode: appState.mode,
+                    pkg: appState.pkg,
+                    category: appState.category,
+                    durationMinutes: appState.durationMinutes,
+                    shuffle: appState.shuffle,
+                    questionIds: appState.questionIds,
+                    currentIndex: appState.currentIndex,
+                    answers: appState.answers,
+                    doubts: appState.doubts,
+                    remainingSeconds: appState.remainingSeconds,
+                    elapsedSeconds: appState.elapsedSeconds,
+                    isFinished: appState.isFinished,
+                    savedAt: Date.now()
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            } catch (err) {
+                console.warn('Auto-save gagal:', err);
+            }
+        }
+
+        function checkSavedSession() {
+            const banner = document.getElementById('resume-banner');
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) {
+                    banner.classList.add('hidden');
+                    return;
+                }
+                const saved = JSON.parse(raw);
+                if (!saved || !Array.isArray(saved.questionIds) || saved.questionIds.length === 0 || saved.isFinished) {
+                    banner.classList.add('hidden');
+                    return;
+                }
+                const answeredCount = Object.keys(saved.answers || {}).length;
+                const modeText = saved.mode === 'exam' ? 'Mode Ujian (CBT)' : 'Mode Latihan';
+                const timeText = saved.mode === 'exam' ? ` • Sisa ${formatTime(saved.remainingSeconds)}` : '';
+                document.getElementById('resume-info').textContent =
+                    `${modeText} • Terjawab ${answeredCount} dari ${saved.questionIds.length} soal${timeText}.`;
+                banner.classList.remove('hidden');
+            } catch (err) {
+                banner.classList.add('hidden');
+            }
+        }
+
+        function resumeSavedSession() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+                appState = {
+                    ...appState,
+                    ...saved,
+                    isPaused: false,
+                    reviewFilter: 'all'
+                };
+                enterCBTScreen();
+            } catch (err) {
+                console.error('Gagal melanjutkan sesi:', err);
+            }
+        }
+
+        function clearSavedSession() {
+            try {
+                localStorage.removeItem(STORAGE_KEY);
+            } catch (err) {}
+            checkSavedSession();
+        }
+
+        // ==========================================
+        // LOGIKA HALAMAN SETUP
+        // ==========================================
+        function selectMode(mode) {
+            appState.mode = mode;
+            const btnExam = document.getElementById('btn-mode-exam');
+            const btnPractice = document.getElementById('btn-mode-practice');
+            const chkExam = document.getElementById('check-mode-exam');
+            const chkPractice = document.getElementById('check-mode-practice');
+            const durBox = document.getElementById('duration-setting-box');
+
+            if (mode === 'exam') {
+                btnExam.className = "text-left p-4 rounded-xl border-2 border-navy-900 bg-blue-50/70 transition-all focus:outline-none";
+                chkExam.className = "w-5 h-5 rounded-full bg-navy-900 text-amber-400 flex items-center justify-center text-xs font-bold";
+                btnPractice.className = "text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all focus:outline-none";
+                chkPractice.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs font-bold text-transparent";
+                durBox.classList.remove('opacity-40', 'pointer-events-none');
+            } else {
+                btnPractice.className = "text-left p-4 rounded-xl border-2 border-amber-500 bg-amber-50/70 transition-all focus:outline-none";
+                chkPractice.className = "w-5 h-5 rounded-full bg-amber-500 text-navy-950 flex items-center justify-center text-xs font-bold";
+                btnExam.className = "text-left p-4 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all focus:outline-none";
+                chkExam.className = "w-5 h-5 rounded-full border-2 border-slate-300 flex items-center justify-center text-xs font-bold text-transparent";
+                durBox.classList.add('opacity-40', 'pointer-events-none');
+            }
+        }
+
+        function selectPackage(pkgKey) {
+            appState.pkg = pkgKey;
+            ['all', 'p1', 'p2', 'p3'].forEach(k => {
+                const btn = document.getElementById(`btn-pkg-${k}`);
+                if (k === pkgKey) {
+                    btn.className = "p-3 rounded-xl border-2 border-navy-900 bg-blue-50/70 text-left transition-all";
+                    btn.firstElementChild.className = "font-bold text-navy-950 text-sm";
+                } else {
+                    btn.className = "p-3 rounded-xl border-2 border-slate-200 bg-white hover:border-slate-300 text-left transition-all";
+                    btn.firstElementChild.className = "font-bold text-slate-800 text-sm";
+                }
+            });
+            // Sesuaikan rekomendasi durasi otomatis
+            if (pkgKey === 'all') selectDuration(120);
+            else selectDuration(60);
+
+            updateSetupQuestionCount();
+        }
+
+        function onCategoryChange() {
+            appState.category = document.getElementById('select-category').value;
+            updateSetupQuestionCount();
+        }
+
+        function selectDuration(mins) {
+            appState.durationMinutes = mins;
+            [30, 60, 90, 120].forEach(m => {
+                const btn = document.getElementById(`btn-dur-${m}`);
+                if (m === mins) {
+                    btn.className = "py-2 rounded-lg border-2 border-navy-900 bg-navy-900 text-amber-300 font-bold text-xs transition-all shadow-xs";
+                } else {
+                    btn.className = "py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all";
+                }
+            });
+        }
+
+        function getFilteredSetupQuestions() {
+            let list = QUESTION_BANK;
+            if (appState.pkg === 'p1') list = QUESTION_BANK.slice(0, 40);
+            else if (appState.pkg === 'p2') list = QUESTION_BANK.slice(40, 80);
+            else if (appState.pkg === 'p3') list = QUESTION_BANK.slice(80, 120);
+
+            if (appState.category !== 'ALL') {
+                list = list.filter(q => q.category === appState.category);
+            }
+            return list;
+        }
+
+        function updateSetupQuestionCount() {
+            const count = getFilteredSetupQuestions().length;
+            document.getElementById('setup-question-count').textContent = `${count} Soal`;
+            const warn = document.getElementById('setup-empty-warning');
+            const btnStart = document.getElementById('btn-start-sim');
+            if (count === 0) {
+                warn.classList.remove('hidden');
+                btnStart.disabled = true;
+            } else {
+                warn.classList.add('hidden');
+                btnStart.disabled = false;
+            }
+        }
+
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function getQuestionById(id) {
+            return QUESTION_BANK.find(q => q.id === id);
+        }
+
+        function getActiveQuestions() {
+            return appState.questionIds.map(id => getQuestionById(id));
+        }
+
+        // ==========================================
+        // MULAI SIMULASI
+        // ==========================================
+        function startNewSimulation(customIds = null) {
+            let ids = customIds;
+            if (!ids) {
+                const filtered = getFilteredSetupQuestions();
+                if (filtered.length === 0) return;
+                ids = filtered.map(q => q.id);
+                appState.shuffle = document.getElementById('chk-shuffle').checked;
+                if (appState.shuffle) ids = shuffleArray(ids);
+            }
+
+            appState.questionIds = ids;
+            appState.currentIndex = 0;
+            appState.answers = {};
+            appState.doubts = {};
+            appState.remainingSeconds = appState.durationMinutes * 60;
+            appState.elapsedSeconds = 0;
+            appState.isPaused = false;
+            appState.isFinished = false;
+            appState.reviewFilter = 'all';
+
+            saveProgress();
+            enterCBTScreen();
+        }
+
+        function enterCBTScreen() {
+            const modeBadge = document.getElementById('cbt-mode-badge');
+            const timerWrap = document.getElementById('cbt-timer-wrapper');
+
+            if (appState.mode === 'exam') {
+                modeBadge.textContent = 'Mode Ujian (CBT)';
+                modeBadge.className = 'font-semibold text-amber-300';
+                timerWrap.classList.remove('hidden');
+            } else {
+                modeBadge.textContent = 'Mode Latihan';
+                modeBadge.className = 'font-semibold text-emerald-300';
+                timerWrap.classList.add('hidden');
+            }
+
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-cbt').classList.remove('hidden');
+            document.getElementById('pause-overlay').classList.add('hidden');
+            document.getElementById('icon-pause').classList.remove('hidden');
+            document.getElementById('icon-play').classList.add('hidden');
+
+            renderLegends();
+            renderQuestion();
+            renderNavGrids();
+            updateProgressHeader();
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // TIMER & PAUSE/RESUME
+        // ==========================================
+        function startTimer() {
+            clearInterval(timerInterval);
+            updateTimerUI();
+
+            timerInterval = setInterval(() => {
+                if (appState.isPaused) return;
+                appState.elapsedSeconds++;
+
+                if (appState.mode === 'exam') {
+                    appState.remainingSeconds--;
+                    updateTimerUI();
+                    if (appState.remainingSeconds % 5 === 0) saveProgress();
+                    if (appState.remainingSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        finishSimulation();
+                    }
+                } else {
+                    if (appState.elapsedSeconds % 10 === 0) saveProgress();
+                }
+            }, 1000);
+        }
+
+        function togglePauseTimer() {
+            if (appState.mode !== 'exam') return;
+            appState.isPaused = !appState.isPaused;
+            document.getElementById('pause-overlay').classList.toggle('hidden', !appState.isPaused);
+            document.getElementById('icon-pause').classList.toggle('hidden', appState.isPaused);
+            document.getElementById('icon-play').classList.toggle('hidden', !appState.isPaused);
+            saveProgress();
+        }
+
+        function formatTime(totalSeconds) {
+            const safe = Math.max(0, totalSeconds);
+            const mins = Math.floor(safe / 60);
+            const secs = safe % 60;
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function updateTimerUI() {
+            if (appState.mode !== 'exam') return;
+            const display = document.getElementById('cbt-timer-display');
+            const box = document.getElementById('cbt-timer-box');
+            display.textContent = formatTime(appState.remainingSeconds);
+
+            if (appState.remainingSeconds <= 300) {
+                box.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/25 border border-rose-400 font-mono font-bold text-sm sm:text-base text-rose-200 animate-pulse";
+            } else {
+                box.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 border border-white/20 font-mono font-bold text-sm sm:text-base text-amber-300";
+            }
+        }
+
+        // ==========================================
+        // RENDER SOAL & PILIHAN OPSI
+        // ==========================================
+        function renderQuestion() {
+            const idx = appState.currentIndex;
+            const total = appState.questionIds.length;
+            const q = getQuestionById(appState.questionIds[idx]);
+            const userAnswer = appState.answers[idx];
+            const isDoubt = !!appState.doubts[idx];
+
+            document.getElementById('question-number-badge').textContent = `Soal No. ${idx + 1}`;
+            document.getElementById('question-category-badge').textContent = q.category;
+            document.getElementById('question-total-info').textContent = `${idx + 1} / ${total}`;
+            document.getElementById('question-text').textContent = q.question;
+
+            const origBadge = document.getElementById('question-orig-badge');
+            if (q.id !== idx + 1) {
+                origBadge.textContent = `Asli #${q.id}`;
+                origBadge.classList.remove('hidden');
+            } else {
+                origBadge.classList.add('hidden');
+            }
+
+            // Status ragu-ragu
+            const doubtBadge = document.getElementById('question-doubt-badge');
+            const doubtChk = document.getElementById('doubt-checkbox');
+            if (isDoubt) {
+                doubtBadge.classList.remove('hidden');
+                doubtChk.textContent = '✓';
+                doubtChk.className = "w-4 h-4 rounded border border-amber-700 bg-amber-500 text-navy-950 flex items-center justify-center text-[10px] font-bold";
+            } else {
+                doubtBadge.classList.add('hidden');
+                doubtChk.textContent = '';
+                doubtChk.className = "w-4 h-4 rounded border border-amber-600 bg-white flex items-center justify-center text-[10px] font-bold";
+            }
+
+            // Render opsi jawaban
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswer === optIdx;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => selectOption(optIdx);
+
+                let btnStyle = "w-full text-left p-3.5 sm:p-4 rounded-xl border-2 transition-all flex items-start gap-3.5 group ";
+                let letterStyle = "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 transition-colors ";
+
+                if (appState.mode === 'practice' && userAnswer !== undefined) {
+                    if (optIdx === q.correct) {
+                        btnStyle += "border-emerald-500 bg-emerald-50 text-emerald-950";
+                        letterStyle += "bg-emerald-600 text-white";
+                    } else if (isSelected && optIdx !== q.correct) {
+                        btnStyle += "border-rose-500 bg-rose-50 text-rose-950";
+                        letterStyle += "bg-rose-600 text-white";
+                    } else {
+                        btnStyle += "border-slate-200 bg-white text-slate-500 opacity-75";
+                        letterStyle += "bg-slate-100 text-slate-500";
+                    }
+                } else {
+                    if (isSelected) {
+                        btnStyle += "border-navy-900 bg-blue-50/80 text-navy-950 shadow-xs";
+                        letterStyle += "bg-navy-900 text-amber-300";
+                    } else {
+                        btnStyle += "border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50 text-slate-700";
+                        letterStyle += "bg-slate-100 text-slate-600 group-hover:bg-navy-900/10 group-hover:text-navy-900";
+                    }
+                }
+
+                btn.className = btnStyle;
+                btn.innerHTML = `
+                    <span class="${letterStyle}">${LETTERS[optIdx]}</span>
+                    <span class="text-sm sm:text-base leading-relaxed pt-0.5">${optText}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Kotak Pembahasan Instan (Khusus Mode Latihan)
+            const practiceBox = document.getElementById('practice-explanation-box');
+            if (appState.mode === 'practice' && userAnswer !== undefined) {
+                const isCorrect = userAnswer === q.correct;
+                practiceBox.classList.remove('hidden');
+                practiceBox.className = `mt-6 p-4 sm:p-5 rounded-xl border fade-in ${
+                    isCorrect ? 'bg-emerald-50/85 border-emerald-200' : 'bg-rose-50/85 border-rose-200'
+                }`;
+                const titleEl = document.getElementById('practice-status-title');
+                titleEl.className = `flex items-center gap-2 font-bold text-sm sm:text-base mb-1.5 ${
+                    isCorrect ? 'text-emerald-800' : 'text-rose-800'
+                }`;
+                titleEl.innerHTML = isCorrect
+                    ? `<span>✓ Jawaban Benar! (${LETTERS[q.correct]})</span>`
+                    : `<span>✕ Jawaban Kurang Tepat — Kunci: ${LETTERS[q.correct]}</span>`;
+                document.getElementById('practice-explanation-text').textContent = q.explanation;
+            } else {
+                practiceBox.classList.add('hidden');
+            }
+
+            // Tombol Prev / Next
+            document.getElementById('btn-prev').disabled = idx === 0;
+            document.getElementById('btn-next-label').textContent = idx === total - 1 ? 'Selesai Ujian' : 'Selanjutnya';
+        }
+
+        function selectOption(optIdx) {
+            appState.answers[appState.currentIndex] = optIdx;
+            saveProgress();
+            renderQuestion();
+            renderNavGrids();
+            updateProgressHeader();
+        }
+
+        function toggleDoubt() {
+            const idx = appState.currentIndex;
+            appState.doubts[idx] = !appState.doubts[idx];
+            saveProgress();
+            renderQuestion();
+            renderNavGrids();
+        }
+
+        function prevQuestion() {
+            if (appState.currentIndex > 0) {
+                appState.currentIndex--;
+                saveProgress();
+                renderQuestion();
+                renderNavGrids();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function nextQuestion() {
+            if (appState.currentIndex < appState.questionIds.length - 1) {
+                appState.currentIndex++;
+                saveProgress();
+                renderQuestion();
+                renderNavGrids();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                openFinishModal();
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            appState.currentIndex = idx;
+            saveProgress();
+            renderQuestion();
+            renderNavGrids();
+            toggleMobileNav(false);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==========================================
+        // SHORTCUT KEYBOARD (A-E, ARROWS, F)
+        // ==========================================
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                const cbtVisible = !document.getElementById('screen-cbt').classList.contains('hidden');
+                const modalOpen = !document.getElementById('finish-modal').classList.contains('hidden') ||
+                                  !document.getElementById('confirm-modal').classList.contains('hidden');
+                if (!cbtVisible || modalOpen || appState.isPaused) return;
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevQuestion();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextQuestion();
+                } else if (e.key.toUpperCase() === 'F') {
+                    e.preventDefault();
+                    toggleDoubt();
+                } else {
+                    const keyUpper = e.key.toUpperCase();
+                    const optIdx = LETTERS.indexOf(keyUpper);
+                    if (optIdx !== -1) {
+                        const q = getQuestionById(appState.questionIds[appState.currentIndex]);
+                        if (q && optIdx < q.options.length) {
+                            selectOption(optIdx);
+                        }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // PANEL NAVIGASI NOMOR SOAL
+        // ==========================================
+        function renderLegends() {
+            const legendHtml = appState.mode === 'practice'
+                ? `
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-600 inline-block"></span><span>Benar</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-500 inline-block"></span><span>Salah</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400 inline-block"></span><span>Ragu-ragu</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-100 border border-slate-300 inline-block"></span><span>Belum</span></div>
+                `
+                : `
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-600 inline-block"></span><span>Dijawab</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400 inline-block"></span><span>Ragu-ragu</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-100 border border-slate-300 inline-block"></span><span>Belum</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border-2 border-blue-700 bg-blue-50 inline-block"></span><span>Aktif</span></div>
+                `;
+            document.getElementById('nav-legend-desktop').innerHTML = legendHtml;
+            document.getElementById('nav-legend-mobile').innerHTML = legendHtml;
+        }
+
+        function renderNavGrids() {
+            const desktopGrid = document.getElementById('nav-grid-desktop');
+            const mobileGrid = document.getElementById('nav-grid-mobile');
+            desktopGrid.innerHTML = '';
+            mobileGrid.innerHTML = '';
+
+            appState.questionIds.forEach((qId, idx) => {
+                const isActive = idx === appState.currentIndex;
+                const userAns = appState.answers[idx];
+                const isAnswered = userAns !== undefined;
+                const isDoubt = !!appState.doubts[idx];
+                const q = getQuestionById(qId);
+
+                let colorClass = "bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200";
+                if (isDoubt) {
+                    colorClass = "bg-amber-400 text-amber-950 border-amber-500 hover:bg-amber-500";
+                } else if (isAnswered) {
+                    if (appState.mode === 'practice') {
+                        colorClass = userAns === q.correct
+                            ? "bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700"
+                            : "bg-rose-500 text-white border-rose-600 hover:bg-rose-600";
+                    } else {
+                        colorClass = "bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700";
+                    }
+                }
+
+                const activeRing = isActive ? " ring-2 ring-blue-700 ring-offset-1 font-extrabold scale-105 z-10" : "";
+
+                const createBtn = () => {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.textContent = idx + 1;
+                    b.title = `Soal ${idx + 1} — ${q.category}`;
+                    b.onclick = () => jumpToQuestion(idx);
+                    b.className = `h-9 rounded-lg border font-semibold text-xs transition-all flex items-center justify-center ${colorClass}${activeRing}`;
+                    return b;
+                };
+
+                desktopGrid.appendChild(createBtn());
+                mobileGrid.appendChild(createBtn());
+            });
+        }
+
+        function updateProgressHeader() {
+            const total = appState.questionIds.length;
+            const answered = Object.keys(appState.answers).length;
+            const pct = total > 0 ? Math.round((answered / total) * 100) : 0;
+
+            document.getElementById('cbt-answered-count').textContent = `Terjawab ${answered} / ${total}`;
+            document.getElementById('sidebar-summary').textContent = `${answered} / ${total}`;
+            document.getElementById('cbt-progress-bar').style.width = `${pct}%`;
+        }
+
+        function toggleMobileNav(show) {
+            document.getElementById('mobile-nav-drawer').classList.toggle('hidden', !show);
+        }
+
+        // ==========================================
+        // MODAL KONFIRMASI
+        // ==========================================
+        function openFinishModal() {
+            const total = appState.questionIds.length;
+            const answered = Object.keys(appState.answers).length;
+            const unanswered = total - answered;
+            const doubtCount = Object.values(appState.doubts).filter(Boolean).length;
+
+            let msg = `Anda telah menjawab <strong>${answered} dari ${total} soal</strong>.`;
+            if (unanswered > 0) {
+                msg += ` Masih ada <strong class="text-rose-600">${unanswered} soal belum dijawab</strong>.`;
+            }
+            if (doubtCount > 0) {
+                msg += ` Terdapat <strong class="text-amber-600">${doubtCount} soal ragu-ragu</strong>.`;
+            }
+            document.getElementById('finish-modal-summary').innerHTML = msg;
+            document.getElementById('finish-modal').classList.remove('hidden');
+        }
+
+        function closeFinishModal() {
+            document.getElementById('finish-modal').classList.add('hidden');
+        }
+
+        function openConfirmModal(title, desc, btnLabel, callback) {
+            document.getElementById('confirm-modal-title').textContent = title;
+            document.getElementById('confirm-modal-desc').textContent = desc;
+            const actionBtn = document.getElementById('confirm-modal-action');
+            actionBtn.textContent = btnLabel;
+            pendingConfirmAction = callback;
+            actionBtn.onclick = () => {
+                closeConfirmModal();
+                if (pendingConfirmAction) pendingConfirmAction();
+            };
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        function openConfirmClearSession() {
+            openConfirmModal(
+                'Hapus Sesi Tersimpan?',
+                'Progres sesi sebelumnya akan dihapus sehingga Anda dapat memulai simulasi baru dari awal.',
+                'Ya, Mulai Baru',
+                () => clearSavedSession()
+            );
+        }
+
+        function confirmBackToSetup() {
+            openConfirmModal(
+                'Kembali ke Menu Utama?',
+                'Progres pengerjaan Anda tersimpan otomatis di browser dan dapat dilanjutkan kapan saja.',
+                'Ke Menu Utama',
+                () => backToSetup()
+            );
+        }
+
+        // ==========================================
+        // HALAMAN HASIL, BREAKDOWN KATEGORI & REVIEW
+        // ==========================================
+        function finishSimulation() {
+            clearInterval(timerInterval);
+            closeFinishModal();
+
+            appState.isFinished = true;
+            saveProgress();
+
+            const questions = getActiveQuestions();
+            const total = questions.length;
+            let correct = 0;
+            let wrong = 0;
+            let unanswered = 0;
+            const wrongIds = [];
+            const catStats = {};
+
+            questions.forEach((q, idx) => {
+                if (!catStats[q.category]) {
+                    catStats[q.category] = { total: 0, correct: 0 };
+                }
+                catStats[q.category].total++;
+
+                const ans = appState.answers[idx];
+                if (ans === undefined) {
+                    unanswered++;
+                } else if (ans === q.correct) {
+                    correct++;
+                    catStats[q.category].correct++;
+                } else {
+                    wrong++;
+                    wrongIds.push(q.id);
+                }
+            });
+
+            appState.wrongQuestionIds = wrongIds;
+
+            const score = total > 0 ? Math.round((correct / total) * 100) : 0;
+            const answeredTotal = correct + wrong;
+            const accuracy = answeredTotal > 0 ? Math.round((correct / answeredTotal) * 100) : 0;
+            const isPassed = score >= 70;
+
+            // Update Badge Kelulusan & Ring
+            const badge = document.getElementById('result-status-badge');
+            const ring = document.getElementById('score-ring-circle');
+            if (isPassed) {
+                badge.textContent = '✓ LULUS SIMULASI (SKOR ≥ 70)';
+                badge.className = 'inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/25 border border-emerald-300/50 text-emerald-200 mb-2.5';
+                ring.setAttribute('stroke', '#34d399');
+            } else {
+                badge.textContent = '✕ BELUM LULUS SIMULASI (SKOR < 70)';
+                badge.className = 'inline-block px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-rose-500/30 border border-rose-300/50 text-rose-200 mb-2.5';
+                ring.setAttribute('stroke', '#fb7185');
+            }
+
+            document.getElementById('result-score-value').textContent = score;
+            document.getElementById('result-accuracy').textContent = `Akurasi dijawab: ${accuracy}%`;
+            document.getElementById('stat-correct').textContent = correct;
+            document.getElementById('stat-wrong').textContent = wrong;
+            document.getElementById('stat-unanswered').textContent = unanswered;
+            document.getElementById('stat-duration').textContent = formatTime(appState.elapsedSeconds);
+
+            // Animasi Progress Ring (circumference = 2 * pi * 34 ≈ 213.6)
+            const circumference = 213.6;
+            ring.style.strokeDashoffset = circumference;
+            setTimeout(() => {
+                ring.style.strokeDashoffset = circumference - (score / 100) * circumference;
+            }, 80);
+
+            // Render Breakdown Akurasi per Kategori
+            renderCategoryBreakdown(catStats);
+
+            // Tombol Ulangi Soal Salah Saja
+            const btnRetryWrong = document.getElementById('btn-retry-wrong');
+            const lblRetryWrong = document.getElementById('btn-retry-wrong-label');
+            if (wrongIds.length > 0) {
+                btnRetryWrong.disabled = false;
+                lblRetryWrong.textContent = `Ulangi Soal Salah Saja (${wrongIds.length} Soal)`;
+            } else {
+                btnRetryWrong.disabled = true;
+                lblRetryWrong.textContent = 'Tidak Ada Soal Salah';
+            }
+
+            // Pindah ke layar Hasil
+            document.getElementById('screen-cbt').classList.add('hidden');
+            document.getElementById('screen-result').classList.remove('hidden');
+
+            document.getElementById('review-search').value = '';
+            filterReview('all');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderCategoryBreakdown(catStats) {
+            const container = document.getElementById('category-breakdown-list');
+            container.innerHTML = '';
+
+            const categories = Object.keys(catStats).sort((a, b) => a.localeCompare(b));
+            categories.forEach(cat => {
+                const { total, correct } = catStats[cat];
+                const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+                let barColor = 'bg-emerald-500';
+                let textColor = 'text-emerald-700';
+                if (pct < 50) {
+                    barColor = 'bg-rose-500';
+                    textColor = 'text-rose-700';
+                } else if (pct < 70) {
+                    barColor = 'bg-amber-500';
+                    textColor = 'text-amber-700';
+                }
+
+                const row = document.createElement('div');
+                row.innerHTML = `
+                    <div class="flex items-center justify-between text-xs sm:text-sm mb-1.5">
+                        <span class="font-semibold text-slate-800">${cat}</span>
+                        <span class="font-bold ${textColor}">${pct}% <span class="text-slate-400 font-normal">(${correct}/${total})</span></span>
+                    </div>
+                    <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200/70">
+                        <div class="h-full ${barColor} rounded-full transition-all duration-700" style="width: ${pct}%;"></div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function filterReview(type) {
+            appState.reviewFilter = type;
+            ['all', 'correct', 'wrong', 'unanswered'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (f === type) {
+                    btn.className = "px-3.5 py-2 rounded-lg text-xs font-bold bg-navy-900 text-amber-300 transition-colors";
+                } else {
+                    btn.className = "px-3.5 py-2 rounded-lg text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors";
+                }
+            });
+            renderReviewList();
+        }
+
+        function renderReviewList() {
+            const container = document.getElementById('review-list');
+            const query = (document.getElementById('review-search').value || '').trim().toLowerCase();
+            const type = appState.reviewFilter;
+            const questions = getActiveQuestions();
+
+            container.innerHTML = '';
+            let renderedCount = 0;
+
+            questions.forEach((q, idx) => {
+                const userAns = appState.answers[idx];
+                const isUnanswered = userAns === undefined;
+                const isCorrect = !isUnanswered && userAns === q.correct;
+                const isWrong = !isUnanswered && userAns !== q.correct;
+
+                if (type === 'correct' && !isCorrect) return;
+                if (type === 'wrong' && !isWrong) return;
+                if (type === 'unanswered' && !isUnanswered) return;
+
+                if (query) {
+                    const haystack = `${q.id} ${q.category} ${q.question} ${q.options.join(' ')} ${q.explanation}`.toLowerCase();
+                    if (!haystack.includes(query)) return;
+                }
+
+                renderedCount++;
+
+                let statusBadge = '';
+                if (isUnanswered) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs">Belum Dijawab</span>`;
+                } else if (isCorrect) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs">✓ Benar</span>`;
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-rose-100 text-rose-800 font-bold text-xs">✕ Salah</span>`;
+                }
+
+                const userAnswerText = !isUnanswered
+                    ? `${LETTERS[userAns]}. ${q.options[userAns]}`
+                    : 'Tidak dijawab';
+                const correctAnswerText = `${LETTERS[q.correct]}. ${q.options[q.correct]}`;
+                const origInfo = q.id !== idx + 1 ? ` <span class="text-slate-400 font-normal">(Asli #${q.id})</span>` : '';
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl shadow-xs border border-slate-200 p-5 sm:p-6";
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="font-extrabold text-sm text-navy-950">Soal No. ${idx + 1}${origInfo}</span>
+                            <span class="px-2.5 py-0.5 rounded-md bg-blue-50 text-blue-900 border border-blue-200 font-semibold text-xs">${q.category}</span>
+                        </div>
+                        ${statusBadge}
+                    </div>
+                    <p class="text-slate-800 font-medium text-sm sm:text-base leading-relaxed mb-4">
+                        ${q.question}
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-xs sm:text-sm">
+                        <div class="p-3 rounded-xl border ${isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : (isUnanswered ? 'bg-slate-50 border-slate-200 text-slate-700' : 'bg-rose-50 border-rose-200 text-rose-900')}">
+                            <div class="font-bold text-[11px] uppercase opacity-75 mb-0.5">Jawaban Anda</div>
+                            <div class="font-medium">${userAnswerText}</div>
+                        </div>
+                        <div class="p-3 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900">
+                            <div class="font-bold text-[11px] uppercase opacity-75 mb-0.5">Kunci Jawaban Benar</div>
+                            <div class="font-medium">${correctAnswerText}</div>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-amber-50/60 border border-amber-200/80 text-xs sm:text-sm text-slate-700 leading-relaxed">
+                        <span class="font-bold text-navy-950">Pembahasan: </span>${q.explanation}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('review-count-label').textContent = `Menampilkan ${renderedCount} dari ${questions.length} soal`;
+
+            if (renderedCount === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 text-sm">
+                        Tidak ada soal yang sesuai dengan filter atau kata kunci pencarian.
+                    </div>
+                `;
+            }
+        }
+
+        function retryWrongQuestions() {
+            if (!appState.wrongQuestionIds || appState.wrongQuestionIds.length === 0) return;
+            const idsToRetry = [...appState.wrongQuestionIds];
+            clearSavedSession();
+            startNewSimulation(idsToRetry);
+        }
+
+        function backToSetup() {
+            clearInterval(timerInterval);
+            document.getElementById('screen-cbt').classList.add('hidden');
+            document.getElementById('screen-result').classList.add('hidden');
+            document.getElementById('screen-setup').classList.remove('hidden');
+            checkSavedSession();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
