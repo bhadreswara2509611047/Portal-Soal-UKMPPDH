@@ -5,8 +5,8 @@
   const CFG_OVERRIDE_KEY = 'portal_ukmppdh_gh_cfg';
 
   let repoConfig = {
-    owner: '',
-    repo: '',
+    owner: 'muhrizky',
+    repo: 'CBT-UKMPPDH-2026',
     branch: 'main',
     manifestPath: 'data/manifest.json',
     packagesDir: 'data/packages'
@@ -45,6 +45,13 @@
       .replace(/'/g, '&#39;');
   }
 
+  function encodeRepoPath(filePath) {
+    return String(filePath || '')
+      .split('/')
+      .map((seg) => encodeURIComponent(seg))
+      .join('/');
+  }
+
   function slugifyFileName(name) {
     const base = String(name || 'paket_soal')
       .replace(/\.html?$/i, '')
@@ -56,7 +63,7 @@
 
   function getSavedToken() {
     try {
-      return localStorage.getItem(TOKEN_STORAGE_KEY) || '';
+      return (localStorage.getItem(TOKEN_STORAGE_KEY) || '').trim();
     } catch (e) {
       return '';
     }
@@ -64,7 +71,8 @@
 
   function saveToken(token) {
     try {
-      if (token) localStorage.setItem(TOKEN_STORAGE_KEY, token.trim());
+      const clean = String(token || '').trim();
+      if (clean) localStorage.setItem(TOKEN_STORAGE_KEY, clean);
       else localStorage.removeItem(TOKEN_STORAGE_KEY);
     } catch (e) {}
   }
@@ -73,7 +81,11 @@
     try {
       const override = JSON.parse(localStorage.getItem(CFG_OVERRIDE_KEY) || 'null');
       if (override && override.owner && override.repo) {
-        return Object.assign({}, repoConfig, override);
+        return Object.assign({}, repoConfig, {
+          owner: String(override.owner).trim(),
+          repo: String(override.repo).trim(),
+          branch: String(override.branch || repoConfig.branch || 'main').trim()
+        });
       }
     } catch (e) {}
     return repoConfig;
@@ -81,12 +93,16 @@
 
   function saveConfigOverride(owner, repo, branch) {
     try {
+      const cleanOwner = String(owner || '').trim();
+      const cleanRepo = String(repo || '').trim();
+      const cleanBranch = String(branch || 'main').trim();
+      if (!cleanOwner || !cleanRepo) return;
       localStorage.setItem(
         CFG_OVERRIDE_KEY,
         JSON.stringify({
-          owner: owner.trim(),
-          repo: repo.trim(),
-          branch: (branch || 'main').trim()
+          owner: cleanOwner,
+          repo: cleanRepo,
+          branch: cleanBranch
         })
       );
     } catch (e) {}
@@ -95,13 +111,17 @@
   // ==================== LOAD CONFIG & MANIFEST ====================
   async function loadRepoConfig() {
     try {
-      const res = await fetch('./config.json?t=' + Date.now(), { cache: 'no-store' });
+      const res = await fetch('./config.json?t=' + Date.now());
       if (res.ok) {
         const data = await res.json();
-        repoConfig = Object.assign(repoConfig, data);
+        if (data.owner && String(data.owner).trim()) repoConfig.owner = String(data.owner).trim();
+        if (data.repo && String(data.repo).trim()) repoConfig.repo = String(data.repo).trim();
+        if (data.branch && String(data.branch).trim()) repoConfig.branch = String(data.branch).trim();
+        if (data.manifestPath && String(data.manifestPath).trim()) repoConfig.manifestPath = String(data.manifestPath).trim();
+        if (data.packagesDir && String(data.packagesDir).trim()) repoConfig.packagesDir = String(data.packagesDir).trim();
       }
     } catch (e) {
-      console.warn('[GitHubSync] config.json belum terbaca:', e);
+      console.warn('[GitHubSync] config.json belum terbaca, memakai konfigurasi bawaan:', e);
     }
   }
 
@@ -124,7 +144,7 @@
 
     for (const url of urls) {
       try {
-        const res = await fetch(url, { cache: 'no-store' });
+        const res = await fetch(url);
         if (res.ok) {
           const json = await res.json();
           cloudPackages = Array.isArray(json.packages) ? json.packages : [];
@@ -147,14 +167,18 @@
     if (!cfg.owner || !cfg.repo) {
       throw new Error('Owner dan nama repository belum diisi di Tab Pengaturan GitHub.');
     }
+
+    const cleanToken = token ? String(token).trim() : '';
     const headers = {
       Accept: 'application/vnd.github+json',
       'X-GitHub-Api-Version': '2022-11-28'
     };
-    if (token) headers.Authorization = `Bearer ${token}`;
+    if (cleanToken) headers.Authorization = `Bearer ${cleanToken}`;
     if (bodyObj) headers['Content-Type'] = 'application/json';
 
-    const url = `https://api.github.com/repos/${encodeURIComponent(cfg.owner)}/${encodeURIComponent(cfg.repo)}/${path}`;
+    const cleanPath = path ? '/' + String(path).replace(/^\/+/, '') : '';
+    const url = `https://api.github.com/repos/${encodeURIComponent(cfg.owner.trim())}/${encodeURIComponent(cfg.repo.trim())}${cleanPath}`;
+
     const res = await fetch(url, {
       method: method || 'GET',
       headers,
@@ -178,7 +202,7 @@
     const cfg = getEffectiveConfig();
     try {
       const data = await githubRequest(
-        `contents/${filePath}?ref=${encodeURIComponent(cfg.branch)}`,
+        `contents/${encodeRepoPath(filePath)}?ref=${encodeURIComponent(cfg.branch)}`,
         'GET',
         null,
         token
@@ -202,7 +226,7 @@
     };
     if (existing.sha) payload.sha = existing.sha;
 
-    return githubRequest(`contents/${filePath}`, 'PUT', payload, token);
+    return githubRequest(`contents/${encodeRepoPath(filePath)}`, 'PUT', payload, token);
   }
 
   async function deleteRepoFile(filePath, commitMessage, token) {
@@ -211,7 +235,7 @@
     if (!existing.sha) return;
 
     return githubRequest(
-      `contents/${filePath}`,
+      `contents/${encodeRepoPath(filePath)}`,
       'DELETE',
       {
         message: commitMessage,
@@ -240,7 +264,7 @@
     let htmlContent = '';
     for (const url of candidateUrls) {
       try {
-        const res = await fetch(url, { cache: 'no-store' });
+        const res = await fetch(url);
         if (res.ok) {
           htmlContent = await res.text();
           break;
@@ -617,7 +641,7 @@
 
   async function handleUploadToGitHub() {
     const modal = ensureAdminModal();
-    const token = getSavedToken();
+    const token = getSavedToken() || modal.querySelector('#gh-cfg-token').value.trim();
     const cfg = getEffectiveConfig();
 
     if (!token || !cfg.owner || !cfg.repo) {
@@ -733,7 +757,8 @@
   }
 
   async function handleDeleteCloudPackage(pkgId) {
-    const token = getSavedToken();
+    const modal = ensureAdminModal();
+    const token = getSavedToken() || modal.querySelector('#gh-cfg-token').value.trim();
     const cfg = getEffectiveConfig();
     if (!token) {
       showStatus('#gh-manage-status', 'Masukkan GitHub PAT di Tab Pengaturan terlebih dahulu.', false);
