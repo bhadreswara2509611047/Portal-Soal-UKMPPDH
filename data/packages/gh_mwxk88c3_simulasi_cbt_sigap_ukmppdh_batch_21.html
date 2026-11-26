@@ -70,6 +70,160 @@
       animation: pulseUrgent 1s infinite;
     }
   </style>
+<style id="portal-unified-theme">
+    :root {
+      --pt-bg: #f8fafc;
+      --pt-surface: #ffffff;
+      --pt-subtle: #f1f5f9;
+      --pt-border: #e2e8f0;
+      --pt-text: #0f172a;
+      --pt-text-sub: #475569;
+      --pt-primary: #0f766e;
+      --pt-primary-hover: #115e59;
+      --pt-primary-soft: #f0fdfa;
+      --pt-primary-border: #99f6e4;
+    }
+
+    html.dark {
+      color-scheme: dark;
+      --pt-bg: #09090b;
+      --pt-surface: #121215;
+      --pt-subtle: #18181b;
+      --pt-border: #27272a;
+      --pt-text: #f4f4f5;
+      --pt-text-sub: #a1a1aa;
+      --pt-primary: #14b8a6;
+      --pt-primary-hover: #0d9488;
+      --pt-primary-soft: rgba(20, 184, 166, 0.14);
+      --pt-primary-border: rgba(20, 184, 166, 0.35);
+    }
+
+    html, body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+      background-color: var(--pt-bg) !important;
+      color: var(--pt-text) !important;
+    }
+
+    /* Header Seragam untuk Semua Paket */
+    body > header,
+    #app > header,
+    div > header.sticky,
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #134e4a 55%, #0f766e 100%) !important;
+      color: #ffffff !important;
+      border-bottom: 2px solid #14b8a6 !important;
+    }
+
+    header h1, header h2, header h3,
+    header .text-slate-900, header .text-slate-800, header .text-slate-700 {
+      color: #ffffff !important;
+    }
+
+    header .text-slate-600, header .text-slate-500, header .text-slate-400 {
+      color: #cbd5e1 !important;
+    }
+
+    header .bg-slate-100, header .bg-blue-100, header .bg-emerald-100,
+    header [class*="bg-[#f0f6fb]"], header #timer-box {
+      background-color: rgba(255, 255, 255, 0.14) !important;
+      border-color: rgba(255, 255, 255, 0.24) !important;
+      color: #ffffff !important;
+    }
+
+    header .text-blue-700, header .text-blue-600, header .text-emerald-800,
+    header .text-vet-700, header [class*="text-[#0f4c81]"] {
+      color: #99f6e4 !important;
+    }
+
+    /* Permukaan kartu, kontainer, dan modal */
+    main .bg-white, aside .bg-white, section .bg-white,
+    [class*="bg-white/95"], .bg-slate-50, .bg-slate-100,
+    [class*="bg-[#f8fafc]"], [class*="bg-[#f1f5f9]"], [class*="bg-[#f4f7"] {
+      background-color: var(--pt-surface) !important;
+      color: var(--pt-text) !important;
+      border-color: var(--pt-border) !important;
+    }
+
+    body.bg-slate-50, body.bg-slate-100, body[class*="bg-[#f8fafc]"] {
+      background-color: var(--pt-bg) !important;
+    }
+
+    /* Penyeragaman tombol & aksen primer lintas paket */
+    .bg-blue-600, .bg-blue-700, .bg-blue-800, .bg-blue-900,
+    .bg-indigo-600, .bg-indigo-700, .bg-indigo-800,
+    .bg-sky-600, .bg-sky-700,
+    .bg-teal-600, .bg-teal-700, .bg-teal-800,
+    [class*="bg-[#1e3a8a]"], [class*="bg-[#2563eb]"],
+    [class*="bg-[#881337]"], [class*="bg-[#9f1239]"],
+    [class*="bg-[#0f5c54]"], [class*="bg-[#134e4a]"],
+    [class*="bg-[#0f2942]"], [class*="bg-[#0f4c81]"],
+    [class*="bg-navy-9"], [class*="bg-navy-8"],
+    [class*="bg-undana-"], [class*="bg-unud-"],
+    [class*="bg-vet-6"], [class*="bg-vet-7"], [class*="bg-vet-8"],
+    [class*="bg-vetnavy-"], [class*="bg-sigap-primary"],
+    [class*="bg-academic-"], [class*="bg-ipb-navy"], [class*="bg-ipb-royal"],
+    [class*="bg-udayana-blue"], [class*="bg-udayana-royal"],
+    [class*="bg-unhas-"] {
+      background-color: var(--pt-primary) !important;
+      border-color: var(--pt-primary) !important;
+      color: #ffffff !important;
+    }
+
+    .hover\:bg-blue-700:hover, .hover\:bg-blue-900:hover,
+    .hover\:bg-indigo-700:hover, .hover\:bg-sky-700:hover,
+    .hover\:bg-teal-700:hover, .hover\:bg-teal-800:hover,
+    [class*="hover:bg-[#2563eb]"]:hover, [class*="hover:bg-[#be123c]"]:hover,
+    [class*="hover:bg-vet-7"]:hover, [class*="hover:bg-undana-9"]:hover,
+    [class*="hover:bg-navy-8"]:hover, [class*="hover:bg-unud-"]:hover {
+      background-color: var(--pt-primary-hover) !important;
+    }
+
+    .text-blue-600, .text-blue-700, .text-blue-800,
+    .text-indigo-600, .text-indigo-700,
+    .text-sky-600, .text-sky-700,
+    .text-teal-600, .text-teal-700, .text-teal-800,
+    [class*="text-[#1e3a8a]"], [class*="text-[#881337]"],
+    [class*="text-[#0f4c81]"], [class*="text-[#0f5c54]"],
+    [class*="text-vet-6"], [class*="text-vet-7"],
+    [class*="text-unud-"], [class*="text-undana-"],
+    [class*="text-ipb-"], [class*="text-udayana-"],
+    [class*="text-academic-"], [class*="text-unhas-"] {
+      color: var(--pt-primary) !important;
+    }
+
+    .bg-blue-50, .bg-indigo-50, .bg-sky-50, .bg-teal-50, .bg-rose-50,
+    [class*="bg-blue-50/"], [class*="bg-teal-50/"],
+    [class*="bg-[#f0f6fb]"], [class*="bg-[#e6f4f"] {
+      background-color: var(--pt-primary-soft) !important;
+      border-color: var(--pt-primary-border) !important;
+    }
+
+    .border-blue-500, .border-blue-600, .border-blue-700,
+    .border-indigo-500, .border-indigo-600,
+    .border-sky-500, .border-teal-500, .border-teal-600,
+    [class*="border-[#2563eb]"], [class*="border-[#9f1239]"],
+    [class*="border-[#0f5c54]"], [class*="border-navy-9"],
+    [class*="border-undana-8"], [class*="border-unud-"],
+    [class*="border-vet-6"], [class*="border-ipb-"] {
+      border-color: var(--pt-primary) !important;
+    }
+
+    /* Mode Gelap (Dark Mode) untuk Konten & Teks Soal */
+    html.dark .text-slate-900, html.dark .text-slate-800, html.dark .text-slate-700,
+    html.dark .text-gray-900, html.dark .text-gray-800,
+    html.dark [class*="text-[#0f172a]"], html.dark [class*="text-[#1e293b]"] {
+      color: var(--pt-text) !important;
+    }
+
+    html.dark .text-slate-600, html.dark .text-slate-500,
+    html.dark .text-gray-600, html.dark .text-gray-500 {
+      color: var(--pt-text-sub) !important;
+    }
+
+    html.dark .border-slate-200, html.dark .border-slate-300, html.dark .border-gray-200 {
+      border-color: var(--pt-border) !important;
+    }
+</style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-vet-200 selection:text-navy-900">
 

@@ -1,5 +1,5 @@
 /* Cache cadangan: jaringan selalu dicoba lebih dulu; cache dipakai bila gagal atau terlalu lambat. */
-const CACHE = 'portal-ukmppdh-v2';
+const CACHE = 'portal-ukmppdh-v3';
 const CORE = ['./', './tailwind.js', './history.js', './progress.js', './runtime.js', './github-sync.js'];
 const TIMEOUT_MS = 5000;
 

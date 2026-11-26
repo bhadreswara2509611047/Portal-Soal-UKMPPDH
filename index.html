@@ -1165,18 +1165,14 @@
                 ['exam-frame', 'gh-runner-frame'].forEach((id) => {
                     const frame = document.getElementById(id);
                     if (!frame) return;
-                    frame.style.filter = isDark ? 'invert(0.92) hue-rotate(180deg)' : '';
+                    frame.style.filter = '';
                     try {
                         const doc = frame.contentDocument;
-                        let styleEl = doc.getElementById('portal-injected-dark-theme');
-                        if (isDark && !styleEl) {
-                            styleEl = doc.createElement('style');
-                            styleEl.id = 'portal-injected-dark-theme';
-                            styleEl.textContent = 'img, svg, video, canvas, picture { filter: invert(1) hue-rotate(180deg); }';
-                            doc.head.appendChild(styleEl);
-                        } else if (!isDark && styleEl) {
-                            styleEl.remove();
+                        if (doc && doc.documentElement) {
+                            doc.documentElement.classList.toggle('dark', isDark);
                         }
+                        const oldInvert = doc && doc.getElementById('portal-injected-dark-theme');
+                        if (oldInvert) oldInvert.remove();
                     } catch (e) {}
                 });
             }
