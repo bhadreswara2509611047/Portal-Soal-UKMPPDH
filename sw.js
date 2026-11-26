@@ -1,6 +1,6 @@
 /* Cache cadangan: jaringan selalu dicoba lebih dulu; cache dipakai bila gagal atau terlalu lambat. */
-const CACHE = 'portal-ukmppdh-v1';
-const CORE = ['./', './tailwind.js', './history.js', './runtime.js', './github-sync.js'];
+const CACHE = 'portal-ukmppdh-v2';
+const CORE = ['./', './tailwind.js', './history.js', './progress.js', './runtime.js', './github-sync.js'];
 const TIMEOUT_MS = 5000;
 
 self.addEventListener('install', (event) => {

@@ -38,6 +38,7 @@
   }
 
   function close() {
+    if (window.PortalProgress) window.PortalProgress.flush(); // simpan posisi terakhir sebelum paket ditutup
     const fn = teardown;
     teardown = null;
     inProgress = false;
@@ -64,6 +65,46 @@
 
   // Entri sisa dari muat ulang saat ujian terbuka.
   if (history.state && history.state.exam) history.replaceState(null, '');
+
+
+  /** Timer paket menghitung dengan mengurangi 1 detik per tick. Saat tab di latar belakang, layar HP mati,
+   *  atau browser menahan timer, tick terlewat dan waktu "berhenti". Di sini tick yang terlewat dikejar
+   *  berdasarkan jam sebenarnya, sehingga sisa waktu ujian selalu benar. */
+  function fixTimers(win) {
+    const rawSet = win.setInterval;
+    const rawClear = win.clearInterval;
+    const cleared = new Set();
+
+    win.clearInterval = function (id) {
+      cleared.add(id);
+      return rawClear.call(win, id);
+    };
+
+    win.setInterval = function (fn, ms) {
+      if (typeof fn !== 'function' || !(ms >= 900 && ms <= 1100)) return rawSet.apply(win, arguments);
+      const extra = Array.prototype.slice.call(arguments, 2);
+      const startedAt = Date.now();
+      let delivered = 0;
+      let id;
+
+      const tick = () => {
+        if (cleared.has(id)) return;
+        const due = Math.floor((Date.now() - startedAt) / 1000 + 0.1);
+        let missing = Math.min(due - delivered, 6 * 3600);
+        while (missing-- > 0 && !cleared.has(id)) {
+          delivered++;
+          fn.apply(win, extra);
+        }
+      };
+      const onVisible = () => { if (!win.document.hidden) tick(); };
+      win.document.addEventListener('visibilitychange', onVisible);
+      id = rawSet.call(win, () => {
+        tick();
+        if (cleared.has(id)) win.document.removeEventListener('visibilitychange', onVisible);
+      }, ms);
+      return id;
+    };
+  }
 
   window.PortalRuntime = {
     confirmLeave,
@@ -111,7 +152,9 @@
         const style = win.document.createElement('style');
         style.textContent = FRAME_CSS;
         win.document.head.appendChild(style);
-        canResume = typeof win.resumeSavedSession === 'function';
+        canResume = typeof win.resumeSavedSession === 'function' || typeof win.loadSavedProgress === 'function' ||
+          !!win.__portalGenericResume;
+        fixTimers(win);
         const track = (names, value) => names.forEach((name) => {
           const fn = win[name];
           if (typeof fn !== 'function') return;

@@ -12,6 +12,7 @@
     { finish: 'finalizeExam', vars: ['selectedMode', 'selectedPackage', 'activeList', 'answers', 'flags', 'currentIdx', 'secondsRemaining'],
       text: ['header-pkg-label'] },
     { finish: 'finishSimulation', vars: ['appState'] },
+    { finish: 'finishSimulation', vars: ['state'] },
     { finish: 'finishQuiz', vars: ['currentMode', 'activeQuestions', 'userAnswers', 'flaggedQuestions', 'currentIndex', 'timeLeftSeconds'] },
     { finish: 'finishQuiz', vars: ['currentMode', 'userAnswers', 'flagged', 'currentIndex', 'timerSeconds'] },
     { finish: 'finishExam', vars: ['session'] },
@@ -169,6 +170,8 @@
       if (reviewRecord) alert('Format paket ini tidak dikenali, hasil tidak bisa dibuka kembali.');
       return;
     }
+
+    if (!reviewRecord && window.PortalProgress) window.PortalProgress.attach(win, adapter, meta, frame);
 
     const originalFinish = win[adapter.finish];
     let lastSignature = '';
