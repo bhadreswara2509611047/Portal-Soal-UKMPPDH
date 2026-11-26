@@ -811,14 +811,10 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        const rawHtml = String(reader.result || '');
-        pendingUploadHtml = (window.PortalTheme && typeof window.PortalTheme.applyToHtml === 'function')
-          ? window.PortalTheme.applyToHtml(rawHtml)
-          : rawHtml;
+        pendingUploadHtml = String(reader.result || '');
         pendingUploadFileName = slugifyFileName(file.name);
-        const sizeKb = (new Blob([pendingUploadHtml]).size / 1024).toFixed(1);
-        modal.querySelector('#gh-file-info').textContent =
-          `✓ ${pendingUploadFileName} (${sizeKb} KB) • Tema otomatis diseragamkan`;
+        const sizeKb = (file.size / 1024).toFixed(1);
+        modal.querySelector('#gh-file-info').textContent = `✓ ${pendingUploadFileName} (${sizeKb} KB)`;
 
         const titleMatch = pendingUploadHtml.match(/<title[^>]*>([^<]+)<\/title>/i);
         const titleInput = modal.querySelector('#gh-pkg-title');
@@ -1037,12 +1033,8 @@
     btn.textContent = 'Mengunggah...';
     showStatus('#gh-upload-status', '1/2 Mengunggah file soal ke GitHub...', true);
 
-    const htmlToUpload = (window.PortalTheme && typeof window.PortalTheme.applyToHtml === 'function')
-      ? window.PortalTheme.applyToHtml(pendingUploadHtml)
-      : pendingUploadHtml;
-
     try {
-      await putRepoFile(pkgFilePath, htmlToUpload, `Upload paket soal: ${code} - ${title}`, token);
+      await putRepoFile(pkgFilePath, pendingUploadHtml, `Upload paket soal: ${code} - ${title}`, token);
 
       showStatus('#gh-upload-status', '2/2 Memperbarui manifest...', true);
       const manifestData = await getFileSha(cfg.manifestPath, token);

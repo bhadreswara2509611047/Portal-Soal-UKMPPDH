@@ -1165,18 +1165,19 @@
                 ['exam-frame', 'gh-runner-frame'].forEach((id) => {
                     const frame = document.getElementById(id);
                     if (!frame) return;
-                    frame.style.filter = '';
+                    frame.style.filter = isDark ? 'invert(0.92) hue-rotate(180deg)' : '';
                     try {
                         const doc = frame.contentDocument;
-                        if (doc && doc.documentElement) {
-                            doc.documentElement.classList.toggle('dark', isDark);
-                            if (window.PortalTheme && typeof window.PortalTheme.applyToDocument === 'function') {
-                                window.PortalTheme.applyToDocument(doc, isDark);
-                            }
+                        let styleEl = doc.getElementById('portal-injected-dark-theme');
+                        if (isDark && !styleEl) {
+                            styleEl = doc.createElement('style');
+                            styleEl.id = 'portal-injected-dark-theme';
+                            styleEl.textContent = 'img, svg, video, canvas, picture { filter: invert(1) hue-rotate(180deg); }';
+                            doc.head.appendChild(styleEl);
+                        } else if (!isDark && styleEl) {
+                            styleEl.remove();
                         }
-                    } catch (e) {
-                        frame.style.filter = isDark ? 'invert(0.92) hue-rotate(180deg)' : '';
-                    }
+                    } catch (e) {}
                 });
             }
             window.syncExamTheme = () => syncExamFrameTheme(document.documentElement.classList.contains('dark'));
