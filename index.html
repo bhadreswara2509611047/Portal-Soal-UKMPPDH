@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Portal Simulasi CBT &amp; OSCE UKMPPDH 2026</title>
-    <script async src="https://cdn.tailwindcss.com"></script>
+    <script src="./tailwind.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
@@ -468,6 +468,12 @@
         const EMBEDDED_ADMIN_CFG = readJsonScript('embedded-admin-config', { adminPin: 'admin2026' });
 
         const memoryHtmlCache = {};
+        // Tailwind disajikan dari repo sendiri (bukan cdn.tailwindcss.com) agar tidak tergantung jaringan.
+        // URL absolut dipakai supaya juga berlaku di dalam iframe srcdoc/blob.
+        const TAILWIND_LOCAL_URL = new URL('./tailwind.js', window.location.href).href;
+        function useLocalTailwind(html) {
+            return String(html || '').split('https://cdn.tailwindcss.com').join(TAILWIND_LOCAL_URL);
+        }
         const PKG_PATHS = {
             "ub": "./data/builtin/ub.html",
             "unair": "./data/builtin/unair.html",
@@ -490,7 +496,7 @@
             try {
                 const res = await fetch(path);
                 if (!res.ok) return '';
-                const txt = await res.text();
+                const txt = useLocalTailwind(await res.text());
                 memoryHtmlCache[id] = txt;
                 return txt;
             } catch (e) {

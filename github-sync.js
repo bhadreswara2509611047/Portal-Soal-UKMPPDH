@@ -4,7 +4,6 @@
   const TOKEN_STORAGE_KEY = 'portal_ukmppdh_gh_token';
   const SESSION_TOKEN_KEY = 'portal_ukmppdh_gh_token_session';
   const CFG_OVERRIDE_KEY = 'portal_ukmppdh_gh_cfg';
-  const HIDDEN_BUILTIN_KEY = 'portal_ukmppdh_hidden_builtins';
   const PBKDF2_ITERATIONS = 200000;
 
   let repoConfig = {
@@ -13,15 +12,13 @@
     branch: 'main',
     manifestPath: 'data/manifest.json',
     packagesDir: 'data/packages',
-    encryptedToken: null,
-    hiddenBuiltinIds: []
+    encryptedToken: null
   };
 
   let memoryToken = '';
   let cloudPackages = [];
   let pendingUploadHtml = '';
   let pendingUploadFileName = '';
-  let isSyncingGridUI = false;
 
   // ==================== UTILITAS ENCODING UTF-8 <-> BASE64 ====================
   function bytesToBase64(bytes) {
@@ -66,46 +63,6 @@
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_+|_+$/g, '');
     return (base || 'paket_soal') + '.html';
-  }
-
-  // ==================== DATA PAKET BAWAAN & STATUS HAPUS ====================
-  function getBuiltinPackagesMeta() {
-    try {
-      const el = document.getElementById('embedded-builtin-meta');
-      if (!el) return [];
-      const parsed = JSON.parse(el.textContent || '[]');
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function getHiddenBuiltinIds() {
-    const fromCfg = Array.isArray(repoConfig.hiddenBuiltinIds) ? repoConfig.hiddenBuiltinIds : [];
-    let fromLocal = [];
-    try {
-      const raw = localStorage.getItem(HIDDEN_BUILTIN_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) fromLocal = parsed;
-      }
-    } catch (e) {}
-    return Array.from(new Set([...fromCfg, ...fromLocal].map((id) => String(id))));
-  }
-
-  function setLocalHiddenBuiltinIds(ids) {
-    const unique = Array.from(new Set((ids || []).map((id) => String(id))));
-    repoConfig.hiddenBuiltinIds = unique;
-    try {
-      localStorage.setItem(HIDDEN_BUILTIN_KEY, JSON.stringify(unique));
-    } catch (e) {}
-    return unique;
-  }
-
-  function isAdminModeActive() {
-    const btn = document.getElementById('btn-open-gh-sync');
-    if (!btn) return false;
-    return !btn.classList.contains('hidden') && btn.offsetParent !== null;
   }
 
   // ==================== ENKRIPSI WEB CRYPTO (PBKDF2 + AES-GCM) ====================
@@ -239,8 +196,7 @@
         branch: 'main',
         manifestPath: 'data/manifest.json',
         packagesDir: 'data/packages',
-        encryptedToken: null,
-        hiddenBuiltinIds: []
+        encryptedToken: null
       },
       repoConfig
     );
@@ -317,18 +273,12 @@
           const data = await res.json();
           if (data && typeof data === 'object') {
             repoConfig = Object.assign({}, repoConfig, data);
-            if (Array.isArray(data.hiddenBuiltinIds)) {
-              setLocalHiddenBuiltinIds(data.hiddenBuiltinIds);
-            }
-            syncBuiltinCardsState();
-            renderManageCloudList();
             return repoConfig;
           }
         }
       } catch (e) {}
     }
 
-    syncBuiltinCardsState();
     return repoConfig;
   }
 
@@ -485,6 +435,10 @@
       return;
     }
 
+    htmlContent = htmlContent
+      .split('https://cdn.tailwindcss.com')
+      .join(new URL('./tailwind.js', window.location.href).href);
+
     const overlay = ensureCloudRunnerOverlay();
     const titleEl = overlay.querySelector('#gh-runner-title');
     const iframe = overlay.querySelector('#gh-runner-frame');
@@ -537,77 +491,6 @@
     return el;
   }
 
-  // ==================== SINKRONISASI KARTU BAWAAN & TOMBOL HAPUS ADMIN ====================
-  function matchCardToBuiltinPkg(card, builtins) {
-    const attrId = card.getAttribute('data-pkg-id') || card.getAttribute('data-id');
-    if (attrId) {
-      const byAttr = builtins.find((p) => p.id === attrId);
-      if (byAttr) return byAttr;
-    }
-
-    const actionEl = card.querySelector('[onclick]');
-    if (actionEl) {
-      const onclickStr = actionEl.getAttribute('onclick') || '';
-      const byOnclick = builtins.find(
-        (p) => onclickStr.includes(`'${p.id}'`) || onclickStr.includes(`"${p.id}"`)
-      );
-      if (byOnclick) return byOnclick;
-    }
-
-    const h3 = card.querySelector('h3');
-    if (h3) {
-      const titleText = h3.textContent.trim();
-      const byTitle = builtins.find((p) => p.title.trim() === titleText);
-      if (byTitle) return byTitle;
-    }
-
-    return null;
-  }
-
-  function syncBuiltinCardsState() {
-    if (isSyncingGridUI) return;
-    const grid = document.getElementById('packages-grid');
-    if (!grid) return;
-
-    isSyncingGridUI = true;
-    try {
-      const builtins = getBuiltinPackagesMeta();
-      const hiddenSet = new Set(getHiddenBuiltinIds());
-      const adminActive = isAdminModeActive();
-
-      Array.from(grid.children).forEach((card) => {
-        const pkg = matchCardToBuiltinPkg(card, builtins);
-        if (!pkg) return;
-
-        const isHidden = hiddenSet.has(pkg.id);
-        card.classList.toggle('hidden', isHidden);
-
-        const existingBtn = card.querySelector('.gh-card-delete-btn');
-        if (adminActive && !isHidden) {
-          if (!existingBtn) {
-            card.classList.add('relative');
-            const delBtn = document.createElement('button');
-            delBtn.type = 'button';
-            delBtn.className =
-              'gh-card-delete-btn absolute top-3 right-3 z-10 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition-colors';
-            delBtn.title = `Hapus paket ${pkg.title}`;
-            delBtn.textContent = 'Hapus';
-            delBtn.addEventListener('click', (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleDeleteBuiltinPackage(pkg.id);
-            });
-            card.appendChild(delBtn);
-          }
-        } else if (existingBtn) {
-          existingBtn.remove();
-        }
-      });
-    } finally {
-      isSyncingGridUI = false;
-    }
-  }
-
   // ==================== RENDER SEKSI PAKET TAMBAHAN ====================
   function renderCloudSection() {
     const grid = document.getElementById('packages-grid');
@@ -628,8 +511,6 @@
       return;
     }
 
-    const adminActive = isAdminModeActive();
-
     wrap.classList.remove('hidden');
     wrap.innerHTML = `
       <div class="flex items-center justify-between gap-2 mb-4">
@@ -645,20 +526,10 @@
           <div class="surface border rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-4 transition-colors hover:border-slate-400 dark:hover:border-zinc-600">
             <div class="space-y-2.5">
               <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="badge-pastel px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-100 text-blue-800">${escapeHtml(pkg.code)}</span>
-                  ${
-                    pkg.hasOsce
-                      ? '<span class="badge-osce px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-800">+ OSCE</span>'
-                      : ''
-                  }
-                </div>
+                <span class="badge-pastel px-2.5 py-0.5 rounded-md text-xs font-bold bg-blue-100 text-blue-800">${escapeHtml(pkg.code)}</span>
                 ${
-                  adminActive
-                    ? `<button type="button" data-gh-card-delete="${escapeHtml(pkg.id)}"
-                        class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 transition-colors shrink-0">
-                        Hapus
-                      </button>`
+                  pkg.hasOsce
+                    ? '<span class="badge-osce px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-800">+ OSCE</span>'
                     : ''
                 }
               </div>
@@ -687,10 +558,6 @@
 
     wrap.querySelectorAll('[data-gh-open]').forEach((btn) => {
       btn.addEventListener('click', () => openCloudPackage(btn.getAttribute('data-gh-open')));
-    });
-
-    wrap.querySelectorAll('[data-gh-card-delete]').forEach((btn) => {
-      btn.addEventListener('click', () => handleDeleteCloudPackage(btn.getAttribute('data-gh-card-delete'), btn));
     });
   }
 
@@ -735,15 +602,15 @@
       <div class="surface border w-full max-w-xl max-h-[92dvh] flex flex-col rounded-t-2xl sm:rounded-2xl shadow-xl overflow-hidden fade-in">
         <div class="flex items-center justify-between px-5 py-4 border-b shrink-0" style="border-color: var(--border-color);">
           <div>
-            <h3 class="text-base font-bold text-main">Admin Paket Soal</h3>
-            <p class="text-xs text-mute">Unggah, kelola, dan hapus paket soal di portal</p>
+            <h3 class="text-base font-bold text-main">Upload ke GitHub</h3>
+            <p class="text-xs text-mute">Unggah dan kelola paket soal di repository</p>
           </div>
           <button type="button" id="gh-modal-close" class="btn-secondary w-8 h-8 rounded-lg text-xs font-bold flex items-center justify-center">✕</button>
         </div>
 
         <div class="flex gap-4 px-5 pt-3 border-b text-xs font-bold shrink-0 overflow-x-auto no-scrollbar" style="border-color: var(--border-color);">
           <button type="button" data-gh-tab="upload" class="gh-tab-btn pb-2.5 border-b-2 whitespace-nowrap">Upload Soal</button>
-          <button type="button" data-gh-tab="manage" class="gh-tab-btn pb-2.5 border-b-2 border-transparent text-mute whitespace-nowrap">Kelola &amp; Hapus Paket</button>
+          <button type="button" data-gh-tab="manage" class="gh-tab-btn pb-2.5 border-b-2 border-transparent text-mute whitespace-nowrap">Kelola Paket</button>
           <button type="button" data-gh-tab="settings" class="gh-tab-btn pb-2.5 border-b-2 border-transparent text-mute whitespace-nowrap">Pengaturan</button>
         </div>
 
@@ -751,7 +618,7 @@
         <div class="px-5 pt-4 shrink-0">
           <!-- Sudah siap -->
           <div id="gh-ready-banner" class="hidden flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400">
-            <div class="truncate font-semibold">✓ Siap sinkron ke <span id="gh-ready-repo-text" class="font-bold"></span></div>
+            <div class="truncate font-semibold">✓ Siap upload ke <span id="gh-ready-repo-text" class="font-bold"></span></div>
             <button type="button" id="gh-btn-quick-lock" class="underline font-bold shrink-0">Kunci</button>
           </div>
 
@@ -761,7 +628,7 @@
               🔐 Buka Kunci Token (<span id="gh-unlock-repo-text" class="text-sub font-semibold"></span>)
             </div>
             <p class="text-[11px] text-sub leading-relaxed">
-              Pengaturan repository sudah tersinkron otomatis. Masukkan <strong>Sandi Enkripsi</strong> untuk mengaktifkan upload &amp; hapus di perangkat ini.
+              Pengaturan repository sudah tersinkron otomatis. Masukkan <strong>Sandi Enkripsi</strong> untuk mengaktifkan upload di perangkat ini.
             </p>
             <div class="flex gap-2">
               <input type="password" id="gh-unlock-passphrase" placeholder="Masukkan Sandi Enkripsi..."
@@ -839,14 +706,14 @@
             </button>
           </div>
 
-          <!-- TAB 2: KELOLA & HAPUS PAKET -->
-          <div id="gh-panel-manage" class="hidden p-5 space-y-4">
+          <!-- TAB 2: KELOLA PAKET -->
+          <div id="gh-panel-manage" class="hidden p-5 space-y-3">
             <div class="flex items-center justify-between">
-              <p class="text-xs font-semibold text-sub">Kelola seluruh paket soal portal</p>
+              <p class="text-xs text-mute">Daftar paket di repository</p>
               <button type="button" id="gh-btn-refresh-cloud" class="btn-secondary px-3 h-8 rounded-lg text-xs font-semibold">Muat Ulang</button>
             </div>
+            <div id="gh-manage-list" class="space-y-2"></div>
             <div id="gh-manage-status" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
-            <div id="gh-manage-list" class="space-y-4"></div>
           </div>
 
           <!-- TAB 3: PENGATURAN GITHUB -->
@@ -980,10 +847,7 @@
     });
 
     modal.querySelector('#gh-btn-upload-submit').addEventListener('click', handleUploadToGitHub);
-    modal.querySelector('#gh-btn-refresh-cloud').addEventListener('click', async () => {
-      await loadRepoConfig(true);
-      await loadCloudManifest(true);
-    });
+    modal.querySelector('#gh-btn-refresh-cloud').addEventListener('click', () => loadCloudManifest(true));
 
     // Simpan lokal saja
     modal.querySelector('#gh-btn-save-settings').addEventListener('click', () => {
@@ -1038,6 +902,7 @@
           packagesDir: repoConfig.packagesDir || 'data/packages'
         };
 
+        // Verifikasi izin tulis dulu sebelum commit
         const repoInfo = await githubRequest('', 'GET', null, token, targetCfg);
         if (!repoInfo.permissions || !repoInfo.permissions.push) {
           throw new Error('Token valid, tetapi tidak memiliki izin tulis (Contents: Read and write).');
@@ -1051,7 +916,6 @@
           manifestPath: targetCfg.manifestPath,
           packagesDir: targetCfg.packagesDir,
           encryptedToken,
-          hiddenBuiltinIds: getHiddenBuiltinIds(),
           updatedAt: new Date().toISOString()
         };
 
@@ -1239,276 +1103,57 @@
     }
   }
 
-  // ==================== KELOLA & HAPUS PAKET (CLOUD + BAWAAN) ====================
   function renderManageCloudList() {
     const list = document.getElementById('gh-manage-list');
     if (!list) return;
 
-    const builtins = getBuiltinPackagesMeta();
-    const hiddenSet = new Set(getHiddenBuiltinIds());
-    const activeBuiltins = builtins.filter((p) => !hiddenSet.has(p.id));
-    const removedBuiltins = builtins.filter((p) => hiddenSet.has(p.id));
+    if (!cloudPackages.length) {
+      list.innerHTML = '<p class="text-xs text-mute py-4 text-center">Belum ada paket tambahan di GitHub.</p>';
+      return;
+    }
 
-    const cloudHtml = cloudPackages.length
-      ? cloudPackages
-          .map(
-            (pkg) => `
-          <div class="subtle border flex items-center justify-between gap-3 p-3 rounded-xl text-xs">
-            <div class="min-w-0">
-              <div class="font-bold text-main truncate">[${escapeHtml(pkg.code)}] ${escapeHtml(pkg.title)}</div>
-              <div class="text-mute truncate mt-0.5">${escapeHtml(pkg.questions)} soal • ${escapeHtml(pkg.duration)}</div>
-            </div>
-            <button type="button" data-gh-delete="${escapeHtml(pkg.id)}"
-              class="px-3 h-8 rounded-lg border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 font-bold shrink-0">
-              Hapus
-            </button>
-          </div>`
-          )
-          .join('')
-      : '<p class="text-xs text-mute py-3 text-center subtle border rounded-xl">Belum ada paket tambahan di GitHub.</p>';
-
-    const builtinHtml = activeBuiltins.length
-      ? activeBuiltins
-          .map(
-            (pkg) => `
-          <div class="subtle border flex items-center justify-between gap-3 p-3 rounded-xl text-xs">
-            <div class="min-w-0">
-              <div class="font-bold text-main truncate">[${escapeHtml(pkg.code)}] ${escapeHtml(pkg.title)}</div>
-              <div class="text-mute truncate mt-0.5">${escapeHtml(pkg.questions)} soal • ${escapeHtml(pkg.duration)}</div>
-            </div>
-            <button type="button" data-builtin-delete="${escapeHtml(pkg.id)}"
-              class="px-3 h-8 rounded-lg border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 font-bold shrink-0">
-              Hapus
-            </button>
-          </div>`
-          )
-          .join('')
-      : '<p class="text-xs text-mute py-3 text-center subtle border rounded-xl">Semua paket bawaan sedang disembunyikan.</p>';
-
-    const removedHtml = removedBuiltins.length
-      ? `
-        <div class="space-y-2 pt-2 border-t" style="border-color: var(--border-color);">
-          <div class="text-[11px] font-bold uppercase tracking-wider text-mute">
-            Paket Bawaan Terhapus (${removedBuiltins.length})
-          </div>
-          ${removedBuiltins
-            .map(
-              (pkg) => `
-            <div class="subtle border flex items-center justify-between gap-3 p-2.5 rounded-xl text-xs opacity-80">
-              <div class="min-w-0">
-                <div class="font-semibold text-sub truncate">[${escapeHtml(pkg.code)}] ${escapeHtml(pkg.title)}</div>
-              </div>
-              <button type="button" data-builtin-restore="${escapeHtml(pkg.id)}"
-                class="btn-secondary px-2.5 h-7 rounded-lg text-[11px] font-bold shrink-0">
-                Pulihkan
-              </button>
-            </div>`
-            )
-            .join('')}
-        </div>`
-      : '';
-
-    list.innerHTML = `
-      <div class="space-y-2">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-mute">
-          Paket Soal Tambahan GitHub (${cloudPackages.length})
+    list.innerHTML = cloudPackages
+      .map(
+        (pkg) => `
+      <div class="subtle border flex items-center justify-between gap-3 p-3 rounded-xl text-xs">
+        <div class="min-w-0">
+          <div class="font-bold text-main truncate">[${escapeHtml(pkg.code)}] ${escapeHtml(pkg.title)}</div>
+          <div class="text-mute truncate mt-0.5">${escapeHtml(pkg.questions)} soal • ${escapeHtml(pkg.duration)}</div>
         </div>
-        <div class="space-y-2">${cloudHtml}</div>
-      </div>
-
-      <div class="space-y-2 pt-2 border-t" style="border-color: var(--border-color);">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-mute">
-          Paket Soal Utama / Bawaan (${activeBuiltins.length})
-        </div>
-        <div class="space-y-2">${builtinHtml}</div>
-      </div>
-
-      ${removedHtml}
-    `;
+        <button type="button" data-gh-delete="${escapeHtml(pkg.id)}"
+          class="px-3 h-8 rounded-lg border border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 font-bold shrink-0">
+          Hapus
+        </button>
+      </div>`
+      )
+      .join('');
 
     list.querySelectorAll('[data-gh-delete]').forEach((btn) => {
-      btn.addEventListener('click', () => handleDeleteCloudPackage(btn.getAttribute('data-gh-delete'), btn));
-    });
-
-    list.querySelectorAll('[data-builtin-delete]').forEach((btn) => {
-      btn.addEventListener('click', () => handleDeleteBuiltinPackage(btn.getAttribute('data-builtin-delete'), btn));
-    });
-
-    list.querySelectorAll('[data-builtin-restore]').forEach((btn) => {
-      btn.addEventListener('click', () => handleRestoreBuiltinPackage(btn.getAttribute('data-builtin-restore'), btn));
+      btn.addEventListener('click', () => handleDeleteCloudPackage(btn.getAttribute('data-gh-delete')));
     });
   }
 
-  async function saveHiddenBuiltinsToCloud(updatedIds, commitMessage) {
+  async function handleDeleteCloudPackage(pkgId) {
     const token = getSavedToken();
     const cfg = getEffectiveConfig();
-
-    setLocalHiddenBuiltinIds(updatedIds);
-    syncBuiltinCardsState();
-    renderManageCloudList();
-
-    if (!token || !cfg.owner || !cfg.repo) {
-      return false;
-    }
-
-    const configData = await getFileSha('config.json', token, cfg);
-    let currentObj = {};
-    if (configData.content) {
-      try {
-        currentObj = JSON.parse(configData.content);
-      } catch (e) {}
-    }
-
-    const nextConfigObj = Object.assign(
-      {
-        owner: cfg.owner,
-        repo: cfg.repo,
-        branch: cfg.branch || 'main',
-        manifestPath: cfg.manifestPath || 'data/manifest.json',
-        packagesDir: cfg.packagesDir || 'data/packages',
-        encryptedToken: cfg.encryptedToken || null
-      },
-      currentObj,
-      {
-        hiddenBuiltinIds: updatedIds,
-        updatedAt: new Date().toISOString()
-      }
-    );
-
-    await putRepoFile(
-      'config.json',
-      JSON.stringify(nextConfigObj, null, 2),
-      commitMessage,
-      token,
-      cfg
-    );
-    repoConfig = Object.assign({}, repoConfig, nextConfigObj);
-    return true;
-  }
-
-  async function handleDeleteBuiltinPackage(pkgId, triggerBtn) {
-    const builtins = getBuiltinPackagesMeta();
-    const pkg = builtins.find((p) => p.id === pkgId);
-    if (!pkg) return;
-
-    if (!confirm(`Hapus paket soal "${pkg.code} — ${pkg.title}" dari portal?`)) return;
-
-    const modalVisible = !ensureAdminModal().classList.contains('hidden');
-    if (triggerBtn) {
-      triggerBtn.disabled = true;
-      triggerBtn.textContent = 'Menghapus...';
-    }
-    if (modalVisible) {
-      showStatus('#gh-manage-status', `Menghapus paket ${pkg.code}...`, true);
-    }
-
-    try {
-      const nextHidden = Array.from(new Set([...getHiddenBuiltinIds(), pkg.id]));
-      const synced = await saveHiddenBuiltinsToCloud(
-        nextHidden,
-        `Hapus paket soal bawaan: ${pkg.code} - ${pkg.title}`
-      );
-
-      if (modalVisible) {
-        showStatus(
-          '#gh-manage-status',
-          synced
-            ? `Paket "${pkg.title}" berhasil dihapus & disinkronkan ke GitHub.`
-            : `Paket "${pkg.title}" dihapus di browser ini. Buka kunci token di atas agar tersinkron ke semua perangkat.`,
-          true
-        );
-      }
-    } catch (err) {
-      if (modalVisible) {
-        showStatus('#gh-manage-status', `Tersimpan lokal, gagal sinkron ke GitHub: ${err.message}`, false);
-      } else {
-        alert(`Paket dihapus secara lokal, tetapi gagal sinkron ke GitHub: ${err.message}`);
-      }
-    } finally {
-      if (triggerBtn) {
-        triggerBtn.disabled = false;
-        triggerBtn.textContent = 'Hapus';
-      }
-    }
-  }
-
-  async function handleRestoreBuiltinPackage(pkgId, triggerBtn) {
-    const builtins = getBuiltinPackagesMeta();
-    const pkg = builtins.find((p) => p.id === pkgId);
-    if (!pkg) return;
-
-    if (triggerBtn) {
-      triggerBtn.disabled = true;
-      triggerBtn.textContent = 'Memulihkan...';
-    }
-    showStatus('#gh-manage-status', `Memulihkan paket ${pkg.code}...`, true);
-
-    try {
-      const nextHidden = getHiddenBuiltinIds().filter((id) => id !== pkg.id);
-      const synced = await saveHiddenBuiltinsToCloud(
-        nextHidden,
-        `Pulihkan paket soal bawaan: ${pkg.code} - ${pkg.title}`
-      );
-
-      showStatus(
-        '#gh-manage-status',
-        synced
-          ? `Paket "${pkg.title}" berhasil dipulihkan & disinkronkan ke GitHub.`
-          : `Paket "${pkg.title}" dipulihkan di browser ini.`,
-        true
-      );
-    } catch (err) {
-      showStatus('#gh-manage-status', `Dipulihkan lokal, gagal sinkron ke GitHub: ${err.message}`, false);
-    } finally {
-      if (triggerBtn) {
-        triggerBtn.disabled = false;
-        triggerBtn.textContent = 'Pulihkan';
-      }
-    }
-  }
-
-  async function handleDeleteCloudPackage(pkgId, triggerBtn) {
-    const token = getSavedToken();
-    const cfg = getEffectiveConfig();
-    const modal = ensureAdminModal();
-    const modalVisible = !modal.classList.contains('hidden');
-
     if (!token) {
-      if (!modalVisible) {
-        await openAdminModalOnTab('manage');
-      }
       if (hasCloudVault()) {
         showStatus('#gh-manage-status', 'Masukkan Sandi Enkripsi pada kotak Buka Kunci di atas terlebih dahulu.', false);
-        const inp = modal.querySelector('#gh-unlock-passphrase');
-        if (inp) inp.focus();
       } else {
         showStatus('#gh-manage-status', 'Masukkan token di tab Pengaturan terlebih dahulu.', false);
       }
       return;
     }
-
     const pkg = cloudPackages.find((p) => p.id === pkgId);
     if (!pkg) return;
-    if (!confirm(`Hapus paket "${pkg.code} — ${pkg.title}" secara permanen dari GitHub?`)) return;
+    if (!confirm(`Hapus paket "${pkg.title}" dari GitHub?`)) return;
 
-    if (triggerBtn) {
-      triggerBtn.disabled = true;
-      triggerBtn.textContent = 'Menghapus...';
-    }
-    if (modalVisible) {
-      showStatus('#gh-manage-status', `Menghapus paket "${pkg.title}" dari GitHub...`, true);
-    }
-
+    showStatus('#gh-manage-status', 'Menghapus paket...', true);
     try {
       await deleteRepoFile(`${cfg.packagesDir}/${pkg.fileName}`, `Hapus paket soal: ${pkg.code}`, token);
 
       const manifestData = await getFileSha(cfg.manifestPath, token);
-      let manifestObj = { packages: [] };
-      if (manifestData.content) {
-        try {
-          manifestObj = JSON.parse(manifestData.content);
-        } catch (e) {}
-      }
+      const manifestObj = manifestData.content ? JSON.parse(manifestData.content) : { packages: [] };
       manifestObj.packages = (manifestObj.packages || []).filter((p) => p.id !== pkgId);
       manifestObj.updatedAt = new Date().toISOString();
 
@@ -1519,77 +1164,38 @@
         token
       );
 
-      if (modalVisible) {
-        showStatus('#gh-manage-status', `Paket "${pkg.title}" berhasil dihapus.`, true);
-      }
+      showStatus('#gh-manage-status', 'Paket berhasil dihapus.', true);
       await loadCloudManifest(true);
     } catch (err) {
-      if (modalVisible) {
-        showStatus('#gh-manage-status', err.message, false);
-      } else {
-        alert(err.message);
-      }
-    } finally {
-      if (triggerBtn) {
-        triggerBtn.disabled = false;
-        triggerBtn.textContent = 'Hapus';
-      }
+      showStatus('#gh-manage-status', err.message, false);
     }
   }
 
-  // ==================== PASANG EVENT PADA TOMBOL ADMIN & OBSERVER ====================
-  async function openAdminModalOnTab(tabName) {
-    const modal = ensureAdminModal();
-    await loadRepoConfig(false);
-    const cfg = getEffectiveConfig();
-    modal.querySelector('#gh-cfg-owner').value = cfg.owner || '';
-    modal.querySelector('#gh-cfg-repo').value = cfg.repo || '';
-    modal.querySelector('#gh-cfg-branch').value = cfg.branch || 'main';
-    modal.querySelector('#gh-cfg-token').value = getSavedToken();
-    updateAuthBannerUI();
-    renderManageCloudList();
-    if (tabName) switchGhTab(tabName);
-    modal.classList.remove('hidden');
-  }
-
+  // ==================== PASANG EVENT PADA TOMBOL ADMIN ====================
   function bindAdminButton() {
     const btn = document.getElementById('btn-open-gh-sync');
     if (!btn || btn.dataset.ghBound === '1') return;
     btn.dataset.ghBound = '1';
 
-    btn.addEventListener('click', () => openAdminModalOnTab('upload'));
-  }
-
-  function setupDomObservers() {
-    const grid = document.getElementById('packages-grid');
-    if (grid && !grid.dataset.ghObserved) {
-      grid.dataset.ghObserved = '1';
-      const gridObserver = new MutationObserver(() => {
-        syncBuiltinCardsState();
-      });
-      gridObserver.observe(grid, { childList: true });
-    }
-
-    const adminObserver = new MutationObserver(() => {
-      bindAdminButton();
-      syncBuiltinCardsState();
-      renderCloudSection();
-    });
-    adminObserver.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class', 'style', 'hidden'],
-      subtree: true
+    btn.addEventListener('click', async () => {
+      const modal = ensureAdminModal();
+      await loadRepoConfig(false);
+      const cfg = getEffectiveConfig();
+      modal.querySelector('#gh-cfg-owner').value = cfg.owner || '';
+      modal.querySelector('#gh-cfg-repo').value = cfg.repo || '';
+      modal.querySelector('#gh-cfg-branch').value = cfg.branch || 'main';
+      modal.querySelector('#gh-cfg-token').value = getSavedToken();
+      updateAuthBannerUI();
+      renderManageCloudList();
+      modal.classList.remove('hidden');
     });
   }
 
   // ==================== INISIALISASI ====================
   async function init() {
     bindAdminButton();
-    syncBuiltinCardsState();
-    setupDomObservers();
     await loadRepoConfig(false);
     await loadCloudManifest(false);
-    syncBuiltinCardsState();
   }
 
   if (document.readyState === 'loading') {
