@@ -237,6 +237,14 @@
                         </div>
                     </div>
 
+                    <label id="remember-device-wrap" class="flex items-start gap-2.5 cursor-pointer select-none">
+                        <input type="checkbox" id="login-remember" checked class="mt-0.5 w-4 h-4 shrink-0 rounded cursor-pointer">
+                        <span class="text-xs font-semibold text-sub leading-snug">
+                            Ingat perangkat ini
+                            <span class="block text-[11px] font-normal text-mute mt-0.5">Tidak perlu isi nama lagi saat membuka portal. Gunakan hanya di perangkat pribadi.</span>
+                        </span>
+                    </label>
+
                     <div id="login-error-box" class="hidden rounded-xl px-3.5 py-2.5 bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-semibold"></div>
 
                     <button type="submit" id="btn-login-submit"
@@ -443,6 +451,7 @@
         const STORAGE_KEY_PREFIX = 'portal_ukmppdh_2026_progress_v3_';
         const SESSION_KEY = 'portal_ukmppdh_2026_active_session_v1';
         const RECENT_USERS_KEY = 'portal_ukmppdh_2026_recent_users_v1';
+        const REMEMBER_KEY = 'portal_ukmppdh_2026_remember_device_v1';
         const ADMIN_CONFIG_KEY = 'portal_ukmppdh_2026_admin_cfg_v1';
 
         function readJsonScript(id, fallback) {
@@ -574,6 +583,8 @@
                 chkUser.style.color = 'transparent';
 
                 pinGroup.classList.remove('hidden');
+                const remWrapA = document.getElementById('remember-device-wrap');
+                if (remWrapA) remWrapA.classList.add('hidden');
                 submitLbl.textContent = 'Masuk sebagai Admin';
                 const uInput = document.getElementById('login-username');
                 if (!uInput.value.trim()) uInput.value = 'admin';
@@ -589,6 +600,8 @@
                 chkAdmin.style.color = 'transparent';
 
                 pinGroup.classList.add('hidden');
+                const remWrapU = document.getElementById('remember-device-wrap');
+                if (remWrapU) remWrapU.classList.remove('hidden');
                 submitLbl.textContent = 'Masuk sebagai Peserta';
                 const uInput = document.getElementById('login-username');
                 if (uInput.value.trim().toLowerCase() === 'admin') uInput.value = '';
@@ -626,10 +639,15 @@
             }
 
             errBox.classList.add('hidden');
-            completeLogin(usernameRaw, selectedLoginRole);
+            completeLogin(usernameRaw, selectedLoginRole, { remember: isRememberChecked() });
         }
 
-        function completeLogin(username, role) {
+        function isRememberChecked() {
+            const cb = document.getElementById('login-remember');
+            return !!(cb && cb.checked);
+        }
+
+        function completeLogin(username, role, opts) {
             currentSession = {
                 username,
                 role: role === 'admin' ? 'admin' : 'user',
@@ -638,6 +656,21 @@
             try {
                 sessionStorage.setItem(SESSION_KEY, JSON.stringify(currentSession));
             } catch (e) {}
+
+            // "Ingat perangkat ini": hanya untuk Peserta (Admin selalu wajib PIN).
+            // opts tidak diberikan saat pemulihan otomatis, jadi pengaturan tidak berubah.
+            if (opts && Object.prototype.hasOwnProperty.call(opts, 'remember')) {
+                try {
+                    if (currentSession.role === 'user' && opts.remember) {
+                        localStorage.setItem(REMEMBER_KEY, JSON.stringify({ username, role: 'user', savedAt: Date.now() }));
+                        if (navigator.storage && navigator.storage.persist) {
+                            navigator.storage.persist().catch(() => {});
+                        }
+                    } else {
+                        localStorage.removeItem(REMEMBER_KEY);
+                    }
+                } catch (e) {}
+            }
 
             saveRecentUser(username, currentSession.role);
             loadUserProgress();
@@ -654,6 +687,7 @@
             activePackageId = null;
             try {
                 sessionStorage.removeItem(SESSION_KEY);
+                localStorage.removeItem(REMEMBER_KEY); // keluar = lupakan perangkat; progres tetap tersimpan
             } catch (e) {}
 
             document.getElementById('exam-frame').removeAttribute('srcdoc');
@@ -700,7 +734,7 @@
             selectLoginRole(role);
             document.getElementById('login-username').value = username;
             if (role === 'user') {
-                completeLogin(username, 'user');
+                completeLogin(username, 'user', { remember: isRememberChecked() });
             } else {
                 document.getElementById('login-admin-pin').focus();
             }
@@ -978,15 +1012,30 @@
             renderRecentUsers();
             selectLoginRole('user');
 
+            let restored = false;
             try {
                 const rawSession = sessionStorage.getItem(SESSION_KEY);
                 if (rawSession) {
                     const parsed = JSON.parse(rawSession);
                     if (parsed && parsed.username && (parsed.role === 'admin' || parsed.role === 'user')) {
                         completeLogin(parsed.username, parsed.role);
+                        restored = true;
                     }
                 }
             } catch (e) {}
+
+            // Tidak ada sesi aktif: coba pulihkan dari "Ingat perangkat ini"
+            if (!restored) {
+                try {
+                    const rawRemember = localStorage.getItem(REMEMBER_KEY);
+                    if (rawRemember) {
+                        const r = JSON.parse(rawRemember);
+                        if (r && r.username && r.role === 'user') {
+                            completeLogin(r.username, 'user');
+                        }
+                    }
+                } catch (e) {}
+            }
         });
     </script>
 
