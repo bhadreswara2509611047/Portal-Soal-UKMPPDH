@@ -2,23 +2,26 @@
   'use strict';
 
   const TOKEN_STORAGE_KEY = 'portal_ukmppdh_gh_token';
+  const SESSION_TOKEN_KEY = 'portal_ukmppdh_gh_token_session';
   const CFG_OVERRIDE_KEY = 'portal_ukmppdh_gh_cfg';
+  const PBKDF2_ITERATIONS = 200000;
 
   let repoConfig = {
     owner: '',
     repo: '',
     branch: 'main',
     manifestPath: 'data/manifest.json',
-    packagesDir: 'data/packages'
+    packagesDir: 'data/packages',
+    encryptedToken: null
   };
 
+  let memoryToken = '';
   let cloudPackages = [];
   let pendingUploadHtml = '';
   let pendingUploadFileName = '';
 
   // ==================== UTILITAS ENCODING UTF-8 <-> BASE64 ====================
-  function utf8ToBase64(str) {
-    const bytes = new TextEncoder().encode(str);
+  function bytesToBase64(bytes) {
     let binary = '';
     const chunkSize = 0x8000;
     for (let i = 0; i < bytes.length; i += chunkSize) {
@@ -27,13 +30,21 @@
     return btoa(binary);
   }
 
-  function base64ToUtf8(b64) {
-    const binary = atob(b64.replace(/\s/g, ''));
+  function base64ToBytes(b64) {
+    const binary = atob(String(b64 || '').replace(/\s/g, ''));
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i);
     }
-    return new TextDecoder('utf-8').decode(bytes);
+    return bytes;
+  }
+
+  function utf8ToBase64(str) {
+    return bytesToBase64(new TextEncoder().encode(str));
+  }
+
+  function base64ToUtf8(b64) {
+    return new TextDecoder('utf-8').decode(base64ToBytes(b64));
   }
 
   function escapeHtml(str) {
@@ -54,29 +65,154 @@
     return (base || 'paket_soal') + '.html';
   }
 
-  function getSavedToken() {
-    try {
-      return localStorage.getItem(TOKEN_STORAGE_KEY) || '';
-    } catch (e) {
-      return '';
+  // ==================== ENKRIPSI WEB CRYPTO (PBKDF2 + AES-GCM) ====================
+  function ensureWebCryptoAvailable() {
+    if (!window.crypto || !window.crypto.subtle) {
+      throw new Error(
+        'Fitur enkripsi memerlukan halaman HTTPS (GitHub Pages) atau localhost.'
+      );
     }
   }
 
-  function saveToken(token) {
+  async function deriveAesKey(passphrase, saltBytes, iterations) {
+    ensureWebCryptoAvailable();
+    const keyMaterial = await window.crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(passphrase),
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey']
+    );
+    return window.crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        salt: saltBytes,
+        iterations: iterations || PBKDF2_ITERATIONS,
+        hash: 'SHA-256'
+      },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['encrypt', 'decrypt']
+    );
+  }
+
+  async function encryptTokenToVault(plainToken, passphrase) {
+    ensureWebCryptoAvailable();
+    const salt = window.crypto.getRandomValues(new Uint8Array(16));
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+    const key = await deriveAesKey(passphrase, salt, PBKDF2_ITERATIONS);
+    const cipherBuf = await window.crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      key,
+      new TextEncoder().encode(plainToken.trim())
+    );
+    return {
+      alg: 'AES-GCM',
+      kdf: 'PBKDF2-SHA256',
+      iter: PBKDF2_ITERATIONS,
+      salt: bytesToBase64(salt),
+      iv: bytesToBase64(iv),
+      data: bytesToBase64(new Uint8Array(cipherBuf))
+    };
+  }
+
+  async function decryptTokenFromVault(vault, passphrase) {
+    ensureWebCryptoAvailable();
+    if (!vault || !vault.salt || !vault.iv || !vault.data) {
+      throw new Error('Data token terenkripsi di config.json tidak valid.');
+    }
+    const salt = base64ToBytes(vault.salt);
+    const iv = base64ToBytes(vault.iv);
+    const cipherBytes = base64ToBytes(vault.data);
+    const key = await deriveAesKey(passphrase, salt, vault.iter || PBKDF2_ITERATIONS);
     try {
-      if (token) localStorage.setItem(TOKEN_STORAGE_KEY, token.trim());
-      else localStorage.removeItem(TOKEN_STORAGE_KEY);
+      const plainBuf = await window.crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv },
+        key,
+        cipherBytes
+      );
+      return new TextDecoder('utf-8').decode(plainBuf);
+    } catch (e) {
+      throw new Error('Sandi enkripsi salah. Token gagal dibuka.');
+    }
+  }
+
+  // ==================== PENYIMPANAN TOKEN & KONFIGURASI ====================
+  function getSavedToken() {
+    if (memoryToken) return memoryToken;
+    try {
+      const sess = sessionStorage.getItem(SESSION_TOKEN_KEY);
+      if (sess) {
+        memoryToken = sess;
+        return sess;
+      }
+      const local = localStorage.getItem(TOKEN_STORAGE_KEY);
+      if (local) {
+        memoryToken = local;
+        return local;
+      }
+    } catch (e) {}
+    return '';
+  }
+
+  function saveToken(token, rememberLocal) {
+    const clean = String(token || '').trim();
+    memoryToken = clean;
+    try {
+      if (!clean) {
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+        sessionStorage.removeItem(SESSION_TOKEN_KEY);
+        return;
+      }
+      sessionStorage.setItem(SESSION_TOKEN_KEY, clean);
+      if (rememberLocal) {
+        localStorage.setItem(TOKEN_STORAGE_KEY, clean);
+      } else {
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+      }
     } catch (e) {}
   }
 
+  function detectGithubPagesRepo() {
+    try {
+      const host = window.location.hostname || '';
+      if (host.endsWith('.github.io')) {
+        const owner = host.replace(/\.github\.io$/i, '');
+        const parts = (window.location.pathname || '').split('/').filter(Boolean);
+        const repo = parts.length > 0 ? parts[0] : `${owner}.github.io`;
+        return { owner, repo };
+      }
+    } catch (e) {}
+    return { owner: '', repo: '' };
+  }
+
   function getEffectiveConfig() {
+    const detected = detectGithubPagesRepo();
+    const base = Object.assign(
+      {
+        owner: detected.owner,
+        repo: detected.repo,
+        branch: 'main',
+        manifestPath: 'data/manifest.json',
+        packagesDir: 'data/packages',
+        encryptedToken: null
+      },
+      repoConfig
+    );
+
     try {
       const override = JSON.parse(localStorage.getItem(CFG_OVERRIDE_KEY) || 'null');
       if (override && override.owner && override.repo) {
-        return Object.assign({}, repoConfig, override);
+        return Object.assign({}, base, {
+          owner: override.owner,
+          repo: override.repo,
+          branch: override.branch || base.branch || 'main'
+        });
       }
     } catch (e) {}
-    return repoConfig;
+
+    return base;
   }
 
   function saveConfigOverride(owner, repo, branch) {
@@ -84,25 +220,66 @@
       localStorage.setItem(
         CFG_OVERRIDE_KEY,
         JSON.stringify({
-          owner: owner.trim(),
-          repo: repo.trim(),
-          branch: (branch || 'main').trim()
+          owner: String(owner || '').trim(),
+          repo: String(repo || '').trim(),
+          branch: (String(branch || '').trim() || 'main')
         })
       );
     } catch (e) {}
   }
 
-  // ==================== LOAD CONFIG & MANIFEST ====================
-  async function loadRepoConfig() {
+  function clearConfigOverride() {
     try {
-      const res = await fetch('./config.json?t=' + Date.now(), { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        repoConfig = Object.assign(repoConfig, data);
-      }
-    } catch (e) {
-      console.warn('[GitHubSync] config.json belum terbaca:', e);
+      localStorage.removeItem(CFG_OVERRIDE_KEY);
+    } catch (e) {}
+  }
+
+  function hasCloudVault() {
+    const cfg = getEffectiveConfig();
+    return Boolean(
+      cfg.encryptedToken &&
+        cfg.encryptedToken.salt &&
+        cfg.encryptedToken.iv &&
+        cfg.encryptedToken.data
+    );
+  }
+
+  // ==================== LOAD CONFIG & MANIFEST ====================
+  async function loadRepoConfig(preferRaw) {
+    const detected = detectGithubPagesRepo();
+    const ts = Date.now();
+    const urls = [];
+
+    const currentOwner = repoConfig.owner || detected.owner;
+    const currentRepo = repoConfig.repo || detected.repo;
+    const currentBranch = repoConfig.branch || 'main';
+
+    if (preferRaw && currentOwner && currentRepo) {
+      urls.push(
+        `https://raw.githubusercontent.com/${currentOwner}/${currentRepo}/${currentBranch}/config.json?t=${ts}`
+      );
     }
+    urls.push(`./config.json?t=${ts}`);
+    if (!preferRaw && currentOwner && currentRepo) {
+      urls.push(
+        `https://raw.githubusercontent.com/${currentOwner}/${currentRepo}/${currentBranch}/config.json?t=${ts}`
+      );
+    }
+
+    for (const url of urls) {
+      try {
+        const res = await fetch(url, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && typeof data === 'object') {
+            repoConfig = Object.assign({}, repoConfig, data);
+            return repoConfig;
+          }
+        }
+      } catch (e) {}
+    }
+
+    return repoConfig;
   }
 
   async function loadCloudManifest(preferRaw) {
@@ -142,8 +319,8 @@
   }
 
   // ==================== GITHUB REST API ====================
-  async function githubRequest(path, method, bodyObj, token) {
-    const cfg = getEffectiveConfig();
+  async function githubRequest(path, method, bodyObj, token, explicitCfg) {
+    const cfg = explicitCfg || getEffectiveConfig();
     if (!cfg.owner || !cfg.repo) {
       throw new Error('Owner dan nama repository belum diisi di tab Pengaturan.');
     }
@@ -175,16 +352,20 @@
     return json;
   }
 
-  async function getFileSha(filePath, token) {
-    const cfg = getEffectiveConfig();
+  async function getFileSha(filePath, token, explicitCfg) {
+    const cfg = explicitCfg || getEffectiveConfig();
     try {
       const data = await githubRequest(
         `contents/${filePath}?ref=${encodeURIComponent(cfg.branch)}`,
         'GET',
         null,
-        token
+        token,
+        cfg
       );
-      return { sha: data.sha || null, content: data.content ? base64ToUtf8(data.content) : null };
+      return {
+        sha: data.sha || null,
+        content: data.content ? base64ToUtf8(data.content) : null
+      };
     } catch (e) {
       if (String(e.message).includes('(404)')) {
         return { sha: null, content: null };
@@ -193,9 +374,9 @@
     }
   }
 
-  async function putRepoFile(filePath, contentString, commitMessage, token) {
-    const cfg = getEffectiveConfig();
-    const existing = await getFileSha(filePath, token);
+  async function putRepoFile(filePath, contentString, commitMessage, token, explicitCfg) {
+    const cfg = explicitCfg || getEffectiveConfig();
+    const existing = await getFileSha(filePath, token, cfg);
     const payload = {
       message: commitMessage,
       content: utf8ToBase64(contentString),
@@ -203,7 +384,7 @@
     };
     if (existing.sha) payload.sha = existing.sha;
 
-    return githubRequest(`contents/${filePath}`, 'PUT', payload, token);
+    return githubRequest(`contents/${filePath}`, 'PUT', payload, token, cfg);
   }
 
   async function deleteRepoFile(filePath, commitMessage, token) {
@@ -377,6 +558,35 @@
   }
 
   // ==================== MODAL UPLOAD & KELOLA GITHUB (ADMIN) ====================
+  function updateAuthBannerUI() {
+    const modal = document.getElementById('gh-sync-modal');
+    if (!modal) return;
+
+    const cfg = getEffectiveConfig();
+    const token = getSavedToken();
+    const vaultAvailable = hasCloudVault();
+
+    const unlockBox = modal.querySelector('#gh-unlock-banner');
+    const readyBox = modal.querySelector('#gh-ready-banner');
+    const setupBox = modal.querySelector('#gh-setup-banner');
+    const readyRepoText = modal.querySelector('#gh-ready-repo-text');
+    const unlockRepoText = modal.querySelector('#gh-unlock-repo-text');
+
+    unlockBox.classList.add('hidden');
+    readyBox.classList.add('hidden');
+    setupBox.classList.add('hidden');
+
+    if (token && cfg.owner && cfg.repo) {
+      readyRepoText.textContent = `${cfg.owner}/${cfg.repo} (${cfg.branch || 'main'})`;
+      readyBox.classList.remove('hidden');
+    } else if (vaultAvailable && cfg.owner && cfg.repo) {
+      unlockRepoText.textContent = `${cfg.owner}/${cfg.repo} (${cfg.branch || 'main'})`;
+      unlockBox.classList.remove('hidden');
+    } else {
+      setupBox.classList.remove('hidden');
+    }
+  }
+
   function ensureAdminModal() {
     let modal = document.getElementById('gh-sync-modal');
     if (modal) return modal;
@@ -398,6 +608,43 @@
           <button type="button" data-gh-tab="upload" class="gh-tab-btn pb-2.5 border-b-2 whitespace-nowrap">Upload Soal</button>
           <button type="button" data-gh-tab="manage" class="gh-tab-btn pb-2.5 border-b-2 border-transparent text-mute whitespace-nowrap">Kelola Paket</button>
           <button type="button" data-gh-tab="settings" class="gh-tab-btn pb-2.5 border-b-2 border-transparent text-mute whitespace-nowrap">Pengaturan</button>
+        </div>
+
+        <!-- BANNER STATUS KONEKSI / BUKA KUNCI TOKEN -->
+        <div class="px-5 pt-4 shrink-0">
+          <!-- Sudah siap -->
+          <div id="gh-ready-banner" class="hidden flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-xs bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400">
+            <div class="truncate font-semibold">✓ Siap upload ke <span id="gh-ready-repo-text" class="font-bold"></span></div>
+            <button type="button" id="gh-btn-quick-lock" class="underline font-bold shrink-0">Kunci</button>
+          </div>
+
+          <!-- Token terenkripsi tersedia di config.json, belum dibuka di perangkat ini -->
+          <div id="gh-unlock-banner" class="hidden subtle border p-3.5 rounded-xl space-y-2.5">
+            <div class="text-xs text-main font-bold">
+              🔐 Buka Kunci Token (<span id="gh-unlock-repo-text" class="text-sub font-semibold"></span>)
+            </div>
+            <p class="text-[11px] text-sub leading-relaxed">
+              Pengaturan repository sudah tersinkron otomatis. Masukkan <strong>Sandi Enkripsi</strong> untuk mengaktifkan upload di perangkat ini.
+            </p>
+            <div class="flex gap-2">
+              <input type="password" id="gh-unlock-passphrase" placeholder="Masukkan Sandi Enkripsi..."
+                class="input-clean flex-1 px-3 py-2 text-base sm:text-xs rounded-xl" />
+              <button type="button" id="gh-btn-unlock-submit" class="btn-primary px-4 py-2 rounded-xl text-xs font-bold shrink-0">
+                Buka Kunci
+              </button>
+            </div>
+            <label class="inline-flex items-center gap-2 text-[11px] font-medium text-sub cursor-pointer">
+              <input type="checkbox" id="gh-unlock-remember" checked class="w-3.5 h-3.5 rounded" />
+              <span>Ingat di perangkat ini (jangan centang jika memakai perangkat umum)</span>
+            </label>
+            <div id="gh-unlock-status" class="hidden p-2.5 rounded-lg text-xs font-semibold"></div>
+          </div>
+
+          <!-- Belum pernah dikonfigurasi -->
+          <div id="gh-setup-banner" class="hidden px-3 py-2.5 rounded-xl text-xs bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400 flex items-center justify-between gap-2">
+            <span class="font-medium">Pengaturan GitHub belum tersimpan. Isi sekali di tab Pengaturan.</span>
+            <button type="button" id="gh-btn-goto-settings" class="underline font-bold shrink-0">Atur Sekarang</button>
+          </div>
         </div>
 
         <div class="overflow-y-auto custom-scroll flex-1">
@@ -468,7 +715,7 @@
           <!-- TAB 3: PENGATURAN GITHUB -->
           <div id="gh-panel-settings" class="hidden p-5 space-y-4">
             <div class="subtle border p-3 rounded-xl text-xs text-sub leading-relaxed">
-              Token disimpan hanya di browser perangkat Admin ini dan memerlukan izin <strong>Contents: Read and write</strong> pada repository target.
+              Simpan pengaturan ke <strong>config.json</strong> di repository agar perangkat lain otomatis mengenali Owner, Repo, dan Token terenkripsi (AES-GCM). Gunakan <strong>Sandi Enkripsi khusus</strong> (bukan PIN bawaan <code>admin2026</code>) serta Fine-Grained PAT dengan izin <strong>Contents: Read and write</strong> hanya pada repository ini.
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -491,17 +738,26 @@
               <input type="password" id="gh-cfg-token" placeholder="github_pat_..." class="input-clean w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl" />
             </div>
 
+            <div>
+              <label class="block text-xs font-semibold text-sub mb-1">Sandi Enkripsi Token (untuk sinkronisasi lintas perangkat)</label>
+              <input type="password" id="gh-cfg-passphrase" placeholder="Buat sandi rahasia minimal 6 karakter..." class="input-clean w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl" />
+              <p class="text-[11px] text-mute mt-1">Sandi ini tidak pernah disimpan ke GitHub—hanya digunakan untuk mengunci &amp; membuka token di perangkat lain.</p>
+            </div>
+
             <div id="gh-settings-status" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
 
             <div class="flex flex-wrap gap-2 pt-1">
-              <button type="button" id="gh-btn-save-settings" class="btn-primary px-4 h-10 rounded-xl text-xs font-bold">
-                Simpan
+              <button type="button" id="gh-btn-sync-config" class="btn-primary px-4 h-10 rounded-xl text-xs font-bold">
+                Simpan &amp; Sinkronkan ke GitHub
+              </button>
+              <button type="button" id="gh-btn-save-settings" class="btn-secondary px-4 h-10 rounded-xl text-xs font-semibold">
+                Simpan Lokal Saja
               </button>
               <button type="button" id="gh-btn-test-conn" class="btn-secondary px-4 h-10 rounded-xl text-xs font-semibold">
                 Tes Koneksi
               </button>
               <button type="button" id="gh-btn-clear-token" class="btn-secondary px-4 h-10 rounded-xl text-rose-600 text-xs font-semibold">
-                Hapus Token
+                Hapus Sesi Lokal
               </button>
             </div>
           </div>
@@ -520,6 +776,53 @@
       btn.addEventListener('click', () => switchGhTab(btn.getAttribute('data-gh-tab')));
     });
 
+    modal.querySelector('#gh-btn-goto-settings').addEventListener('click', () => switchGhTab('settings'));
+
+    modal.querySelector('#gh-btn-quick-lock').addEventListener('click', () => {
+      saveToken('', false);
+      modal.querySelector('#gh-cfg-token').value = '';
+      updateAuthBannerUI();
+    });
+
+    // Buka kunci token dari config.json
+    async function handleUnlockVault() {
+      const passInput = modal.querySelector('#gh-unlock-passphrase');
+      const remember = modal.querySelector('#gh-unlock-remember').checked;
+      const pass = (passInput.value || '').trim();
+      if (!pass) {
+        showStatus('#gh-unlock-status', 'Masukkan Sandi Enkripsi terlebih dahulu.', false);
+        passInput.focus();
+        return;
+      }
+
+      const btn = modal.querySelector('#gh-btn-unlock-submit');
+      btn.disabled = true;
+      btn.textContent = 'Membuka...';
+      try {
+        const cfg = getEffectiveConfig();
+        const plainToken = await decryptTokenFromVault(cfg.encryptedToken, pass);
+        saveToken(plainToken, remember);
+        passInput.value = '';
+        modal.querySelector('#gh-cfg-token').value = plainToken;
+        modal.querySelector('#gh-unlock-status').classList.add('hidden');
+        updateAuthBannerUI();
+      } catch (err) {
+        showStatus('#gh-unlock-status', err.message, false);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Buka Kunci';
+      }
+    }
+
+    modal.querySelector('#gh-btn-unlock-submit').addEventListener('click', handleUnlockVault);
+    modal.querySelector('#gh-unlock-passphrase').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleUnlockVault();
+      }
+    });
+
+    // Input file soal
     modal.querySelector('#gh-file-input').addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -542,36 +845,129 @@
     modal.querySelector('#gh-btn-upload-submit').addEventListener('click', handleUploadToGitHub);
     modal.querySelector('#gh-btn-refresh-cloud').addEventListener('click', () => loadCloudManifest(true));
 
+    // Simpan lokal saja
     modal.querySelector('#gh-btn-save-settings').addEventListener('click', () => {
-      const owner = modal.querySelector('#gh-cfg-owner').value;
-      const repo = modal.querySelector('#gh-cfg-repo').value;
-      const branch = modal.querySelector('#gh-cfg-branch').value;
-      const token = modal.querySelector('#gh-cfg-token').value;
+      const owner = modal.querySelector('#gh-cfg-owner').value.trim();
+      const repo = modal.querySelector('#gh-cfg-repo').value.trim();
+      const branch = (modal.querySelector('#gh-cfg-branch').value || 'main').trim();
+      const token = modal.querySelector('#gh-cfg-token').value.trim();
       saveConfigOverride(owner, repo, branch);
-      if (token.trim()) saveToken(token);
-      showStatus('#gh-settings-status', 'Pengaturan tersimpan.', true);
+      if (token) saveToken(token, true);
+      updateAuthBannerUI();
+      showStatus('#gh-settings-status', 'Pengaturan tersimpan di browser perangkat ini saja.', true);
+    });
+
+    // Simpan & Sinkronkan ke GitHub (config.json dengan token terenkripsi)
+    modal.querySelector('#gh-btn-sync-config').addEventListener('click', async () => {
+      const owner = modal.querySelector('#gh-cfg-owner').value.trim();
+      const repo = modal.querySelector('#gh-cfg-repo').value.trim();
+      const branch = (modal.querySelector('#gh-cfg-branch').value || 'main').trim();
+      const token = modal.querySelector('#gh-cfg-token').value.trim() || getSavedToken();
+      const passphrase = modal.querySelector('#gh-cfg-passphrase').value.trim();
+
+      if (!owner || !repo) {
+        showStatus('#gh-settings-status', 'Owner dan Repository wajib diisi.', false);
+        return;
+      }
+      if (!token) {
+        showStatus('#gh-settings-status', 'Masukkan Personal Access Token (PAT) terlebih dahulu.', false);
+        return;
+      }
+      if (passphrase.length < 6) {
+        showStatus('#gh-settings-status', 'Buat Sandi Enkripsi minimal 6 karakter untuk mengunci token di config.json.', false);
+        modal.querySelector('#gh-cfg-passphrase').focus();
+        return;
+      }
+      if (passphrase.toLowerCase() === 'admin2026') {
+        showStatus('#gh-settings-status', 'Jangan gunakan PIN bawaan "admin2026" sebagai Sandi Enkripsi. Gunakan sandi rahasia lain.', false);
+        modal.querySelector('#gh-cfg-passphrase').focus();
+        return;
+      }
+
+      const btn = modal.querySelector('#gh-btn-sync-config');
+      btn.disabled = true;
+      btn.textContent = 'Menyinkronkan...';
+      showStatus('#gh-settings-status', '1/2 Mengenkripsi token & memverifikasi koneksi...', true);
+
+      try {
+        const targetCfg = {
+          owner,
+          repo,
+          branch,
+          manifestPath: repoConfig.manifestPath || 'data/manifest.json',
+          packagesDir: repoConfig.packagesDir || 'data/packages'
+        };
+
+        // Verifikasi izin tulis dulu sebelum commit
+        const repoInfo = await githubRequest('', 'GET', null, token, targetCfg);
+        if (!repoInfo.permissions || !repoInfo.permissions.push) {
+          throw new Error('Token valid, tetapi tidak memiliki izin tulis (Contents: Read and write).');
+        }
+
+        const encryptedToken = await encryptTokenToVault(token, passphrase);
+        const newConfigObj = {
+          owner,
+          repo,
+          branch,
+          manifestPath: targetCfg.manifestPath,
+          packagesDir: targetCfg.packagesDir,
+          encryptedToken,
+          updatedAt: new Date().toISOString()
+        };
+
+        showStatus('#gh-settings-status', '2/2 Menyimpan config.json ke repository GitHub...', true);
+        await putRepoFile(
+          'config.json',
+          JSON.stringify(newConfigObj, null, 2),
+          'Update config.json (sinkronisasi repo & token terenkripsi)',
+          token,
+          targetCfg
+        );
+
+        repoConfig = Object.assign({}, repoConfig, newConfigObj);
+        clearConfigOverride();
+        saveToken(token, true);
+        modal.querySelector('#gh-cfg-passphrase').value = '';
+        updateAuthBannerUI();
+
+        showStatus(
+          '#gh-settings-status',
+          'Berhasil! config.json tersimpan di GitHub. Di perangkat lain cukup masukkan Sandi Enkripsi untuk membuka kunci.',
+          true
+        );
+      } catch (err) {
+        showStatus('#gh-settings-status', err.message, false);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Simpan & Sinkronkan ke GitHub';
+      }
     });
 
     modal.querySelector('#gh-btn-clear-token').addEventListener('click', () => {
-      saveToken('');
+      saveToken('', false);
+      clearConfigOverride();
       modal.querySelector('#gh-cfg-token').value = '';
-      showStatus('#gh-settings-status', 'Token dihapus dari browser.', true);
+      updateAuthBannerUI();
+      showStatus('#gh-settings-status', 'Sesi token di browser ini telah dihapus.', true);
     });
 
     modal.querySelector('#gh-btn-test-conn').addEventListener('click', async () => {
+      const owner = modal.querySelector('#gh-cfg-owner').value.trim();
+      const repo = modal.querySelector('#gh-cfg-repo').value.trim();
+      const branch = (modal.querySelector('#gh-cfg-branch').value || 'main').trim();
       const token = modal.querySelector('#gh-cfg-token').value.trim() || getSavedToken();
-      saveConfigOverride(
-        modal.querySelector('#gh-cfg-owner').value,
-        modal.querySelector('#gh-cfg-repo').value,
-        modal.querySelector('#gh-cfg-branch').value
-      );
+
+      if (!owner || !repo) {
+        showStatus('#gh-settings-status', 'Isi Owner dan Repository terlebih dahulu.', false);
+        return;
+      }
       if (!token) {
-        showStatus('#gh-settings-status', 'Masukkan token terlebih dahulu.', false);
+        showStatus('#gh-settings-status', 'Masukkan token atau buka kunci token terlebih dahulu.', false);
         return;
       }
       showStatus('#gh-settings-status', 'Menguji koneksi...', true);
       try {
-        const repoInfo = await githubRequest('', 'GET', null, token);
+        const repoInfo = await githubRequest('', 'GET', null, token, { owner, repo, branch });
         const canPush = repoInfo.permissions && repoInfo.permissions.push;
         showStatus(
           '#gh-settings-status',
@@ -622,8 +1018,14 @@
     const cfg = getEffectiveConfig();
 
     if (!token || !cfg.owner || !cfg.repo) {
-      showStatus('#gh-upload-status', 'Lengkapi Owner, Repository, dan Token di tab Pengaturan.', false);
-      switchGhTab('settings');
+      if (hasCloudVault()) {
+        showStatus('#gh-upload-status', 'Masukkan Sandi Enkripsi pada kotak Buka Kunci di atas terlebih dahulu.', false);
+        const inp = modal.querySelector('#gh-unlock-passphrase');
+        if (inp) inp.focus();
+      } else {
+        showStatus('#gh-upload-status', 'Lengkapi Owner, Repository, dan Token di tab Pengaturan.', false);
+        switchGhTab('settings');
+      }
       return;
     }
     if (!pendingUploadHtml) {
@@ -731,7 +1133,11 @@
     const token = getSavedToken();
     const cfg = getEffectiveConfig();
     if (!token) {
-      showStatus('#gh-manage-status', 'Masukkan token di tab Pengaturan terlebih dahulu.', false);
+      if (hasCloudVault()) {
+        showStatus('#gh-manage-status', 'Masukkan Sandi Enkripsi pada kotak Buka Kunci di atas terlebih dahulu.', false);
+      } else {
+        showStatus('#gh-manage-status', 'Masukkan token di tab Pengaturan terlebih dahulu.', false);
+      }
       return;
     }
     const pkg = cloudPackages.find((p) => p.id === pkgId);
@@ -767,13 +1173,15 @@
     if (!btn || btn.dataset.ghBound === '1') return;
     btn.dataset.ghBound = '1';
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       const modal = ensureAdminModal();
+      await loadRepoConfig(false);
       const cfg = getEffectiveConfig();
       modal.querySelector('#gh-cfg-owner').value = cfg.owner || '';
       modal.querySelector('#gh-cfg-repo').value = cfg.repo || '';
       modal.querySelector('#gh-cfg-branch').value = cfg.branch || 'main';
       modal.querySelector('#gh-cfg-token').value = getSavedToken();
+      updateAuthBannerUI();
       renderManageCloudList();
       modal.classList.remove('hidden');
     });
@@ -782,7 +1190,7 @@
   // ==================== INISIALISASI ====================
   async function init() {
     bindAdminButton();
-    await loadRepoConfig();
+    await loadRepoConfig(false);
     await loadCloudManifest(false);
   }
 
