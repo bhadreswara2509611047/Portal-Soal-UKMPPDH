@@ -5,6 +5,36 @@
   const THEME_STORAGE_KEY = 'portal_ukmppdh_theme';
 
   const EXAM_THEME_CSS = `
+    /* ==================== SEMBUNYIKAN TOMBOL TEMA DUPLIKAT DI PAKET SOAL ==================== */
+    [data-portal-hidden-theme-toggle="1"],
+    #themeToggle, #theme-toggle, #btnTheme, #btn-theme,
+    #darkModeToggle, #dark-mode-toggle, #darkToggle, #dark-toggle,
+    #btnDarkMode, #btn-dark-mode, #toggleDarkMode, #toggle-dark-mode,
+    #nightModeToggle, #night-mode-toggle,
+    .theme-toggle, .dark-mode-toggle, .dark-toggle,
+    [data-theme-toggle], [data-dark-toggle],
+    button[onclick*="toggleTheme" i],
+    button[onclick*="toggleDark" i],
+    button[onclick*="toggleNight" i],
+    button[onclick*="switchTheme" i],
+    button[onclick*="changeTheme" i],
+    button[onclick*="setTheme" i],
+    button[onclick*="darkMode" i],
+    button[title*="mode gelap" i],
+    button[title*="mode terang" i],
+    button[title*="dark mode" i],
+    button[title*="light mode" i],
+    button[title*="ganti tema" i],
+    button[title*="ubah tema" i],
+    button[aria-label*="mode gelap" i],
+    button[aria-label*="mode terang" i],
+    button[aria-label*="dark mode" i],
+    button[aria-label*="light mode" i],
+    button[aria-label*="ganti tema" i],
+    button[aria-label*="ubah tema" i] {
+      display: none !important;
+    }
+
     /* ==================== DASAR KENYAMANAN BACA ==================== */
     html {
       -webkit-font-smoothing: antialiased;
@@ -653,6 +683,48 @@
     }
   `;
 
+  // Deteksi & sembunyikan tombol ganti tema bawaan di dalam iframe paket soal
+  const THEME_ATTR_RE = /\b(theme[-_]?(toggle|btn|switch|mode)|dark[-_]?(mode|toggle|btn|switch)|night[-_]?(mode|toggle|btn|switch)|toggle[-_]?(dark|night|theme)|switch[-_]?(theme|dark|night)|ganti[-_]?tema|ubah[-_]?tema)\b/i;
+  const THEME_TEXT_RE = /^(mode\s*(gelap|terang|malam|siang)|dark\s*mode|light\s*mode|night\s*mode|tema\s*(gelap|terang)|(ganti|ubah)\s*tema|🌙|☀️|🌞|🌜)$/i;
+  const SUN_MOON_PATH_RE = /M20\.354\s*15\.354|M17\.293\s*13\.293|M21\s*12\.79A9|M12\s*3v1m0\s*16v1|M12\s*3v2\.25|M21\.752\s*15\.002/;
+
+  function hideDuplicateThemeToggles(doc) {
+    if (!doc || !doc.body) return;
+    doc.querySelectorAll('button, [role="button"], [onclick], input[type="checkbox"]').forEach((el) => {
+      if (el.getAttribute('data-portal-hidden-theme-toggle') === '1') return;
+
+      const meta = [
+        el.id || '',
+        typeof el.className === 'string' ? el.className : '',
+        el.getAttribute('title') || '',
+        el.getAttribute('aria-label') || '',
+        el.getAttribute('onclick') || ''
+      ].join(' ');
+
+      const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      let isThemeBtn = THEME_ATTR_RE.test(meta) || THEME_TEXT_RE.test(text);
+
+      // Cek tombol ikon matahari/bulan tanpa teks di dalam header/nav paket soal
+      if (!isThemeBtn && (el.tagName === 'BUTTON' || el.getAttribute('role') === 'button') && text.length <= 12 && el.closest('header, nav')) {
+        const html = el.innerHTML || '';
+        if (SUN_MOON_PATH_RE.test(html) || /\b(sun|moon|fa-sun|fa-moon|icon-sun|icon-moon)\b/i.test(html)) {
+          isThemeBtn = true;
+        }
+      }
+
+      if (isThemeBtn) {
+        if (el.tagName === 'INPUT') {
+          const wrapLabel = el.closest('label');
+          if (wrapLabel && (wrapLabel.textContent || '').trim().length < 25) {
+            wrapLabel.setAttribute('data-portal-hidden-theme-toggle', '1');
+            return;
+          }
+        }
+        el.setAttribute('data-portal-hidden-theme-toggle', '1');
+      }
+    });
+  }
+
   function updateAllThemeButtons(isDark) {
     document.querySelectorAll('.theme-toggle-btn, [onclick="togglePortalTheme()"]').forEach((btn) => {
       const sun = btn.querySelector('.theme-icon-sun');
@@ -846,6 +918,7 @@
             if (el && doc.head.lastElementChild !== el) {
               doc.head.appendChild(el);
             }
+            hideDuplicateThemeToggles(doc);
             if (typeof doc.__portalRescanDark === 'function') {
               doc.__portalRescanDark();
             }
@@ -853,9 +926,36 @@
           doc.__portalThemeObserver.observe(doc.head, { childList: true });
         }
 
-        doc.documentElement.classList.toggle('portal-dark', isDark);
-        doc.documentElement.classList.toggle('dark', isDark);
-        doc.documentElement.classList.toggle('portal-light', !isDark);
+        const applyRootClasses = () => {
+          const currentDark = document.documentElement.classList.contains('dark');
+          if (doc.documentElement.classList.contains('portal-dark') !== currentDark) {
+            doc.documentElement.classList.toggle('portal-dark', currentDark);
+          }
+          if (doc.documentElement.classList.contains('dark') !== currentDark) {
+            doc.documentElement.classList.toggle('dark', currentDark);
+          }
+          if (doc.documentElement.classList.contains('portal-light') === currentDark) {
+            doc.documentElement.classList.toggle('portal-light', !currentDark);
+          }
+        };
+
+        applyRootClasses();
+
+        if (!doc.__portalHtmlClassObserver) {
+          doc.__portalHtmlClassObserver = new MutationObserver(() => applyRootClasses());
+          doc.__portalHtmlClassObserver.observe(doc.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+          });
+        }
+
+        // Pastikan tombol ganti tema duplikat di dalam paket soal disembunyikan (baik mode terang maupun gelap)
+        hideDuplicateThemeToggles(doc);
+        if (doc.body && !doc.__portalHideToggleObserver) {
+          doc.__portalHideToggleObserver = new MutationObserver(() => hideDuplicateThemeToggles(doc));
+          doc.__portalHideToggleObserver.observe(doc.body, { childList: true, subtree: true });
+        }
+
         runDarkSurfaceAdapter(doc, isDark);
       } catch (e) {}
     });
