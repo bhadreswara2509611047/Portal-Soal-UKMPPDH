@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi CBT UKMPPDH Gelombang 1 — EDUKAVET (100 Soal)</title>
+<style>
+  :root {
+    --primary: #0f766e;
+    --primary-dark: #115e59;
+    --primary-light: #f0fdfa;
+    --accent: #0284c7;
+    --success: #15803d;
+    --success-bg: #dcfce7;
+    --danger: #b91c1c;
+    --danger-bg: #fee2e2;
+    --warn: #b45309;
+    --warn-bg: #fef3c7;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .hidden { display: none !important; }
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: 0 2px 6px rgba(15,23,42,.05);
+  }
+  .brand { font-weight: 800; font-size: 1.05rem; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; }
+  .badge-mode { font-size: .75rem; padding: 3px 10px; border-radius: 999px; background: var(--primary-light); color: var(--primary); font-weight: 700; border: 1px solid #99f6e4; }
+  .header-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .timer {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700; font-size: 1rem;
+    padding: 6px 14px; border-radius: 8px;
+    background: #0f172a; color: #fff;
+  }
+  .timer.warning { background: var(--danger); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: .75; } }
+  button {
+    cursor: pointer; border: none; border-radius: 8px;
+    font-weight: 600; font-size: .92rem; padding: 10px 16px;
+    transition: all .15s ease;
+  }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+  .btn-outline { background: #fff; color: var(--text); border: 1px solid var(--border); }
+  .btn-outline:hover:not(:disabled) { background: #f8fafc; border-color: #cbd5e1; }
+  .btn-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #fcd34d; }
+  .btn-warn.active { background: #f59e0b; color: #fff; border-color: #d97706; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #991b1b; }
+
+  .start-wrap { max-width: 740px; margin: 44px auto; padding: 0 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px;
+    box-shadow: 0 4px 16px rgba(15,23,42,.05);
+  }
+  .start-title { font-size: 1.6rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 6px; }
+  .start-sub { color: var(--muted); margin-bottom: 22px; }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+    gap: 12px; margin-bottom: 22px;
+  }
+  .info-box {
+    background: #f8fafc; border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; text-align: center;
+  }
+  .info-box .val { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+  .info-box .lbl { font-size: .8rem; color: var(--muted); }
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  @media (max-width: 600px) { .mode-grid { grid-template-columns: 1fr; } }
+  .mode-card {
+    border: 2px solid var(--border); border-radius: 12px; padding: 16px;
+    cursor: pointer; transition: .15s; background: #fff; text-align: left;
+  }
+  .mode-card.selected { border-color: var(--primary); background: var(--primary-light); }
+  .mode-card h3 { font-size: 1rem; margin-bottom: 4px; color: var(--text); }
+  .mode-card p { font-size: .83rem; color: var(--muted); font-weight: 400; }
+  .opt-check { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: .92rem; cursor: pointer; }
+
+  .exam-container {
+    max-width: 1200px; margin: 20px auto; padding: 0 16px 40px;
+    display: grid; grid-template-columns: 1fr 315px; gap: 20px; align-items: start;
+  }
+  @media (max-width: 900px) { .exam-container { grid-template-columns: 1fr; } }
+  .q-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+  .q-number { font-weight: 800; font-size: 1.05rem; color: var(--primary-dark); }
+  .q-status { font-size: .82rem; color: var(--muted); }
+  .q-text { font-size: 1.05rem; margin-bottom: 20px; white-space: pre-line; }
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .option-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 13px 16px; border: 2px solid var(--border); border-radius: 10px;
+    cursor: pointer; background: #fff; transition: .12s;
+  }
+  .option-item:hover { border-color: #5eead4; background: #f8fafc; }
+  .option-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.correct { border-color: var(--success); background: var(--success-bg); }
+  .option-item.wrong { border-color: var(--danger); background: var(--danger-bg); }
+  .opt-key {
+    width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%;
+    background: #e2e8f0; color: var(--text); font-weight: 700; font-size: .88rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .option-item.selected .opt-key { background: var(--primary); color: #fff; }
+  .option-item.correct .opt-key { background: var(--success); color: #fff; }
+  .option-item.wrong .opt-key { background: var(--danger); color: #fff; }
+
+  .exp-box {
+    margin-top: 16px; padding: 16px; border-radius: 10px;
+    background: #f8fafc; border-left: 4px solid var(--primary);
+    font-size: .93rem; white-space: pre-line;
+  }
+  .exp-box h4 { color: var(--primary-dark); margin-bottom: 6px; font-size: .95rem; }
+
+  .nav-actions {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px;
+    margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .sidebar { position: sticky; top: 76px; }
+  .progress-wrap { margin-bottom: 14px; }
+  .progress-bar { height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width .2s; }
+  .num-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    max-height: 410px; overflow-y: auto; padding-right: 4px;
+  }
+  .num-btn {
+    padding: 8px 0; font-size: .82rem; border-radius: 6px;
+    background: #f1f5f9; color: var(--text); border: 1px solid var(--border);
+  }
+  .num-btn.current { outline: 2px solid var(--primary-dark); outline-offset: 1px; font-weight: 800; }
+  .num-btn.answered { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .num-btn.flagged { background: #f59e0b; color: #fff; border-color: #d97706; }
+  .num-btn.rev-correct { background: var(--success); color: #fff; border-color: var(--success); }
+  .num-btn.rev-wrong { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px;
+    font-size: .78rem; color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  .result-wrap { max-width: 960px; margin: 28px auto; padding: 0 16px 50px; }
+  .score-hero {
+    text-align: center; padding: 28px 20px; border-radius: 14px;
+    background: linear-gradient(135deg, #115e59, #0f766e); color: #fff;
+    margin-bottom: 22px;
+  }
+  .score-big { font-size: 3.4rem; font-weight: 900; line-height: 1.1; }
+  .score-sub { opacity: .92; margin-top: 6px; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin-bottom: 22px;
+  }
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; align-items: center; }
+  .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .review-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin-bottom: 14px;
+  }
+  .review-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .pill { font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+  .pill-ok { background: var(--success-bg); color: var(--success); }
+  .pill-bad { background: var(--danger-bg); color: var(--danger); }
+  .pill-empty { background: #e2e8f0; color: #475569; }
+</style>
+</head>
+<body>
+
+<header id="appHeader" class="hidden">
+  <div class="brand">
+    <span>🩺 CBT UKMPPDH Gelombang 1</span>
+    <span id="modeBadge" class="badge-mode">Mode Ujian</span>
+  </div>
+  <div class="header-controls">
+    <div id="timerDisplay" class="timer">100:00</div>
+    <button class="btn-danger" onclick="confirmFinish()">Selesai &amp; Nilai</button>
+  </div>
+</header>
+
+<!-- START SCREEN -->
+<section id="startScreen" class="start-wrap">
+  <div class="card">
+    <h1 class="start-title">Simulasi CBT Tryout Sukses UKMPPDH — Gelombang 1</h1>
+    <p class="start-sub">Sumber: Soal &amp; Pembahasan Tryout Sukses UKMPPDH Gelombang 1 (EDUKAVET). Lengkap dengan skor otomatis dan pembahasan.</p>
+
+    <div class="info-grid">
+      <div class="info-box"><div class="val">100</div><div class="lbl">Jumlah Soal</div></div>
+      <div class="info-box"><div class="val">100 Menit</div><div class="lbl">Durasi Ujian</div></div>
+      <div class="info-box"><div class="val">A – E</div><div class="lbl">Pilihan Ganda</div></div>
+      <div class="info-box"><div class="val">Lengkap</div><div class="lbl">Skor &amp; Pembahasan</div></div>
+    </div>
+
+    <div class="mode-grid">
+      <div id="cardExam" class="mode-card selected" onclick="selectMode('exam')">
+        <h3>⏱️ Mode Ujian (Simulasi CBT)</h3>
+        <p>Timer mundur 100 menit. Skor akhir, rekap benar/salah, dan pembahasan lengkap ditampilkan setelah selesai.</p>
+      </div>
+      <div id="cardPractice" class="mode-card" onclick="selectMode('practice')">
+        <h3>📘 Mode Latihan Interaktif</h3>
+        <p>Kunci jawaban dan pembahasan langsung tampil setiap kali Anda memilih jawaban untuk belajar cepat.</p>
+      </div>
+    </div>
+
+    <label class="opt-check">
+      <input type="checkbox" id="shuffleCheck"> Acak urutan soal saat memulai simulasi
+    </label>
+
+    <button class="btn-primary" style="width:100%; padding:14px; font-size:1rem;" onclick="startQuiz()">Mulai Simulasi Sekarang</button>
+  </div>
+</section>
+
+<!-- EXAM SCREEN -->
+<main id="examScreen" class="exam-container hidden">
+  <div class="card">
+    <div class="q-meta">
+      <span id="qLabel" class="q-number">Soal 1 dari 100</span>
+      <span id="qOrigNum" class="q-status"></span>
+    </div>
+    <div id="qText" class="q-text"></div>
+    <div id="optionsContainer" class="options"></div>
+    <div id="instantExp" class="exp-box hidden"></div>
+
+    <div class="nav-actions">
+      <div style="display:flex; gap:8px;">
+        <button class="btn-outline" id="btnPrev" onclick="goStep(-1)">← Sebelumnya</button>
+        <button class="btn-warn" id="btnFlag" onclick="toggleFlag()">🚩 Ragu-ragu</button>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-outline" onclick="clearAnswer()">Hapus Pilihan</button>
+        <button class="btn-primary" id="btnNext" onclick="goStep(1)">Selanjutnya →</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="card sidebar">
+    <div class="progress-wrap">
+      <div style="display:flex; justify-content:space-between; font-size:.85rem; font-weight:600;">
+        <span>Progres Pengerjaan</span>
+        <span id="progressText">0 / 100</span>
+      </div>
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+    </div>
+    <div id="numGrid" class="num-grid"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--primary)"></i> Dijawab</span>
+      <span><i class="dot" style="background:#f59e0b"></i> Ragu-ragu</span>
+      <span><i class="dot" style="background:#e2e8f0"></i> Belum</span>
+    </div>
+  </aside>
+</main>
+
+<!-- RESULT SCREEN -->
+<section id="resultScreen" class="result-wrap hidden">
+  <div class="score-hero">
+    <div style="font-size:.95rem; font-weight:600; opacity:.9;">HASIL SIMULASI CBT UKMPPDH GELOMBANG 1</div>
+    <div id="finalScore" class="score-big">0</div>
+    <div id="scoreNote" class="score-sub"></div>
+  </div>
+
+  <div class="stat-row">
+    <div class="info-box"><div id="statCorrect" class="val" style="color:var(--success)">0</div><div class="lbl">Benar</div></div>
+    <div class="info-box"><div id="statWrong" class="val" style="color:var(--danger)">0</div><div class="lbl">Salah</div></div>
+    <div class="info-box"><div id="statEmpty" class="val" style="color:var(--muted)">0</div><div class="lbl">Tidak Dijawab</div></div>
+    <div class="info-box"><div id="statTime" class="val" style="color:var(--primary)">00:00</div><div class="lbl">Waktu Terpakai</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="btn-outline filter-btn active" onclick="renderReview('all', this)">Semua (100)</button>
+    <button class="btn-outline filter-btn" onclick="renderReview('wrong', this)">Salah</button>
+    <button class="btn-outline filter-btn" onclick="renderReview('correct', this)">Benar</button>
+    <button class="btn-outline filter-btn" onclick="renderReview('empty', this)">Kosong</button>
+    <div style="flex:1"></div>
+    <button class="btn-primary" onclick="restartQuiz()">🔄 Ulangi Simulasi</button>
+  </div>
+
+  <div id="reviewContainer"></div>
+</section>
+
+<script>
+const QUESTIONS = [
+  {id:1, q:"Dokter Rendi memeriksa sapi milik Pak Rebo untuk mengetahui umur kebuntingannya. Ketika melakukan eksplorasi rektal, teraba asimetri kornua uterus sehingga diperkirakan umur kebuntingan sapi adalah...", o:{a:"2-3 bulan", b:"4 bulan", c:"5-6 bulan", d:"7 bulan", e:"8 bulan"}, ans:"a", exp:"Pada pemeriksaan palpasi rektal sapi bunting:\n• Bunting 2 bulan: asimetri kornua uteri, kantong amnion sebesar telur ayam kampung, penggelinciran selaput fetus, masih bisa diretraksi di ruang pelvis.\n• Bunting 3 bulan: asimetri kornua uteri, kantong amnion sebesar telur angsa (diameter 15 cm), serviks mulai tertarik ke depan bawah, mulai terasa kotiledon.\n• Bunting 4 bulan: uterus makin tertarik ke depan bawah, plasentoma sebesar kancing baju, fetus dan fremitus a. uterina media mulai teraba."},
+  {id:2, q:"Ivermectin memiliki efek neurotoksik, seperti depresi, ataksia, kesulitan melihat, koma hingga kematian apabila diberikan pada anjing jenis berikut, kecuali...", o:{a:"Collie", b:"Australian shepherd", c:"Sheltie", d:"Old English Sheepdog", e:"German shepherd"}, ans:"e", exp:"Anjing dengan mutasi gen multidrug resistant (ABCB1 / MDR1) sangat sensitif terhadap ivermectin karena obat dapat menembus blood-brain barrier dan membuka kanal klorida GABA secara irreversibel. Ras yang rentan antara lain Collie, Australian Shepherd, Sheltie, Old English Sheepdog, Whippet berambut panjang, dan ras campuran terkait."},
+  {id:3, q:"Sapi milik Indro diduga mengalami korpus luteum persisten. Terapi yang tepat untuk mengatasi masalah ini adalah...", o:{a:"Pemberian hormon progesterone", b:"Terapi hormon PGF2-alfa", c:"Terapi hormon LH", d:"Anjuran perbaikan nutrisi pakan", e:"Terapi hormon FSH dan LH"}, ans:"b", exp:"Korpus luteum persisten adalah CL yang tidak mengalami regresi dan menetap di ovarium >1 siklus birahi meski hewan tidak bunting. Terapi utamanya adalah pemberian preparat PGF2-alfa untuk melisiskan korpus luteum (apabila ada endometritis, diobati terlebih dahulu)."},
+  {id:4, q:"Setelah dilakukan pemeriksaan, pasien anjing Betrand ternyata mengalami infestasi cacing jantung. Terapi yang tepat untuk pasien ini adalah...", o:{a:"Levamisole (IV)", b:"Diethylcarbamazine (IM)", c:"Albendazole (IV)", d:"Thiacetarsamide (IV)", e:"Ivermectine (IV)"}, ans:"d", exp:"Perhatikan rute pemberiannya: Thiacetarsamide (adultisida cacing jantung) diberikan melalui rute intravena (IV) 2x sehari selama 3 hari. Sementara Levamisole, Diethylcarbamazine, Ivermectin, dan Moxidectin diberikan secara per oral."},
+  {id:5, q:"Parameter berikut menggambarkan terjadinya ikterus pasca-hepatik, kecuali...", o:{a:"Terjadinya peningkatan bilirubin direct", b:"Terjadinya peningkatan bilirubin indirect", c:"Nilai SGOT normal", d:"Nilai SGPT normal", e:"Nilai albumin dan globulin normal"}, ans:"b", exp:"Ikterus pasca-hepatik terjadi akibat obstruksi atau kompresi duktus biliaris sehingga drainase empedu terhambat. Temuannya adalah peningkatan bilirubin direk, sedangkan nilai SGOT, SGPT, albumin, dan globulin tetap normal (peningkatan bilirubin indirek khas pada pre-hepatik/hemolitik)."},
+  {id:6, q:"Kelainan pada sistem kardiovaskular yang menimbulkan suara murmur kontinu adalah...", o:{a:"Stenosis katup mitral", b:"Stenosis katup semilunaris pulmoner", c:"Defek septum ventrikel", d:"Insufisiensi katup mitral", e:"Ductus arteriosus paten"}, ans:"e", exp:"Murmur kontinu tidak terputus mulai fase sistolik hingga seluruh diastolik. Kelainan kongenital Patent Ductus Arteriosus (PDA) menimbulkan murmur kontinu karena tekanan aorta selalu jauh lebih tinggi daripada arteri pulmonalis pada fase sistolik maupun diastolik."},
+  {id:7, q:"Tanda-tanda klinis turgor kulit yang jelek, CRT >2-3 detik, enoftalmus ringan, serta temperatur ekstremitas yang menurun menunjukkan dehidrasi tingkat...", o:{a:"Sangat ringan", b:"Ringan", c:"Sedang", d:"Berat", e:"Sangat Berat"}, ans:"c", exp:"Tingkat dehidrasi klinis:\n• Ringan (5%): mukosa sedikit kering, turgor sedikit melambat, mata normal.\n• Sedang (8-10%): CRT >2 detik, kulit kehilangan elastisitas (turgor jelek), mukosa kering, enoftalmus ringan.\n• Berat (>10%): CRT >5 detik, enoftalmus jelas, ekstremitas dingin/hipotermia, kolaps sirkulasi."},
+  {id:8, q:"Motilitas rumen paling dipengaruhi oleh faktor...", o:{a:"Kadar lemak pakan", b:"Kadar protein pakan", c:"Kadar karbohidrat pakan", d:"Kadar air pakan", e:"Besar partikel pakan"}, ans:"e", exp:"Motilitas rumen dikendalikan oleh otak melalui nervus vagus dan sangat dipengaruhi oleh ukuran partikel pakan. Pakan berserat dengan ukuran partikel besar merangsang frekuensi kontraksi rumen lebih tinggi dibandingkan pakan tinggi konsentrat berpartikel halus."},
+  {id:9, q:"Fenbendazole efektif untuk menangani penyakit-penyakit berikut, kecuali...", o:{a:"Ascariasis", b:"Ancylostomiasis", c:"Giardiasis", d:"Coccidiosis", e:"Trichuriasis"}, ans:"d", exp:"Fenbendazole adalah antelmintik spektrum luas yang efektif untuk ascariasis, ancylostomiasis, trichuriasis, taeniasis, cacing paru, serta giardiasis, namun tidak efektif untuk coccidiosis."},
+  {id:10, q:"Ciri-ciri pendarahan kapiler...", o:{a:"Darah keluar dengan merembes", b:"Warna darah gelap", c:"Warna darah terang", d:"Darah keluar dengan menyemprot", e:"Darah keluar dengan mengalir"}, ans:"a", exp:"Tipe perdarahan:\n• Perdarahan arteri: darah merah terang keluar menyemprot sesuai denyut nadi.\n• Perdarahan vena: darah merah gelap keluar mengalir terus-menerus.\n• Perdarahan kapiler: darah keluar dengan cara merembes."},
+  {id:11, q:"White spot pada ikan disebabkan oleh agen parasit apa...", o:{a:"Bakteri", b:"Virus", c:"Protozoa", d:"Cacing", e:"Krustasea"}, ans:"c", exp:"White Spot Disease disebabkan oleh protozoa siliata obligat: Ichthyophthirius multifiliis pada ikan air tawar dan Cryptocaryon irritans pada ikan air laut, yang menyerang epidermis kulit, sirip, dan insang."},
+  {id:12, q:"Apa jenis penyakit jamur dengan gejala klinis lesi pada kulit berwarna putih hingga keabuan, di permukaan integumen dan insang atau telur terlihat seperti bentukan kapas, penyakit bersifat kronis walaupun demikian dapat menyebabkan kematian...", o:{a:"Saprolegniasis", b:"Ulcerative Epizootic Syndrome", c:"Branchiomycosis", d:"Ichthyosporiodiosis", e:"Black gill"}, ans:"a", exp:"Saprolegniasis ditandai koloni jamur menyerupai benang kapas berwarna putih keabuan pada kulit, sirip, mata, insang, maupun telur ikan (tahap lanjut berubah kehijauan/kecokelatan karena sedimen)."},
+  {id:13, q:"Agen infeksius berikut ini yang dapat menyebabkan abortus pada kucing adalah...", o:{a:"Corona virus", b:"Calici virus", c:"Herpes", d:"Rhinotracheitis", e:"Chlamydia"}, ans:"d", exp:"Feline Panleukopenia Virus (FPV) dan Feline Viral Rhinotracheitis (FVR) menyebabkan abortus secara langsung melalui infeksi transplasental. Sementara FeLV, FIPV, dan Calicivirus dapat menyebabkan abortus secara tidak langsung."},
+  {id:14, q:"Dilaporkan kematian pada ternak babi dengan tingkat morbiditas 100%. Penularan penyakit ini melalui satwa liar kelelawar buah. Penyakit yang dimaksud adalah...", o:{a:"Rabies", b:"Nipah Disease", c:"PMK", d:"Hepatic distomyasis", e:"Hog Cholera"}, ans:"b", exp:"Nipah virus (ssRNA, famili Paramyxoviridae) memiliki reservoir utama kelelawar buah genus Pteropus. Babi sangat rentan dan berperan sebagai inang pengganda (amplifying host) dengan morbiditas tinggi."},
+  {id:15, q:"Gejala rabies dengan mengeluarkan air liur, menjulurkan lidah dan tidak menutup mulut termasuk ke fase...", o:{a:"Fase prodromal", b:"Fase eksitasi", c:"Fase paralisis", d:"Fase jinak", e:"Fase halusinasi"}, ans:"c", exp:"3 tahap klinis rabies:\n1) Prodromal (1-3 hari): demam, menjilat bekas gigitan, gelisah, takut.\n2) Eksitasi (1-7 hari): agresif, hipersensitif suara/cahaya, menggigit benda sekitar.\n3) Paralisis (2-4 hari): sulit menelan sehingga hipersalivasi, rahang bawah jatuh (mulut terbuka, lidah menjulur), sesak napas, lumpuh, dan mati."},
+  {id:16, q:"Peste des petits ruminants penyakit yang disebabkan oleh virus. Hewan apa saja yang rentan terjangkit penyakit tersebut...", o:{a:"Domba", b:"Domba, kambing, unta, sapi, kerbau", c:"Kambing", d:"Kambing, domba", e:"Kambing, sapi, babi"}, ans:"d", exp:"Peste des Petits Ruminants (PPR) disebabkan Morbillivirus (famili Paramyxoviridae) dengan hospes utama kambing dan domba (morbiditas 90-100%, mortalitas 50-100%). Gejala khasnya keropeng di bibir dan pneumonia tahap lanjut."},
+  {id:17, q:"Sapi mengalami kondisi bottle jaw, anoreksia, dan bulu kusam. Setelah diperiksa diagnosis akhir adalah distomatosis. Etiologi penyakit tersebut adalah...", o:{a:"Fasciola hepatica", b:"Schistosoma japonica", c:"Paramphistomum spp.", d:"Haemonchus contortus", e:"Taenia saginata"}, ans:"a", exp:"Fasciolosis atau distomatosis disebabkan cacing trematoda hati genus Fasciola (F. hepatica dan F. gigantica). Infeksi masif merusak hati sehingga sintesis protein (albumin) menurun dan memicu edema submandibular (bottle jaw)."},
+  {id:18, q:"Seekor kuda terkena strangles (Streptococcus equi). Gambaran klinis dari penyakit tersebut adalah...", o:{a:"Abses di sekujur tubuh", b:"Jaundice pada mukosa", c:"Hemoragi organ visceral", d:"Diare", e:"Kelumpuhan"}, ans:"a", exp:"Strangles (equine distemper) akibat Streptococcus equi merupakan penyakit kontagious akut pada kuda yang ditandai inflamasi mukopurulen saluran pernapasan atas disertai pembentukan abses pada kelenjar limfe (dapat menyebar/bastard strangles)."},
+  {id:19, q:"Kuda dengan tanda klinis ikterus, anemia, petekie, dan ada Heinz body. Penyakit tersebut adalah...", o:{a:"Toxoplasmosis", b:"Babesiosis", c:"Anaplasmosis", d:"Wild onion toxicosis", e:"Trichomoniasis"}, ans:"d", exp:"Konsumsi bawang liar (wild onion) pada kuda memicu stres oksidatif yang merusak hemoglobin dan membentuk inklusi bulat di membran eritrosit (Heinz bodies) sehingga terjadi anemia hemolitik dan ikterus."},
+  {id:20, q:"Sapi FH usia 6 tahun mati dengan penyakit kronis, sapi kemudian dinekropsi dan dari hasil pemeriksaan patologi anatomi ditemukan adanya lesi granuloma yang sudah mulai mengkeju dan pengapuran, benjolan ditemukan di limfa dan pulmo. Apa diagnosa dari penyakit tersebut...", o:{a:"Anthrax", b:"Brucellosis", c:"Leptospirosis", d:"Bovine Tuberculosis", e:"Malignant Catarrhal Fever"}, ans:"d", exp:"Bovine Tuberculosis (Mycobacterium bovis) bersifat kronis/menahun dengan lesi khas berupa bungkul/benjolan (tuberkel granulomatosa) yang mengalami perkejuan (kaseosa) dan perkapuran (kalsifikasi) pada pulmo, limfa, hati, ginjal, pleura, maupun kelenjar susu."},
+  {id:21, q:"Pemeriksaan laboratorium menunjukkan adanya badan inklusi pada otak bagian hipokampus. Hewan mati sebelumnya menggigit orang dan hewan serta memakan benda sekitar. Apa diagnosis definitif dari kasus di atas...", o:{a:"Distemper", b:"Canine Parvo Virus", c:"Rabies", d:"Intoksikosis", e:"Hepatitis contagious"}, ans:"c", exp:"Gejala menggigit dan memakan benda asing menunjukkan fase eksitasi rabies. Diagnosis definitif histopatologi ditandai oleh badan inklusi intrasitoplasmik (Negri bodies) pada neuron, paling mudah ditemukan di hipokampus dan sel Purkinje serebelum."},
+  {id:22, q:"Berikut ini yang bukan merupakan hasil pemeriksaan post mortem kucing yang terinfeksi Feline Infectious Peritonitis (FIP)...", o:{a:"Pyogranulomatous", b:"Adanya penebalan mukosa usus", c:"Vasculitis", d:"Hiperplasia vili intestinum", e:"Ditemukan adanya cairan pada abdomen"}, ans:"d", exp:"Temuan post mortem FIP meliputi akumulasi cairan di rongga abdomen/toraks, radang pyogranulomatosa pada berbagai organ, vasculitis, penebalan membran peritoneum, serta pyogranulomatous enterocolitis (penebalan mukosa usus). Hiperplasia vili intestinum bukan temuan khas FIP."},
+  {id:23, q:"Anjing menunjukkan gejala klinis lemas dan diare. Kemudian dilakukan pemeriksaan feses ditemukan adanya kista bulat 10-12 mikrometer dengan 4 inti kemudian ditemukan adanya tropozoit 12-30 mikrometer dengan 1 inti. Dari temuan di atas anjing terinfeksi...", o:{a:"Isospora canis", b:"Toxocara canis", c:"Entamoeba", d:"Giardia canis", e:"Balantidium coli"}, ans:"c", exp:"Entamoeba histolytica memiliki trofozoit berdiameter 12-15 µm (bentuk kecil) hingga 20-30 µm (bentuk besar) dengan 1 inti, serta kista bulat berukuran 10-12 µm dengan 4 inti saat matang."},
+  {id:24, q:"Toxoplasma gondii dapat menyerang semua hewan berdarah panas, kucing, dan manusia. Oosista yang merupakan stadium infektif dihasilkan oleh...", o:{a:"Kucing", b:"Manusia", c:"Manusia dan kucing", d:"Semua hewan darah panas", e:"Semua jawaban benar"}, ans:"a", exp:"Satu-satunya inang definitif Toxoplasma gondii adalah famili Felidae (kucing). Ookista dikeluarkan melalui feses kucing dan bersporulasi di lingkungan dalam 1-5 hari menjadi infektif."},
+  {id:25, q:"Kandang merpati banyak lalat, lalat Pseudolynchia canariensis menyerang merpati dapat menyebabkan penyakit...", o:{a:"Haemoproteus", b:"Leucocytozoon", c:"Coccidiosis", d:"Avian malaria", e:"Babesia"}, ans:"a", exp:"Lalat merpati (Pseudolynchia canariensis, famili Hippoboscidae) merupakan vektor transmisi parasit darah Haemoproteus spp. pada merpati."},
+  {id:26, q:"Ancylostomiasis menyebabkan anemia. Anemia yang disebabkan oleh Ancylostoma disebabkan karena...", o:{a:"Kegagalan membentuk eritrosit", b:"Sel darah merah lisis/kerusakan eritrosit", c:"Defisiensi Fe", d:"Berkurangnya jumlah eritrosit", e:"Penurunan nafsu makan karena adanya Ancylostoma"}, ans:"c", exp:"Ancylostoma menghisap darah (~0,1 mL/cacing/hari) menggunakan kapsul bukal bergigi pada mukosa usus. Pada anak anjing dengan cadangan zat besi rendah maupun infeksi kronis, kehilangan darah terus-menerus memicu defisiensi zat besi (Fe) dan anemia mikrositik hipokromik."},
+  {id:27, q:"Penyebab dominan kematian pada hewan akibat dari penyakit anthrax adalah...", o:{a:"Bacillus anthracis pada gastrointestinal dan muntah", b:"Menyerang saraf pusat", c:"Spora B. anthracis menyerang inhalasi", d:"Toksin B. anthracis sangat mematikan", e:"Menyebabkan black spot pada kulit"}, ans:"d", exp:"Toksin Bacillus anthracis (Lethal Toxin dan Edema Toxin bersama Protective Antigen) melumpuhkan sistem imun bawaan pada fase awal, lalu pada tahap sistemik menyerang kardiomiosit, otot polos pembuluh darah, dan hati sehingga memicu kolaps vaskular yang mematikan."},
+  {id:28, q:"Ayam mengalami gejala paralisis anggota gerak, tortikolis, dan inkoordinasi. Hasil histopatologi ditemukan adanya perivascular cuffing limfosarkoma dan pembengkakan saraf ischiadicus. Diagnosa penyakit tersebut adalah...", o:{a:"Infectious bronchitis", b:"Infectious laryngotracheitis", c:"Marek diseases", d:"Salmonella pullorum", e:"Fowl typhoid"}, ans:"c", exp:"Marek's disease (Herpesvirus-2) ditandai proliferasi dan infiltrasi sel limfosit pada saraf (pembengkakan plexus ischiadicus, plexus brachialis, n. vagus), organ viseral, iris mata (gray eye), dan kulit, menyebabkan kelumpuhan kaki/sayap dan tortikolis."},
+  {id:29, q:"LSDV (Lumpy Skin Disease Virus) beredar ke seluruh tubuh melalui sel...", o:{a:"Monosit", b:"Makrofag", c:"Eosinofil", d:"Dendritik", e:"Neutrofil"}, ans:"b", exp:"Lumpy Skin Disease Virus bereplikasi intraseluler dalam fibroblas, makrofag, perisit, dan sel endotel, lalu menyebar melalui viremia ke seluruh tubuh menimbulkan vaskulitis dan limfangitis."},
+  {id:30, q:"Lates Calcarifer Herpes Virus (LCHV) merupakan penyakit yang menginfeksi Baramundi. LCHV merupakan virus dari famili...", o:{a:"Reoviridae", b:"Orthomyxoviridae", c:"Alloherpesviridae", d:"Parvoviridae", e:"Iridovirus"}, ans:"c", exp:"Lates calcarifer herpesvirus (LCHV) adalah virus DNA untai ganda berselubung anggota famili Alloherpesviridae (patogenik pada ikan dan amfibi), menyebabkan anoreksia, bercak putih/hilang sisik, kulit gelap, erosi sirip, dan badan inklusi intranuklear."},
+  {id:31, q:"Terdapat seekor sapi dengan gangguan pencernaan, memiliki kondisi tubuh yang kurus. Diketahui sapi diberikan pakan alang-alang tanpa disertai pemberian konsentrat. Sapi memperlihatkan gejala mengunyah terus-terusan, bau menyengat pada nafasnya dan sempoyongan. Sapi tersebut mengalami...", o:{a:"Asidosis rumen", b:"Hipokalsemia", c:"Hipomagnesium", d:"Ketosis", e:"Hipoglikemia"}, ans:"d", exp:"Ketosis terjadi akibat defisiensi energi/glukosa sehingga terjadi mobilisasi lemak berlebih dan akumulasi badan keton. Gejala klinis khas meliputi anoreksia, penurunan BB, gejala saraf (sempoyongan, mengunyah terus-menerus), serta bau aseton menyengat pada napas dan susu."},
+  {id:32, q:"Seekor anak sapi dengan gejala klinis kaku tidak bisa berdiri dikarenakan otot rusak dengan gangguan pada daerah ekstremitas dan terdapat degenerasi miokard saat pemeriksaan fisik. Anak sapi didiagnosis mengalami nutritional myodegeneration karena adanya defisiensi nutrisi pada saat kebuntingan. Solusi perbaikan nutrisi dari kasus di atas adalah...", o:{a:"B kompleks dan vitamin C", b:"Vitamin E dan Selenium", c:"Vitamin C dan Selenium", d:"Vitamin A, D, E, dan K", e:"Vitamin A"}, ans:"b", exp:"Nutritional myodegeneration (White Muscle Disease) adalah miopati akut pada otot rangka dan/atau otot jantung ruminansia muda akibat defisiensi Vitamin E dan/atau Selenium. Penanganannya meliputi suplementasi Vitamin E + Selenium, pembatasan aktivitas, antiinflamasi, dan terapi suportif."},
+  {id:33, q:"Seekor biawak berumur 2 tahun mengalami anoreksia selama 4 hari, dan teramati adanya pembesaran pada abdomen. Tidak diketahui riwayat kawin biawak tersebut. Dilakukan pemeriksaan radiografi dan ditemukan adanya telur berukuran 7×3 cm di rongga coelom. Berdasarkan radiografi diagnosis dari kasus di atas adalah...", o:{a:"Post ovulatory egg stasis", b:"Distokia", c:"Egg stasis", d:"Ovulatory egg stasis", e:"Pre ovulatory egg stasis"}, ans:"a", exp:"Egg stasis terbagi dua:\n• Pre-ovulatory: folikel ovarium membesar tetapi gagal berovulasi.\n• Post-ovulatory: folikel sudah berovulasi ke oviduk dan membentuk telur (terlihat pada radiografi di rongga coelom) namun gagal dikeluarkan."},
+  {id:34, q:"Di RPH organ hijauan ditemukan cacing Paramphistomum. Maka hasil pemeriksaan tersebut dan tindakan post mortemnya...", o:{a:"Helminthiasis, boleh diedarkan", b:"Helminthiasis, dibuang karena zoonosis", c:"Helminthiasis, tidak dibuang karena zoonosis", d:"Helminthiasis, tidak diedarkan dengan syarat perebusan", e:"Helminthiasis, tidak boleh diedarkan"}, ans:"a", exp:"Berdasarkan SK Mentan No. 413/Kpts/TN.310/7/1992, penyakit lokal non-zoonosis seperti helminthiasis lokal (Paramphistomum pada rumen/hijauan) tetap diperbolehkan diedarkan untuk konsumsi setelah bagian organ yang tidak layak konsumsi dibuang."},
+  {id:35, q:"Pembinaan pada unit usaha yang belum memenuhi NKV dilaksanakan dalam jangka waktu tertentu. Berapa waktu paling lama yang diperlukan untuk pembinaan...", o:{a:"1 Tahun", b:"2 Tahun", c:"3 Tahun", d:"4 Tahun", e:"5 Tahun"}, ans:"e", exp:"Menurut Permentan No. 11 Tahun 2020 Pasal 45 ayat (1) dan (2), pembinaan unit usaha produk hewan dalam rangka perbaikan temuan hasil audit NKV diberikan waktu paling lama 5 tahun."},
+  {id:36, q:"Suatu unit usaha produk hewan wajib mengajukan permohonan untuk memperoleh NKV kepada pemerintah provinsi berdasarkan pedoman yang ditetapkan menteri, Peraturan Pemerintah No. 95 Tahun 2012 Pasal 4 ayat 3. Siapakah berhak melakukan pembinaan kepada unit usaha tersebut...", o:{a:"Pemerintah Provinsi", b:"Dinas Provinsi", c:"Kementerian", d:"Pemerintah Kabupaten/Kota", e:"Dinas Peternakan"}, ans:"d", exp:"Menurut Permentan No. 11 Tahun 2020 Pasal 45 ayat (1) dan (2), pembinaan unit usaha produk hewan untuk pemenuhan NKV dilaksanakan oleh Dinas Daerah Kabupaten/Kota (Pemerintah Kabupaten/Kota)."},
+  {id:37, q:"Di sebuah desa A terdapat perayaan, sebanyak 50 dari 75 orang yang hadir terkena diare, lemas, dan muntah setelah mengonsumsi hidangan sate domba dan sate sapi dari perayaan tersebut. Dari pernyataan di atas, yang bukan merupakan penyebab foodborne disease yaitu...", o:{a:"Campylobacter sp", b:"Giardia", c:"E. coli O15:K52:H1", d:"Listeria", e:"Salmonella"}, ans:"c", exp:"Lima kelompok E. coli penyebab diare foodborne adalah EPEC, ETEC, EIEC, EHEC, dan EAEC. Sedangkan E. coli strain O15:K52:H1 adalah patogen penyebab infeksi saluran kemih (UTI / Urinary Tract Infection), bukan penyebab foodborne disease."},
+  {id:38, q:"Penyakit yang disebabkan parasit dengan larva berbentuk kista, ditemukan di otot garis, diafragma, mesenterium, paru-paru, jantung, hati, mata dan otak pada babi, anjing, kambing, kera, rusa, sapi, manusia dapat terinfeksi jika memakan dagingnya. Penyakit zoonosis ini adalah...", o:{a:"Moniezia", b:"Eurytrema", c:"Cysticercus cellulosae", d:"Haemonchosis", e:"Paramphistomiasis"}, ans:"c", exp:"Cysticercus cellulosae merupakan stadium larva (metasestoda) dari cacing pita Taenia solium (human pork tapeworm) yang membentuk kista di jaringan otot, jantung, hati, mata, hingga otak dan bersifat zoonosis."},
+  {id:39, q:"Anjing jantan dengan BB 4 kg akan dilakukan kastrasi. Dosis ketamine 15 mg/kg dan xylazine 2 mg/kg. Dosis ketamine dan xylazine yang dibutuhkan adalah...", o:{a:"Ketamine 0,6 dan xylazine 0,4", b:"Ketamine 0,4 dan xylazine 0,5", c:"Ketamine 0,8 dan xylazine 0,2", d:"Ketamine 0,4 dan xylazine 0,2", e:"Ketamine 0,5 dan xylazine 0,5"}, ans:"a", exp:"Perhitungan (Sediaan standar Ketamine 100 mg/mL; Xylazine 20 mg/mL):\n• Ketamine = (15 mg/kg × 4 kg) / 100 mg/mL = 60 / 100 = 0,6 mL.\n• Xylazine = (2 mg/kg × 4 kg) / 20 mg/mL = 8 / 20 = 0,4 mL."},
+  {id:40, q:"Sapi yang telah diberikan injeksi Xylazine akan menimbulkan adverse effect berupa salivasi, regurgitasi, dan penurunan peristaltik usus. Obat yang dapat meredakan adverse effect xylazine adalah...", o:{a:"Yohimbine", b:"Adrenaline", c:"Nor adrenaline", d:"Amfetamin", e:"Ketamine"}, ans:"a", exp:"Yohimbine (antagonis reseptor alfa-2 adrenergik) dan Tolazoline (antagonis alfa-1 & alfa-2 adrenergik) diberikan secara intravena sebagai antidot (reversal agent) untuk membalikkan efek samping Xylazine."},
+  {id:41, q:"Syarat umum DOC yakni dari Grand Parent Stock yang bebas Salmonella pullorum oleh surat keterangan dari dinas fungsi peternakan dan kesehatan hewan. Berapa lama batas surat tersebut berlaku...", o:{a:"3 bulan", b:"6 bulan", c:"9 bulan", d:"10 bulan", e:"1 tahun"}, ans:"e", exp:"Berdasarkan Kepdirjen PKH No. 9488/KPTS/PK.320/F/08/2024 tentang Juknis Surveilans Pullorum, Surat Keterangan Bebas Salmonella pullorum bagi pelaku usaha pembibit unggas GGPS, GPS, dan PS berlaku selama 1 tahun (sedangkan untuk Hatchery berlaku 6 bulan)."},
+  {id:42, q:"Rabies adalah salah satu penyakit zoonosis. Salah satu cara depopulasi pada anjing rabies adalah dengan menggunakan strychnine. Prinsip kesejahteraan hewan tentang hal tersebut adalah...", o:{a:"Sesuai prinsip, hewan mati dengan cepat", b:"Sesuai prinsip, harga terjangkau dan tidak ada dampak pada lingkungan", c:"Tidak sesuai prinsip, hewan kesakitan", d:"Tidak sesuai prinsip, strychnine susah diurai di lingkungan", e:"Tidak sesuai prinsip, ada dampak pada petugas lapangan"}, ans:"c", exp:"Penggunaan strychnine melanggar prinsip kesejahteraan hewan karena menimbulkan kejang dan penderitaan/kesakitan hebat selama 10-20 menit sebelum hewan mati. Eutanasi manusiawi yang direkomendasikan saat ini adalah preparat barbiturat."},
+  {id:43, q:"Jenis penyakit hewan menular strategis wajib ditetapkan dalam rangka pengamanan terhadap penyakit hewan menurut UU No. 18 Tahun 2009 junto UU No. 41 Tahun 2014 yang ditetapkan oleh...", o:{a:"Presiden", b:"Menteri urusan pemerintah bidang peternakan dan kesehatan hewan", c:"Menteri urusan pemerintah bidang kesehatan", d:"Direktur jenderal peternakan dan kesehatan hewan", e:"Gubernur"}, ans:"b", exp:"Sesuai Pasal 43 ayat (1) UU No. 18 Tahun 2009 jo. UU No. 41 Tahun 2014, Menteri (yang menyelenggarakan urusan pemerintahan di bidang peternakan dan kesehatan hewan) menetapkan jenis Penyakit Hewan Menular Strategis (PHMS)."},
+  {id:44, q:"Hasil kajian epidemiologi pengkajian kasus Direktorat Kesehatan Hewan oleh Otoritas Veteriner kabupaten/kota kepada bupati/walikota untuk dilaporkan kepada gubernur dan Menteri. Tahap selanjutnya yaitu penentuan jenis, status, situasi dan peta dilakukan oleh...", o:{a:"Menteri", b:"Otoritas veteriner", c:"Direktur kesehatan hewan", d:"Kepala daerah", e:"Gubernur"}, ans:"a", exp:"Berdasarkan Permentan No. 31 Tahun 2023 Pasal 38 ayat (1), berdasarkan laporan yang masuk dan/atau laporan Pejabat Otoritas Veteriner Nasional, Menteri menetapkan jenis, status situasi, dan peta penyakit hewan."},
+  {id:45, q:"Penyakit Zoonosis diatur dalam Peraturan Pemerintah No. 95 Tahun 2012 pada pasal 63 ayat (4). Sebaran geografis yang dimaksud pada pasal di atas kecuali...", o:{a:"Daerah wabah", b:"Daerah tertular", c:"Daerah penyangga", d:"Daerah bebas", e:"Daerah terlantar"}, ans:"e", exp:"Berdasarkan PP No. 95 Tahun 2012 (Pasal 67 ayat 2), status zoonosis daerah meliputi: (a) daerah wabah, (b) daerah tertular, (c) daerah penyangga, dan (d) daerah bebas. 'Daerah terlantar' tidak termasuk."},
+  {id:46, q:"Transmisi penyakit zoonosis pada hewan dapat berpindah secara langsung maupun tidak langsung. Bilamana penularan agen zoonosis bergantung pada benda bukan hewan (non-animal) sebagai reservoirnya, hal ini disebut dengan...", o:{a:"Meta-zoonosis", b:"Obligatory-zoonosis", c:"Cyclo-anthropozoonosis", d:"Saprozoonosis", e:"Vector borne zoonosis"}, ans:"d", exp:"Klasifikasi zoonosis:\n• Orthozoonosis: penularan langsung dari 1 spesies vertebrata.\n• Siklozoonosis: butuh >1 spesies vertebrata tanpa invertebrata.\n• Metazoonosis (Pherozoonosis): butuh vertebrata + vektor invertebrata.\n• Saprozoonosis: memerlukan tempat non-hewan (tanah, air, tumbuhan, makanan) sebagai reservoir/tempat perkembangan, contoh: Listeriosis, Erysipelothrix."},
+  {id:47, q:"Batas cemaran bakteri pada daging segar...", o:{a:"1 × 10⁶", b:"1 × 10⁵", c:"1 × 10⁴", d:"1 × 10³", e:"1 × 10²"}, ans:"a", exp:"Berdasarkan SNI 7388:2009 tentang Batas Maksimum Cemaran Mikroba dalam Pangan, batas maksimum TPC (Total Plate Count) pada daging segar ayam dan sapi adalah 1 × 10⁶ cfu/g (sedangkan Coliform maksimal 1 × 10² cfu/g)."},
+  {id:48, q:"Suhu merupakan salah satu hal penting yang perlu diperhatikan dalam rumah potong ayam, beberapa ruangan memiliki tingkat suhu yang berbeda-beda sesuai dengan fungsi dalam menjaga kualitas hasil produksi. Sebutkan suhu yang baik pada daerah pengemasan / packing...", o:{a:"0-5°C", b:"6-10°C", c:"10-15°C", d:"15-20°C", e:"20-25°C"}, ans:"c", exp:"Berdasarkan SNI 6160:2022 tentang Rumah Potong Hewan Unggas (RPHU), persyaratan temperatur ruangan pada area pengemasan (packaging) adalah 10°C – 15°C."},
+  {id:49, q:"Kode etik penting untuk mencegah penyalahgunaan profesi. Pelanggaran kode etik biasanya terjadi karena dokter hewan abai terhadap tanggung jawab dan mendahulukan kepentingan pribadi. Butir mana dari sumpah atau janji dokter terkait kode etik profesi dokter hewan...", o:{a:"Akan mengabdikan diri saya, ilmu pengetahuan dan keterampilan yang saya miliki kepada perbaikan mutu, peringanan penderitaan serta perlindungan hewan demi kesejahteraan masyarakat.", b:"Akan menggunakan ilmu pengetahuan dan keterampilan yang saya miliki berlandaskan perikemanusiaan dan kasih sayang kepada hewan", c:"Saya tidak akan menggunakan pengetahuan yang berlawanan dengan hukum perikemanusiaan atau menyimpang dari Kode Etik profesi saya", d:"Akan memberikan pertimbangan utama untuk kesembuhan, kesehatan dan kesejahteraan pasien saya, kepentingan tertinggi klien dengan mempertaruhkan kehormatan profesi dan diri saya", e:"Akan menggunakan ilmu pengetahuan dan keterampilan yang saya miliki berlandaskan perikehewanan dan kasih sayang kepada hewan"}, ans:"c", exp:"Butir sumpah/janji dokter hewan yang secara eksplisit menyebut Kode Etik Profesi adalah: 'Saya tidak akan menggunakan pengetahuan yang berlawanan dengan hukum perikemanusiaan atau menyimpang dari Kode Etik profesi saya.'"},
+  {id:50, q:"Saat ini banyak dilakukan tindakan medis veteriner yang dilakukan oleh non-dokter hewan tanpa ada pengawasan dokter hewan atau di bawah penyeliaan dokter hewan. Tindakan ini merupakan pelanggaran terhadap etika...", o:{a:"Etika terhadap profesi", b:"Etika terhadap masyarakat", c:"Etika terhadap diri sendiri", d:"Etika terhadap sejawat", e:"Etika terhadap klien"}, ans:"a", exp:"Dalam Kode Etik Dokter Hewan (Etika terhadap Profesi, Pasal 19): Dokter Hewan tidak membantu praktik ilegal dan wajib melaporkan bilamana mengetahui adanya praktik ilegal."},
+  {id:51, q:"Ilmu kedokteran hewan menjamin dan mewujudkan keselamatan dan kesejahteraan manusia, hewan dan lingkungan. Dalam praktik dokter hewan, penting untuk memprioritaskan kesejahteraan hewan. Manakah dari skenario yang menunjukkan potensi dilema etika bagi dokter hewan...", o:{a:"Pemilik hewan peliharaan menuntut prosedur pembedahan elektif untuk hewan peliharaannya yang tidak memiliki manfaat medis dan berpotensi membahayakan hewan", b:"Seorang pemilik hewan memutuskan untuk melewatkan layanan perawatan opsional untuk kucing berbulunya", c:"Seorang pemilik hewan peliharaan meminta rekomendasi diet untuk anjingnya yang kelebihan berat badan", d:"Seorang pemilik hewan peliharaan membawa hewan peliharaan untuk pemeriksaan rutin dan vaksinasi", e:"Pemilik hewan peliharaan yang tidak puas dengan layanan dokter hewan mencari second opinion kepada dokter hewan lainnya"}, ans:"a", exp:"Memenuhi tuntutan pembedahan elektif tanpa manfaat medis yang berpotensi membahayakan hewan bertentangan dengan BAB III Etika terhadap Pasien (Pasal 22) yang mewajibkan dokter hewan mengutamakan kesejahteraan dan kepentingan pasien."},
+  {id:52, q:"Sewaktu menangani pasien, dokter hewan diharuskan bekerja secara profesional dan sesuai POB/SOP. Yang tidak termasuk kewajiban dokter hewan terhadap pasien dan klien...", o:{a:"Melakukan client education", b:"Memberikan penjelasan penyakit yang sedang diderita pasien", c:"Menyampaikan kemungkinan lain yang dapat terjadi", d:"Menyampaikan risiko terburuk dari pasien", e:"Memberikan kontak klinik jika ingin konsultasi lebih lanjut mengenai pasien di luar jam kerja klinik hewan"}, ans:"e", exp:"Dokter hewan wajib memberikan edukasi klien, penjelasan diagnosis, kemungkinan komplikasi, dan risiko terburuk pasien, namun tidak berkewajiban menyediakan konsultasi di luar jam kerja operasional klinik."},
+  {id:53, q:"Klien membawa kura-kura sulcata dan setelah diperiksa serta melakukan x-ray didiagnosa mengalami bladder stone, namun klien tidak percaya dan ingin mendatangi dokter lain. Apa yang akan dilakukan oleh Anda...", o:{a:"Melarang", b:"Menjelek-jelekkan dokter lain", c:"Diperbolehkan dan disertai dengan hasil x-ray", d:"Diperbolehkan tidak disertai keterangan", e:"Tidak diperbolehkan dan menjelek-jelekkan"}, ans:"c", exp:"Sesuai etika terhadap klien dan teman sejawat, dokter hewan harus menghargai hak klien untuk mencari second opinion dengan tetap bersikap profesional serta menyertakan hasil pemeriksaan penunjang (x-ray) milik pasien."},
+  {id:54, q:"Yang perlu dicantumkan dalam papan nama, media massa, dan iklan dokter hewan kecuali...", o:{a:"Nama dan gelar yang berhubungan dengan profesi", b:"Waktu operasional", c:"Lokasi praktik", d:"Nama klinik", e:"Biaya dan promosi tindakan"}, ans:"e", exp:"Berdasarkan Kode Etik Profesi (Pasal 5, 14, dan 17): papan nama hanya mencantumkan nama Dokter Hewan, nomor SIP, nomor STRV, dan jam praktik; iklan hanya untuk pemberitahuan buka, pindah, atau tutup praktik — tidak boleh mencantumkan biaya dan promosi tindakan."},
+  {id:55, q:"Replacement, Reduction, Refinement termasuk dalam...", o:{a:"Animal welfare", b:"Prinsip animal welfare", c:"Animal health", d:"One health", e:"Tujuan animal welfare"}, ans:"b", exp:"Replacement, Reduction, dan Refinement (prinsip 3R oleh Russell & Burch) merupakan prinsip animal welfare (kesejahteraan hewan) khusus pada penggunaan hewan coba."},
+  {id:56, q:"Prinsip Five Freedoms of Animal tidak selalu bisa diterapkan secara bersamaan. Ada situasi ketika menerapkan satu prinsip menyebabkan prinsip lain tidak terpenuhi, hal ini disebut welfare conflict. Welfare conflict di freedom from discomfort dengan freedom from pain, injury, and disease dapat terjadi di beberapa kondisi yaitu...", o:{a:"Vaksinasi ayam dengan rute IM", b:"DOC yang dipuasakan selama proses transport dari hatchery ke farm", c:"Pemeliharaan ayam petelur dengan kandang baterai", d:"Transport ayam menggunakan motor", e:"Memberi vitamin pada ayam aduan"}, ans:"c", exp:"Pemeliharaan ayam petelur dengan kandang baterai mempermudah kontrol penyakit dan mencegah cedera antarsesama (memenuhi freedom from pain, injury, and disease), tetapi membatasi ruang gerak dan perilaku alamiah (mengorbankan freedom from discomfort)."},
+  {id:57, q:"Luksasi coxofemoral cranial dapat menyebabkan femur mengalami abduksi dan supinasi. Dilakukan penanganan reposisi caput femur ke dalam acetabulum kemudian tindakan rekomendasi yang sebaiknya dilakukan adalah...", o:{a:"Reposisi tertutup dan pembalutan Ehmer sling", b:"Reposisi tertutup dan pembalutan Hobbles", c:"Reposisi tertutup dan pembalutan Robert Jones", d:"Reposisi tertutup dan pembalutan Modified Robert Jones", e:"Reposisi tertutup dan pembalutan Velpeau sling"}, ans:"a", exp:"Ehmer sling digunakan pada tungkai belakang untuk mencegah tumpuan berat badan (non-weight bearing) dan menjaga stabilitas reduksi tertutup/terbuka setelah luksasi sendi pinggul (coxofemoral craniodorsal)."},
+  {id:58, q:"Pada operasi reseksi kelenjar ludah, untuk mencapai kelenjar sublingual harus menguakkan muskulus apa saja...", o:{a:"M. Platysma", b:"M. Parotidoauricularis - M. Platysma", c:"M. Digastricus - M. Masseter", d:"M. Mandibularis - M. Masseter", e:"M. Maxillaris - M. Digastricus"}, ans:"c", exp:"Pada operasi sialoadenektomi mandibular dan sublingual (kasus salivary mucocele), pendekatan dilakukan dengan menyibakkan area M. Masseter dan M. Digastricus (serta M. Mylohyoideus untuk rantai sublingual rostral)."},
+  {id:59, q:"Seorang dokter hewan mengangkat tumor area kaki pada seekor kucing. Selanjutnya pada hari yang sama dokter tersebut menutup luka tersebut dengan distant flap menggunakan kulit pada area thorax. Berapa lama waktu untuk memotong distant flap tersebut...", o:{a:"2-3 hari", b:"4-5 hari", c:"6-7 hari", d:"7-8 hari", e:"1-2 hari"}, ans:"d", exp:"Pada teknik distant flap (skin flap dari area donor jauh seperti lateral thorax untuk menutup defek ekstremitas), pemisahan/pemotongan pedikel donor umumnya dilakukan setelah revaskularisasi stabil, yakni pada hari ke-7 sampai ke-8 (7-10 hari pascaoperasi)."},
+  {id:60, q:"Berdasarkan standar yang berlaku, jumlah kepadatan mikroba dalam pakan probiotik ikan adalah...", o:{a:"1 × 10² CFU", b:"1 × 10³ CFU", c:"1 × 10⁴ CFU", d:"1 × 10⁵ CFU", e:"1 × 10⁶ CFU"}, ans:"e", exp:"Berdasarkan Permen KP No. 1 Tahun 2019 tentang Obat Ikan (Pasal 12 ayat 4), sediaan probiotik paling banyak mengandung 5 spesies mikroba dengan kepadatan masing-masing spesies paling sedikit 10⁶ CFU/mL atau 10⁶ CFU/g."},
+  {id:61, q:"Pemijahan ikan dilakukan untuk mempercepat proses ovulasi dan gonad. Obat hormon yang digunakan untuk mempercepat proses ovulasi tersebut adalah...", o:{a:"Dietil stilbestrol", b:"Benesterol", c:"Dienesterol", d:"17a-metiltestosteron", e:"Ovaprim"}, ans:"e", exp:"Ovaprim adalah campuran analog salmon GnRH (sGnRH-a) dan anti-dopamin yang merangsang pelepasan gonadotropin untuk mempercepat pematangan gonad, ovulasi, dan pemijahan ikan."},
+  {id:62, q:"Agen anestesi yang digunakan dalam anestesi regional pada epidural untuk operasi prolaps vagina adalah...", o:{a:"Procaine 1%", b:"Procaine 2%", c:"Procaine 6%", d:"Procaine 10%", e:"Xylocaine 10%"}, ans:"b", exp:"Anestesi regional epidural pada sapi umumnya menggunakan Procaine HCl 2% atau Lidocaine HCl 2%."},
+  {id:63, q:"Surat pemasukan dan pengeluaran untuk lalu lintas satwa liar adalah...", o:{a:"SATS-LN/SATS-DN diterbitkan oleh BKSDA", b:"SATS-LN/SATS-DN diterbitkan oleh Direktorat Jenderal Kesehatan Hewan", c:"SATS-LN/SATS-DN diterbitkan oleh Kepolisian RI", d:"SATS-LN/SATS-DN diterbitkan oleh Badan Karantina Hewan, Ikan, dan Tumbuhan", e:"SATS-LN/SATS-DN diterbitkan oleh Dinas Pertanian Provinsi"}, ans:"a", exp:"Berdasarkan Permen LHK No. 20 Tahun 2022, Surat Angkut Tumbuhan dan Satwa Liar Dalam Negeri (SATS-DN) dan Luar Negeri (SATS-LN) merupakan dokumen resmi lalu lintas satwa liar yang diterbitkan di bawah kewenangan KSDA / BKSDA (KLHK)."},
+  {id:64, q:"Seorang peternak ingin membawa telur hasil ternaknya ke luar pulau, maka dokumen yang diperlukan saat melewati perbatasan adalah...", o:{a:"Sertifikat Veteriner", b:"Surat Keterangan Sehat", c:"Nomor Kontrol Veteriner", d:"Data jumlah total muatan", e:"Surat Izin Usaha"}, ans:"a", exp:"Berdasarkan Permentan No. 17 Tahun 2023 tentang Pengawasan Lalu Lintas Hewan, Produk Hewan, dan Media Pembawa (HPM), persyaratan teknis kesehatan hewan lalu lintas antarpulau/antarprovinsi wajib dilengkapi Sertifikat Veteriner dari Otoritas Veteriner pengirim."},
+  {id:65, q:"Syarat seorang dokter hewan dapat menjadi pengawas obat hewan di bawah ini, kecuali...", o:{a:"Dokter hewan berstatus ASN", b:"Bertugas di instansi kesehatan hewan", c:"Mengikuti pelatihan Pengawas Obat Hewan", d:"Bekerja di industri obat hewan minimal selama 3 tahun", e:"Tidak berafiliasi"}, ans:"d", exp:"Menurut Permentan No. 16 Tahun 2021 Pasal 25 ayat (1), syarat Pengawas Obat Hewan: (a) dokter hewan ASN, (b) bertugas di instansi kesehatan hewan, (c) lulus pelatihan & bersertifikat Pengawas Obat Hewan, (d) tidak berafiliasi/berkonflik kepentingan dengan usaha obat hewan."},
+  {id:66, q:"Sapi bali milik peternak dilaporkan mengalami gejala lepuh dan luka pada punggung serta adanya keringat berdarah. Berdasarkan laporan tersebut maka sapi tersebut menderita penyakit...", o:{a:"PMK", b:"Erysipelas", c:"Rama Dewa", d:"Ringworm", e:"Scabiosis"}, ans:"c", exp:"Penyakit Jembrana (disebut juga penyakit Rama Dewa) merupakan penyakit viral menular khusus pada sapi Bali dengan tanda patognomonik berupa keringat berdarah (blood sweating), demam, stomatitis, dan pembesaran kelenjar limfe."},
+  {id:67, q:"Obat alkylating pada penyakit lymphoma...", o:{a:"Vincristine sulfate", b:"Methotrexate", c:"5-fluorouracil", d:"Cyclophosphamide", e:"Doxorubicin"}, ans:"d", exp:"Cyclophosphamide (bersama Chlorambucil, Lomustine, Melphalan) merupakan agen kemoterapi golongan alkylating agent yang membentuk ikatan silang DNA. Vincristine = antimikrotubul; Doxorubicin = antibiotik antitumor; Methotrexate & 5-FU = antimetabolit."},
+  {id:68, q:"Bagian resep yang terdapat perintah/pesan dan merupakan inti resep...", o:{a:"Subscriptio", b:"Signatura", c:"Prescriptio", d:"Inscriptio", e:"Invocatio"}, ans:"c", exp:"Bagian resep:\n• Inscriptio: identitas dokter, kota, tanggal.\n• Invocatio: tanda R/.\n• Prescriptio: perintah/pesanan inti resep (nama obat, bentuk sediaan, dosis, jumlah).\n• Signatura: aturan pakai obat.\n• Subscriptio: tanda tangan/paraf dokter."},
+  {id:69, q:"Seekor anjing dibawa dalam kondisi pingsan, setelah dilakukan hematologi didapatkan PCV 52%, total protein plasma 9,5 g/dL. Interpretasinya adalah...", o:{a:"Dehidrasi", b:"Hyperglobulinemia", c:"Hyperalbuminemia", d:"Polisitemia", e:"Anemia"}, ans:"a", exp:"Nilai normal anjing: PCV 35-45% dan Total Protein (TP) 5,4-7,5 g/dL. Peningkatan serentak PCV dan TP (hemokonsentrasi) merupakan indikator klasik dehidrasi akibat berkurangnya volume cairan plasma."},
+  {id:70, q:"Anjing Dalmatian 3 tahun, jenis kelamin jantan. Menunjukkan tanda klinis urinasi sedikit, nyeri saat urinasi, hematuria. Anjing didiagnosa urolith dan gangguan metabolik purin. Jenis urolith yang sering terjadi pada anjing Dalmatian yaitu...", o:{a:"Urolith struvite", b:"Urolith oxalate", c:"Urolith xantin", d:"Urolith urat", e:"Urolith karbonat"}, ans:"d", exp:"Urat termasuk dalam jalur metabolisme purin. Anjing ras Dalmatian memiliki predisposisi genetik gangguan metabolisme purin sehingga sangat sering mengalami Urate urolithiasis."},
+  {id:71, q:"Seekor kambing diketahui memiliki gejala mual dan muntah, dan diketahui kambing suka makan tali rafia kandangnya. Tindakan yang dilakukan untuk hal tersebut adalah...", o:{a:"Rumenotomy", b:"Enterostomy", c:"Enterotomy", d:"Rumenostomy", e:"Gastropexy"}, ans:"a", exp:"Kambing sering menelan benda asing tidak tercerna (pica) seperti plastik/tali rafia yang menumpuk di rumen/retikulum menyebabkan impaksi. Tindakan bedah untuk membuka dan mengeluarkan benda asing dari rumen adalah rumenotomy."},
+  {id:72, q:"Seekor kucing baru jatuh dari tangga 3 hari yang lalu, mengalami luka tidak infeksi pada radius ulna. Dengan luka 3×3 cm, tidak ada pus (nanah), teknik yang dilakukan adalah distant flap dengan mengambil pada bagian mana...", o:{a:"Femur", b:"Thorax", c:"Abdomen", d:"Tibia", e:"Fibula"}, ans:"b", exp:"Untuk menutup defek kulit luas pada ekstremitas depan (radius-ulna), teknik distant flap paling sering memanfaatkan kulit longgar di area lateral thorax (forelimb skin fold / thorax)."},
+  {id:73, q:"Luxatio pada scapulo humeralis dapat ditangani dengan metode...", o:{a:"Dilakukan reposisi dan bandage dengan metode Ehmer Sling", b:"Dilakukan reposisi dan bandage dengan metode Robert Jones", c:"Dilakukan reposisi dan bandage dengan metode Modified Robert Jones", d:"Dilakukan reposisi dan bandage dengan metode Velpeau Sling", e:"Dilakukan reposisi dan bandage dengan metode Hobbles"}, ans:"d", exp:"Velpeau sling digunakan pada ekstremitas depan untuk mencegah tumpuan berat badan dan menstabilkan reduksi tertutup/terbuka luksasi bahu medial (scapulo-humeralis) serta fraktur skapula."},
+  {id:74, q:"Dokter hewan meminta owner untuk mempuasakan hewannya sebelum dilakukan bedah, apa tujuan dilakukan hal tersebut...", o:{a:"Agar pasien mudah ditangani", b:"Menghindari gangguan lambung saat operasi", c:"Sudah aturan sebelum bedah harus puasa", d:"Menghindari regurgitasi dan aspirasi lambung", e:"Menghindari kolik"}, ans:"d", exp:"Puasa makan 6-12 jam pada hewan dewasa (maksimal 4-6 jam pada hewan muda agar tidak hipoglikemia) sebelum induksi anestesi bertujuan mencegah muntah/regurgitasi dan aspirasi pneumonia intraoperatif maupun pascaoperatif."},
+  {id:75, q:"Area anestesi epidural sapi untuk melahirkan dilakukan pada...", o:{a:"Os lumbal 5 - os lumbal 6", b:"Os lumbal 6 - os sacrum 1", c:"Os sacrum 1 - os sacrum 3", d:"Os sacrum 5 - os coccygea 1", e:"Os coccygea 2 - os coccygea 3"}, ans:"d", exp:"Tempat injeksi anestesi epidural kaudal yang umum pada hewan besar (sapi) adalah ruang intervertebral sakrokoksigeal (S5–Co1) atau interkoksigeal pertama (Co1–Co2)."},
+  {id:76, q:"Pada anjing terdapat bentukan seperti bunga kol yang merupakan venereal sarcoma. Dilakukan ekstraksi tumor dan kemoterapi. Saran pencegahan terhadap penularan yang dapat dilakukan...", o:{a:"Dikandangkan", b:"Dibiarkan tetap liar", c:"OH/kastrasi", d:"Dibatasi pergerakannya", e:"Dilanjutkan kemoterapi"}, ans:"c", exp:"Canine Transmissible Venereal Tumor (CTVT) ditularkan melalui kontak langsung saat kawin/mengendus genitalia. Pencegahan utama meliputi sterilisasi/kastrasi (OH/kastrasi), isolasi anjing terinfeksi, dan pengendalian perkawinan liar."},
+  {id:77, q:"Kucing mengalami prolaps rectum dan sudah dilakukan penanganan sebelumnya dengan melakukan reposisi rectum. Namun, 3 bulan setelahnya mengalami hal yang sama. Penanganan yang tepat untuk mengatasi kondisi ini adalah...", o:{a:"Colopexy", b:"Reposisi kembali", c:"Colectomy", d:"Reseksi", e:"Anal sacculectomy"}, ans:"a", exp:"Apabila prolapsus rektum kambuh berulang setelah reposisi manual dan jahitan purse-string (dengan jaringan rektum masih sehat), penanganan bedah yang tepat adalah colopexy (memfiksasi kolon ke dinding abdomen)."},
+  {id:78, q:"Owner datang membawa anjingnya dengan jenis anjing Kintamani. Telah dikawinkan 19 hari yang lalu. Owner membawa ke dokter untuk mengetahui apakah anjingnya bunting atau tidak. Diagnosa yang dilakukan adalah...", o:{a:"Doppler", b:"Ultrasound", c:"X-Ray", d:"Palpasi abdomen", e:"EKG Fetus"}, ans:"b", exp:"Implantasi pada anjing terjadi 14-18 hari pasca fertilisasi. Pada usia kebuntingan dini (~19-24 hari), ultrasonografi (USG) adalah metode paling berguna untuk mendeteksi gestational sac. Palpasi abdomen efektif hari ke-28–35, sedangkan X-ray baru melihat rangka fetus setelah hari ke-42–45."},
+  {id:79, q:"Penanganan fraktur dapat menggunakan bahan tambahan untuk menggantikan bagian tulang yang patah. Bahan pengganti yang paling dapat diterima oleh tubuh adalah...", o:{a:"Allograft", b:"Xenograft", c:"Autograft", d:"Demineralized bone", e:"Cortical bone"}, ans:"c", exp:"Autograft (jaringan diambil dari tubuh pasien sendiri) memiliki kecocokan MHC sempurna sehingga paling dapat diterima tubuh tanpa risiko reaksi penolakan imun."},
+  {id:80, q:"Penilaian ekonomi untuk peternakan yang tidak mencatat income atau tanpa perhitungan mendalam adalah...", o:{a:"Analisis gross margin", b:"Analisis micro-economics", c:"Analisis cost-benefits", d:"Analisis table pay off", e:"Analisis netto margin"}, ans:"c", exp:"Analisis cost-benefit mengevaluasi kelayakan keputusan/kegiatan dengan membandingkan biaya dan manfaat yang ditimbulkan (dapat diterapkan untuk penilaian proyek/peternakan tanpa pembukuan laba-rugi mendalam seperti gross/netto margin)."},
+  {id:81, q:"Jenis-jenis antikoagulan berikut ini bekerja dengan cara mengikat atau mengendapkan kalsium, kecuali...", o:{a:"Golongan EDTA", b:"Heparin", c:"Natrium sitrat", d:"Natrium Polianetol Sulfonat (NPS)", e:"Golongan oksalat"}, ans:"b", exp:"EDTA, Natrium sitrat, golongan oksalat, dan NPS mencegah pembekuan darah dengan mengikat/mengendapkan ion kalsium (Ca²⁺). Sebaliknya, Heparin bekerja dengan mengaktivasi antitrombin III sehingga menghambat pembentukan trombin."},
+  {id:82, q:"Langkah-langkah dalam pencatatan rekam medik di rumah sakit antara lain...", o:{a:"Mengoleksi basis data (database), identifikasi data, membuat rencana terapi, evaluasi", b:"Mencatat sinyalemen, mendiagnosis, identifikasi data, membuat rencana terapi", c:"Anamnesis, membuat diagnosis, rencana terapi, evaluasi", d:"Pemeriksaan fisik, edukasi klien, evaluasi, membuat rencana terapi", e:"Pemeriksaan fisik, rencana terapi, evaluasi, edukasi klien"}, ans:"c", exp:"Alur sistematis rekam medik klinis meliputi pencatatan identitas/sinyalemen, anamnesis, pemeriksaan fisik/penunjang untuk menegakkan diagnosis, penyusunan rencana terapi/tindakan medis, serta evaluasi perkembangan pasien."},
+  {id:83, q:"pH urine normal pada anjing dan kucing adalah...", o:{a:"7 atau >7", b:"7 atau <7", c:"8-10", d:"10 atau >10", e:"Bervariasi dari 4-9"}, ans:"b", exp:"pH normal urin anjing dan kucing berkisar 6,0–7,5 (cenderung asam hingga netral, yakni 7 atau <7 karena diet tinggi protein hewani). Urin basa (>7,5) perlu dicurigai adanya infeksi bakteri penghasil urease."},
+  {id:84, q:"Jenis cacing berikut dapat diperiksa dengan uji feses metode konsentrasi apung yang dapat mengapungkan telur nematoda, kecuali...", o:{a:"Ascaris suum", b:"Oesophagostomum sp", c:"Capillaria sp", d:"Stephanurus dentatus", e:"Haemonchus contortus"}, ans:"d", exp:"Stephanurus dentatus adalah cacing ginjal pada babi (penyebab stephanuriasis) sehingga telurnya keluar melalui urin dan didiagnosis dengan pemeriksaan sedimen urin, bukan uji apung feses."},
+  {id:85, q:"Domba milik Pak Dimas dilaporkan mati dengan gejala akhir keluar cairan berbusa dari hidung dan mulut yang diduga terjadi akibat infeksi berat cacing Haemonchus contortus. Tanda klinis yang terlihat pada organ paru domba jika benar terjadi infeksi berat adalah...", o:{a:"Obstruksi pulmoner", b:"Bronkopneumonia", c:"Pleuritis", d:"Pneumonitis", e:"Edema paru"}, ans:"e", exp:"Infeksi berat/kronis Haemonchus contortus menyebabkan kehilangan darah hebat dan hipoalbuminemia berat, sehingga tekanan onkotik plasma turun dan memicu akumulasi cairan/eksudat pada parenkim paru (edema paru) yang ditandai cairan berbusa dari hidung dan mulut."},
+  {id:86, q:"Sapi milik Pak Ahmad setiap pagi diberi pakan hijauan/rumput yang masih terlalu muda dan basah. Pada akhirnya, sapi tersebut mengalami kematian akibat timpani. Organ-organ dalam tubuh sapi mengalami gangguan karena terjadi...", o:{a:"Hambatan pada digesti", b:"Peritonitis oleh lambung yang rupture", c:"Pengecilan abdomen di sekitar legok lapar", d:"Desakan pada paru dan jantung oleh diafragma sehingga organ mengalami gagal fungsi", e:"Rupture diafragma"}, ans:"d", exp:"Pada ruminal timpani (bloat), akumulasi gas berlebih menyebabkan distensi hebat rumen yang mendesak diafragma ke kranial, menekan paru-paru dan jantung hingga terjadi gagal respirasi dan gagal sirkulasi."},
+  {id:87, q:"Penyakit pada sapi yang dapat menyebabkan erosi pada lidah, hidung, serta bibir yang sering kali ditularkan melalui gigitan lalat penghisap darah seperti Tabanus rubidus adalah...", o:{a:"Jembrana", b:"Septicaemia epizootica", c:"Malignant catarrhal fever (MCF)", d:"Trypanosomiasis", e:"Ecthyma contagiosum (Orf)"}, ans:"a", exp:"Penyakit Jembrana pada sapi Bali ditularkan secara mekanis oleh lalat pengisap darah Tabanus rubidus, dengan gejala demam tinggi (40-42°C), lesu, anoreksia, serta perdarahan dan erosi pada lidah, hidung, dan bibir."},
+  {id:88, q:"Penyakit yang menyerang sapi, disebabkan oleh Clostridium chauvoei, dengan gejala utama kelumpuhan disertai edema, panas, dan terdengar suara krepitasi di daerah paha adalah...", o:{a:"Penyakit Mulut dan Kuku (PMK)", b:"Jembrana", c:"Milk fever", d:"Antraks", e:"Radang paha"}, ans:"e", exp:"Radang paha (Blackleg) disebabkan Clostridium chauvoei, umum menyerang sapi muda 6 bulan–1 tahun dengan pembengkakan otot bahu/paha yang lunak, edema, panas, dan berbunyi krepitasi akibat gas saat dipalpasi."},
+  {id:89, q:"Seekor anjing dengan berat badan 20 kg harus minum obat dengan dosis 5 mg/kg berat badan. Obat tersedia dalam bentuk tablet dengan kandungan zat aktif 200 mg/tablet. Berapa tablet yang harus diberikan untuk satu dosis pengobatan pada anjing tersebut...", o:{a:"1/2 tablet", b:"1 tablet", c:"1 1/4 tablet", d:"1 1/2 tablet", e:"2 tablet"}, ans:"a", exp:"Jumlah pemberian = (Dosis anjuran × BB) / Sediaan = (5 mg/kg × 20 kg) / 200 mg = 100 / 200 = 1/2 tablet."},
+  {id:90, q:"Obat-obat berikut adalah golongan obat antasida, kecuali...", o:{a:"Famotidine", b:"Sulfasalazine", c:"Aluminium hydroxide", d:"Cimetidine", e:"Omeprazole"}, ans:"b", exp:"Sulfasalazine adalah obat antiinflamasi saluran cerna untuk kolitis/radang usus besar (IBD), bukan penurun/penetral asam lambung (sedangkan Aluminium hydroxide, Cimetidine, Famotidine, dan Omeprazole digunakan untuk menekan/menetralkan asam lambung)."},
+  {id:91, q:"Jenis jarum jahit yang sebaiknya digunakan untuk menjahit uterus adalah jarum berbentuk...", o:{a:"Lingkaran dengan penampang heksagonal", b:"Kurva dengan penampang gilik", c:"Lingkaran dengan penampang gilik", d:"Lurus dengan penampang segitiga", e:"Lingkaran dengan penampang segitiga"}, ans:"b", exp:"Jarum melengkung (kurva) dengan penampang gilik (taperpoint / round-bodied) meminimalkan trauma sobekan jaringan sehingga paling ideal untuk menjahit organ viseral yang rapuh seperti uterus dan usus."},
+  {id:92, q:"Penggunaan obat golongan fenotiazin bersifat kontraindikasi pada hewan yang menderita...", o:{a:"Hipertiroidismus", b:"Hipertensi", c:"Glaukoma", d:"Diabetes", e:"Epilepsi"}, ans:"e", exp:"Golongan fenotiazin (seperti Acepromazine) menurunkan ambang kejang di otak sehingga dapat memicu kejang dan bersifat kontraindikasi pada pasien epilepsi (serta pasien gagal jantung kongestif/hipotensi)."},
+  {id:93, q:"Pada anjing dan kucing gigi sulung (deciduous teeth) rata-rata tumbuh saat hewan berumur...", o:{a:"2-3 bulan", b:"4-5 bulan", c:"6-8 bulan", d:"9-12 bulan", e:"12-24 bulan"}, ans:"a", exp:"Gigi sulung/susu (deciduous teeth) pada anak anjing dan kucing mulai tumbuh sejak umur 3-6 minggu hingga lengkap di usia 2-3 bulan. Pada umur 4-5 bulan gigi susu mulai tanggal dan digantikan gigi permanen (selesai ~7 bulan)."},
+  {id:94, q:"Bagian
