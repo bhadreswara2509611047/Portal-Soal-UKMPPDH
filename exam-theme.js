@@ -585,6 +585,72 @@
         background-color: #ffffff !important;
       }
     }
+
+    /* ==================== TAMBAHAN KELAS NETRAL & HEX UMUM ==================== */
+    html.portal-dark .bg-\[\#fff\],
+    html.portal-dark .bg-\[\#ffffff\],
+    html.portal-dark .bg-\[\#FFFFFF\] {
+      background-color: var(--p-surface) !important;
+    }
+    html.portal-dark .bg-neutral-50,
+    html.portal-dark .bg-stone-50,
+    html.portal-dark .bg-\[\#f1f5f9\],
+    html.portal-dark .bg-\[\#f4f7f9\],
+    html.portal-dark .bg-\[\#f4f7fb\],
+    html.portal-dark .bg-\[\#f4f7f7\],
+    html.portal-dark .bg-\[\#f9fafb\] {
+      background-color: var(--p-elevated) !important;
+    }
+    html.portal-dark .bg-neutral-100,
+    html.portal-dark .bg-stone-100,
+    html.portal-dark .bg-neutral-200,
+    html.portal-dark .bg-stone-200 {
+      background-color: var(--p-subtle) !important;
+    }
+    html.portal-dark .text-neutral-950,
+    html.portal-dark .text-neutral-900,
+    html.portal-dark .text-neutral-800,
+    html.portal-dark .text-stone-950,
+    html.portal-dark .text-stone-900,
+    html.portal-dark .text-stone-800 {
+      color: var(--p-text) !important;
+    }
+    html.portal-dark .text-neutral-700,
+    html.portal-dark .text-neutral-600,
+    html.portal-dark .text-stone-700,
+    html.portal-dark .text-stone-600 {
+      color: var(--p-text-sub) !important;
+    }
+    html.portal-dark .text-neutral-500,
+    html.portal-dark .text-stone-500 {
+      color: var(--p-text-muted) !important;
+    }
+    html.portal-dark .border-neutral-200,
+    html.portal-dark .border-neutral-300,
+    html.portal-dark .border-stone-200,
+    html.portal-dark .border-stone-300 {
+      border-color: var(--p-border) !important;
+    }
+
+    /* ==================== ADAPTOR OTOMATIS ELEMEN NON-TAILWIND / CSS KUSTOM ==================== */
+    html.portal-dark [data-portal-dark-surface="white"] {
+      background-color: var(--p-surface) !important;
+    }
+    html.portal-dark [data-portal-dark-surface="elevated"] {
+      background-color: var(--p-elevated) !important;
+    }
+    html.portal-dark [data-portal-dark-surface="subtle"] {
+      background-color: var(--p-subtle) !important;
+    }
+    html.portal-dark [data-portal-dark-border="1"] {
+      border-color: var(--p-border) !important;
+    }
+    html.portal-dark [data-portal-dark-text="main"] {
+      color: var(--p-text) !important;
+    }
+    html.portal-dark [data-portal-dark-text="muted"] {
+      color: var(--p-text-muted) !important;
+    }
   `;
 
   function updateAllThemeButtons(isDark) {
@@ -596,6 +662,160 @@
       if (moon) moon.classList.toggle('hidden', isDark);
       if (txt) txt.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
     });
+  }
+
+  function parseRgbColor(str) {
+    const m = str && str.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[\s,/]+([\d.]+))?\s*\)/i);
+    if (!m) return null;
+    return { r: +m[1], g: +m[2], b: +m[3], a: m[4] === undefined ? 1 : +m[4] };
+  }
+
+  function isOnBrightColoredBg(el, win) {
+    let cur = el;
+    let depth = 0;
+    while (cur && cur.nodeType === 1 && depth < 6) {
+      if (cur.hasAttribute('data-portal-dark-surface')) return false;
+      const cs = win.getComputedStyle(cur);
+      const bg = parseRgbColor(cs.backgroundColor);
+      if (bg && bg.a > 0.65) {
+        const lum = 0.299 * bg.r + 0.587 * bg.g + 0.114 * bg.b;
+        const spread = Math.max(bg.r, bg.g, bg.b) - Math.min(bg.r, bg.g, bg.b);
+        // Jika berada di atas tombol/badge berwarna cerah (misal kuning ragu-ragu), jangan ubah teks gelap jadi putih
+        return lum >= 155 && spread > 28;
+      }
+      cur = cur.parentElement;
+      depth++;
+    }
+    return false;
+  }
+
+  function adaptElementDark(el, win) {
+    if (!el || el.nodeType !== 1) return;
+    const tag = el.tagName;
+    if (tag === 'SVG' || tag === 'PATH' || tag === 'CIRCLE' || tag === 'RECT' || tag === 'IMG' || tag === 'SCRIPT' || tag === 'STYLE' || tag === 'LINK') {
+      return;
+    }
+
+    // Bersihkan penanda lama dulu agar status dinamis (biru aktif, hijau terjawab, kuning ragu) tidak tertimpa
+    el.removeAttribute('data-portal-dark-surface');
+    el.removeAttribute('data-portal-dark-border');
+    el.removeAttribute('data-portal-dark-text');
+
+    const cs = win.getComputedStyle(el);
+    const bg = parseRgbColor(cs.backgroundColor);
+    const hasGradient = cs.backgroundImage && cs.backgroundImage !== 'none';
+
+    if (bg && bg.a > 0.65 && !hasGradient) {
+      const spread = Math.max(bg.r, bg.g, bg.b) - Math.min(bg.r, bg.g, bg.b);
+      const lum = (bg.r + bg.g + bg.b) / 3;
+      if (spread <= 28) {
+        if (lum >= 244) el.setAttribute('data-portal-dark-surface', 'white');
+        else if (lum >= 228) el.setAttribute('data-portal-dark-surface', 'elevated');
+        else if (lum >= 202) el.setAttribute('data-portal-dark-surface', 'subtle');
+      }
+    }
+
+    const bd = parseRgbColor(cs.borderTopColor);
+    if (bd && bd.a > 0.35 && parseFloat(cs.borderTopWidth) > 0) {
+      const spread = Math.max(bd.r, bd.g, bd.b) - Math.min(bd.r, bd.g, bd.b);
+      const lum = (bd.r + bd.g + bd.b) / 3;
+      if (spread <= 30 && lum >= 190) {
+        el.setAttribute('data-portal-dark-border', '1');
+      }
+    }
+
+    const fg = parseRgbColor(cs.color);
+    if (fg && fg.a > 0.5 && !isOnBrightColoredBg(el, win)) {
+      const spread = Math.max(fg.r, fg.g, fg.b) - Math.min(fg.r, fg.g, fg.b);
+      const lum = (fg.r + fg.g + fg.b) / 3;
+      if (spread <= 40) {
+        if (lum <= 90) el.setAttribute('data-portal-dark-text', 'main');
+        else if (lum <= 138) el.setAttribute('data-portal-dark-text', 'muted');
+      }
+    }
+  }
+
+  function runDarkSurfaceAdapter(doc, isDark) {
+    const win = doc.defaultView;
+    if (!win || !doc.body) return;
+
+    if (doc.__portalDarkDomObserver) {
+      doc.__portalDarkDomObserver.disconnect();
+      doc.__portalDarkDomObserver = null;
+    }
+    if (doc.__portalDarkRescanTimers) {
+      doc.__portalDarkRescanTimers.forEach((t) => clearTimeout(t));
+      doc.__portalDarkRescanTimers = null;
+    }
+
+    if (!isDark) {
+      doc.querySelectorAll('[data-portal-dark-surface],[data-portal-dark-border],[data-portal-dark-text]').forEach((el) => {
+        el.removeAttribute('data-portal-dark-surface');
+        el.removeAttribute('data-portal-dark-border');
+        el.removeAttribute('data-portal-dark-text');
+      });
+      doc.__portalRescanDark = null;
+      return;
+    }
+
+    const SELECTOR = 'header, nav, main, aside, section, article, div, ul, ol, li, p, h1, h2, h3, h4, h5, span, strong, small, button, label, a, table, thead, tbody, tr, th, td, input, select, textarea';
+    const scanSubtree = (root) => {
+      if (!root || root.nodeType !== 1) return;
+      adaptElementDark(root, win);
+      root.querySelectorAll(SELECTOR).forEach((el) => adaptElementDark(el, win));
+    };
+
+    const scheduleFullScan = () => {
+      if (doc.__portalFullScanRaf) return;
+      doc.__portalFullScanRaf = win.requestAnimationFrame(() => {
+        doc.__portalFullScanRaf = 0;
+        if (doc.documentElement.classList.contains('portal-dark') && doc.body) {
+          scanSubtree(doc.body);
+        }
+      });
+    };
+    doc.__portalRescanDark = scheduleFullScan;
+
+    // Pindai awal + tunda singkat untuk mengantisipasi kompilasi dinamis Tailwind CDN
+    scanSubtree(doc.body);
+    doc.__portalDarkRescanTimers = [
+      setTimeout(scheduleFullScan, 150),
+      setTimeout(scheduleFullScan, 500)
+    ];
+
+    const pending = new Set();
+    let rafId = 0;
+    const flush = () => {
+      rafId = 0;
+      if (!doc.documentElement.classList.contains('portal-dark')) {
+        pending.clear();
+        return;
+      }
+      const batch = Array.from(pending);
+      pending.clear();
+      batch.forEach((node) => {
+        if (doc.contains(node)) scanSubtree(node);
+      });
+    };
+
+    const obs = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.type === 'childList') {
+          m.addedNodes.forEach((n) => { if (n.nodeType === 1) pending.add(n); });
+        } else if (m.type === 'attributes' && m.target && m.target.nodeType === 1) {
+          pending.add(m.target);
+        }
+      }
+      if (pending.size && !rafId) rafId = win.requestAnimationFrame(flush);
+    });
+
+    obs.observe(doc.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
+    doc.__portalDarkDomObserver = obs;
   }
 
   function syncExamFrameTheme(isDark) {
@@ -626,6 +846,9 @@
             if (el && doc.head.lastElementChild !== el) {
               doc.head.appendChild(el);
             }
+            if (typeof doc.__portalRescanDark === 'function') {
+              doc.__portalRescanDark();
+            }
           });
           doc.__portalThemeObserver.observe(doc.head, { childList: true });
         }
@@ -633,6 +856,7 @@
         doc.documentElement.classList.toggle('portal-dark', isDark);
         doc.documentElement.classList.toggle('dark', isDark);
         doc.documentElement.classList.toggle('portal-light', !isDark);
+        runDarkSurfaceAdapter(doc, isDark);
       } catch (e) {}
     });
   }
