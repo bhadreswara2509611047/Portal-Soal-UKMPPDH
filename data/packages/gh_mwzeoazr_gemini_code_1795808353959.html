@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi CBT UKMPPDH Batch 8 (100 Soal)</title>
+<style>
+  :root {
+    --primary: #1d4ed8;
+    --primary-dark: #1e40af;
+    --primary-light: #eff6ff;
+    --success: #15803d;
+    --success-bg: #dcfce7;
+    --danger: #b91c1c;
+    --danger-bg: #fee2e2;
+    --warn: #b45309;
+    --warn-bg: #fef3c7;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .hidden { display: none !important; }
+  /* Header */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    box-shadow: 0 2px 6px rgba(15,23,42,.05);
+  }
+  .brand { font-weight: 700; font-size: 1.05rem; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; }
+  .badge-mode { font-size: .75rem; padding: 3px 10px; border-radius: 999px; background: var(--primary-light); color: var(--primary); font-weight: 600; }
+  .header-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .timer {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700; font-size: 1rem;
+    padding: 6px 14px; border-radius: 8px;
+    background: #0f172a; color: #fff;
+  }
+  .timer.warning { background: var(--danger); animation: pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity: .75; } }
+  /* Buttons */
+  button {
+    cursor: pointer; border: none; border-radius: 8px;
+    font-weight: 600; font-size: .92rem; padding: 10px 16px;
+    transition: all .15s ease;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-outline { background: #fff; color: var(--text); border: 1px solid var(--border); }
+  .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+  .btn-warn { background: var(--warn-bg); color: var(--warn); border: 1px solid #fcd34d; }
+  .btn-warn.active { background: #f59e0b; color: #fff; border-color: #d97706; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #991b1b; }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #166534; }
+
+  /* Start Screen */
+  .start-wrap {
+    max-width: 720px; margin: 48px auto; padding: 0 16px;
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px;
+    box-shadow: 0 4px 16px rgba(15,23,42,.05);
+  }
+  .start-title { font-size: 1.65rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 6px; }
+  .start-sub { color: var(--muted); margin-bottom: 22px; }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px; margin-bottom: 22px;
+  }
+  .info-box {
+    background: #f8fafc; border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; text-align: center;
+  }
+  .info-box .val { font-size: 1.35rem; font-weight: 800; color: var(--primary); }
+  .info-box .lbl { font-size: .8rem; color: var(--muted); }
+  .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  @media (max-width: 600px) { .mode-grid { grid-template-columns: 1fr; } }
+  .mode-card {
+    border: 2px solid var(--border); border-radius: 12px; padding: 16px;
+    cursor: pointer; transition: .15s; background: #fff; text-align: left;
+  }
+  .mode-card.selected { border-color: var(--primary); background: var(--primary-light); }
+  .mode-card h3 { font-size: 1rem; margin-bottom: 4px; color: var(--text); }
+  .mode-card p { font-size: .83rem; color: var(--muted); font-weight: 400; }
+  .opt-check { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: .92rem; color: var(--text); cursor: pointer; }
+
+  /* Exam Layout */
+  .exam-container {
+    max-width: 1200px; margin: 20px auto; padding: 0 16px 40px;
+    display: grid; grid-template-columns: 1fr 310px; gap: 20px; align-items: start;
+  }
+  @media (max-width: 900px) { .exam-container { grid-template-columns: 1fr; } }
+  .q-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+  .q-number { font-weight: 800; font-size: 1.05rem; color: var(--primary-dark); }
+  .q-status { font-size: .82rem; color: var(--muted); }
+  .q-text { font-size: 1.05rem; margin-bottom: 20px; white-space: pre-line; }
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .option-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 13px 16px; border: 2px solid var(--border); border-radius: 10px;
+    cursor: pointer; background: #fff; transition: .12s;
+  }
+  .option-item:hover { border-color: #93c5fd; background: #f8fafc; }
+  .option-item.selected { border-color: var(--primary); background: var(--primary-light); }
+  .option-item.correct { border-color: var(--success); background: var(--success-bg); }
+  .option-item.wrong { border-color: var(--danger); background: var(--danger-bg); }
+  .opt-key {
+    width: 28px; height: 28px; flex-shrink: 0; border-radius: 50%;
+    background: #e2e8f0; color: var(--text); font-weight: 700; font-size: .88rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .option-item.selected .opt-key { background: var(--primary); color: #fff; }
+  .option-item.correct .opt-key { background: var(--success); color: #fff; }
+  .option-item.wrong .opt-key { background: var(--danger); color: #fff; }
+
+  .exp-box {
+    margin-top: 16px; padding: 16px; border-radius: 10px;
+    background: #f8fafc; border-left: 4px solid var(--primary);
+    font-size: .93rem;
+  }
+  .exp-box h4 { color: var(--primary-dark); margin-bottom: 6px; font-size: .95rem; }
+
+  .nav-actions {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px;
+    margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  /* Sidebar Grid */
+  .sidebar { position: sticky; top: 76px; }
+  .progress-wrap { margin-bottom: 14px; }
+  .progress-bar { height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin-top: 6px; }
+  .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: width .2s; }
+  .num-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    max-height: 410px; overflow-y: auto; padding-right: 4px;
+  }
+  .num-btn {
+    padding: 8px 0; font-size: .82rem; border-radius: 6px;
+    background: #f1f5f9; color: var(--text); border: 1px solid var(--border);
+  }
+  .num-btn.current { outline: 2px solid var(--primary-dark); outline-offset: 1px; font-weight: 800; }
+  .num-btn.answered { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .num-btn.flagged { background: #f59e0b; color: #fff; border-color: #d97706; }
+  .num-btn.rev-correct { background: var(--success); color: #fff; border-color: var(--success); }
+  .num-btn.rev-wrong { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px;
+    font-size: .78rem; color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  /* Result Screen */
+  .result-wrap { max-width: 960px; margin: 28px auto; padding: 0 16px 50px; }
+  .score-hero {
+    text-align: center; padding: 28px 20px; border-radius: 14px;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #fff;
+    margin-bottom: 22px;
+  }
+  .score-big { font-size: 3.4rem; font-weight: 900; line-height: 1.1; }
+  .score-sub { opacity: .9; margin-top: 6px; }
+  .stat-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px; margin-bottom: 22px;
+  }
+  .filter-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; align-items: center; }
+  .filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .review-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px; margin-bottom: 14px;
+  }
+  .review-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .pill { font-size: .78rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; }
+  .pill-ok { background: var(--success-bg); color: var(--success); }
+  .pill-bad { background: var(--danger-bg); color: var(--danger); }
+  .pill-empty { background: #e2e8f0; color: #475569; }
+</style>
+</head>
+<body>
+
+<header id="appHeader" class="hidden">
+  <div class="brand">
+    <span>🩺 Simulasi CBT UKMPPDH Batch 8</span>
+    <span id="modeBadge" class="badge-mode">Mode Ujian</span>
+  </div>
+  <div class="header-controls">
+    <div id="timerDisplay" class="timer">100:00</div>
+    <button class="btn-danger" onclick="confirmFinish()">Selesai &amp; Nilai</button>
+  </div>
+</header>
+
+<!-- START SCREEN -->
+<section id="startScreen" class="start-wrap">
+  <div class="card">
+    <h1 class="start-title">Simulasi CBT UKMPPDH Batch 8</h1>
+    <p class="start-sub">Tryout Interaktif Kedokteran Hewan lengkap dengan kunci jawaban resmi dan pembahasan detail.</p>
+
+    <div class="info-grid">
+      <div class="info-box"><div class="val">100</div><div class="lbl">Jumlah Soal</div></div>
+      <div class="info-box"><div class="val">100 Menit</div><div class="lbl">Waktu Standar</div></div>
+      <div class="info-box"><div class="val">A – E</div><div class="lbl">Pilihan Ganda</div></div>
+      <div class="info-box"><div class="val">Otomatis</div><div class="lbl">Skor &amp; Pembahasan</div></div>
+    </div>
+
+    <div class="mode-grid">
+      <div id="cardExam" class="mode-card selected" onclick="selectMode('exam')">
+        <h3>⏱️ Mode Ujian (Simulasi CBT)</h3>
+        <p>Timer berjalan 100 menit. Skor akhir dan pembahasan lengkap ditampilkan setelah selesai mengerjakan.</p>
+      </div>
+      <div id="cardPractice" class="mode-card" onclick="selectMode('practice')">
+        <h3>📘 Mode Latihan Interaktif</h3>
+        <p>Kunci jawaban dan pembahasan langsung muncul setiap kali Anda memilih jawaban untuk belajar cepat.</p>
+      </div>
+    </div>
+
+    <label class="opt-check">
+      <input type="checkbox" id="shuffleCheck"> Acak urutan soal saat memulai simulasi
+    </label>
+
+    <button class="btn-primary" style="width:100%; padding:14px; font-size:1rem;" onclick="startQuiz()">Mulai Simulasi Sekarang</button>
+  </div>
+</section>
+
+<!-- EXAM SCREEN -->
+<main id="examScreen" class="exam-container hidden">
+  <div class="card">
+    <div class="q-meta">
+      <span id="qLabel" class="q-number">Soal 1 dari 100</span>
+      <span id="qOrigNum" class="q-status"></span>
+    </div>
+    <div id="qText" class="q-text"></div>
+    <div id="optionsContainer" class="options"></div>
+    <div id="instantExp" class="exp-box hidden"></div>
+
+    <div class="nav-actions">
+      <div style="display:flex; gap:8px;">
+        <button class="btn-outline" id="btnPrev" onclick="goStep(-1)">← Sebelumnya</button>
+        <button class="btn-warn" id="btnFlag" onclick="toggleFlag()">🚩 Ragu-ragu</button>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn-outline" onclick="clearAnswer()">Hapus Pilihan</button>
+        <button class="btn-primary" id="btnNext" onclick="goStep(1)">Selanjutnya →</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="card sidebar">
+    <div class="progress-wrap">
+      <div style="display:flex; justify-content:space-between; font-size:.85rem; font-weight:600;">
+        <span>Progres Pengerjaan</span>
+        <span id="progressText">0 / 100</span>
+      </div>
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+    </div>
+    <div id="numGrid" class="num-grid"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--primary)"></i> Dijawab</span>
+      <span><i class="dot" style="background:#f59e0b"></i> Ragu-ragu</span>
+      <span><i class="dot" style="background:#e2e8f0"></i> Belum</span>
+    </div>
+  </aside>
+</main>
+
+<!-- RESULT SCREEN -->
+<section id="resultScreen" class="result-wrap hidden">
+  <div class="score-hero">
+    <div style="font-size:.95rem; font-weight:600; opacity:.9;">HASIL SIMULASI CBT UKMPPDH BATCH 8</div>
+    <div id="finalScore" class="score-big">0</div>
+    <div id="scoreNote" class="score-sub"></div>
+  </div>
+
+  <div class="stat-row">
+    <div class="info-box"><div id="statCorrect" class="val" style="color:var(--success)">0</div><div class="lbl">Benar</div></div>
+    <div class="info-box"><div id="statWrong" class="val" style="color:var(--danger)">0</div><div class="lbl">Salah</div></div>
+    <div class="info-box"><div id="statEmpty" class="val" style="color:var(--muted)">0</div><div class="lbl">Tidak Dijawab</div></div>
+    <div class="info-box"><div id="statTime" class="val" style="color:var(--primary)">00:00</div><div class="lbl">Waktu Terpakai</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="btn-outline filter-btn active" onclick="renderReview('all', this)">Semua (100)</button>
+    <button class="btn-outline filter-btn" onclick="renderReview('wrong', this)">Salah</button>
+    <button class="btn-outline filter-btn" onclick="renderReview('correct', this)">Benar</button>
+    <button class="btn-outline filter-btn" onclick="renderReview('empty', this)">Kosong</button>
+    <div style="flex:1"></div>
+    <button class="btn-primary" onclick="restartQuiz()">🔄 Ulangi Simulasi</button>
+  </div>
+
+  <div id="reviewContainer"></div>
+</section>
+
+<script>
+const QUESTIONS = [
+  {id:1, q:"Terdapat tiga jenis kista ovarium pada hewan, yaitu kista luteal, kista korpora luteal, dan kista folikel. Kista luteal menyebabkan anestrus, kista korpora luteal masih memungkinkan terjadinya estrus, sedangkan kista folikel menyebabkan nimfomania. Pengobatan yang tepat untuk kondisi tersebut adalah…", o:{a:"LH", b:"FSH", c:"PGF2α", d:"P4", e:"GnRH"}, ans:"a", exp:"Kista folikuler (dinding tipis <3 mm) menyebabkan produksi estradiol tinggi dan nimfomania. Kista luteal (dinding ≥3 mm) mensekresikan progesteron berkepanjangan sehingga menyebabkan anestrus. Kista korpora luteal umumnya tidak mengganggu siklus reproduksi normal. Pemberian hormon LH akan memicu ovulasi atau luteinisasi folikel berkista sehingga membantu mengembalikan siklus estrus."},
+  {id:2, q:"Kista folikuler pada sapi terjadi akibat gangguan hormonal yang menyebabkan folikel tidak mengalami ovulasi. Kondisi ini umumnya disebabkan oleh defisiensi…", o:{a:"FSH", b:"LH Berat", c:"LH Ringan", d:"Progesteron", e:"Estrogen"}, ans:"b", exp:"Kista folikel terjadi akibat gangguan mekanisme hormonal pada sumbu hipotalamus–hipofisis–ovarium berupa kegagalan pelepasan/lonjakan hormon LH yang cukup (defisiensi LH berat) untuk memicu ovulasi. Folikel tetap bertahan di ovarium, berkembang menjadi kista folikel, dan menghasilkan estrogen tinggi sehingga memicu birahi berulang/berkepanjangan (nymphomania)."},
+  {id:3, q:"Anjing mengalami lesu, membran mukosa pucat, kerusakan hati dan ginjal sehingga dokter hewan menduga anjing tersebut mengalami IMHA. Pemeriksaan untuk kasus immune mediated haemolytic anemia (IMHA) adalah…", o:{a:"Coomb's test", b:"Pemeriksaan parasit darah", c:"Pemeriksaan hati dan ginjal", d:"Kimia darah, kadar globulin dan PTT", e:"Rapid test"}, ans:"a", exp:"Immune Mediated Hemolytic Anemia (IMHA) terjadi ketika sistem kekebalan tubuh menyerang dan menghancurkan eritrosit sendiri. Pemeriksaan utama untuk mendeteksi IMHA adalah Coombs test guna mengidentifikasi antibodi (IgG atau IgM) yang menempel/menyerang eritrosit."},
+  {id:4, q:"Pruritus anjing krusta dan tidak berkrusta pada kaki anjing, penyebab paling lemah adalah…", o:{a:"Pelodera dermatitis", b:"Hookworm dermatitis", c:"Defisiensi biotin", d:"Contact allergy", e:"Irritant contact allergy"}, ans:"c", exp:"Biotin (vitamin B7) berfungsi menjaga kesehatan rambut, merangsang pertumbuhan rambut, dan keratinisasi folikel rambut. Defisiensi biotin lebih berkaitan dengan gangguan kualitas kulit/rambut umum seperti alopesia, kulit kering/bersisik, rambut kusam, dan dermatitis umum, sehingga menjadi penyebab paling lemah dibanding penyebab spesifik pruritus krusta pada kaki."},
+  {id:5, q:"Bertambahnya umur sapi menurunkan tingkat metabolisme. Kapasitas penyerapan kalsium menurun, cadangan kalsium berkurang mengakibatkan sapi tua hipokalsemia. Gangguan metabolik kalsium terjadi pada sapi setelah melahirkan dan ditandai dengan sapi berbaring, kepala menunduk disebut…", o:{a:"Ketosis", b:"Acidosis", c:"Milk fever", d:"Paralisa post partum", e:"Paraplegia post partum"}, ans:"c", exp:"Milk fever merupakan gangguan metabolik akibat hipokalsemia menjelang atau setelah partus karena lonjakan kebutuhan kalsium untuk kolostrum/susu melebihi mobilisasi tulang dan absorpsi usus. Gejalanya meliputi kelemahan otot, ambruk, hingga posisi kepala melipat ke arah tubuh. Penanganan utama adalah kalsium boroglukonat IV perlahan dengan pemantauan jantung."},
+  {id:6, q:"Seekor kucing liar berjenis kelamin jantan mengalami gingivostomatitis kronis, rhinitis kronis, limfadenopati, penurunan berat badan. Diketahui kucing tersebut sering terlihat berkelahi dengan kucing liar lainnya, memiliki banyak bekas luka gigitan di tubuhnya. Apakah penyebab dari kasus penyakit kucing tersebut…", o:{a:"Feline immunodeficiency virus by lentivirus", b:"Feline infectious peritonitis by coronavirus", c:"Rhinotracheitis by coronavirus", d:"Feline herpes virus by herpes virus", e:"Feline calicivirus by calicivirus"}, ans:"a", exp:"Feline Immunodeficiency Virus (FIV) disebabkan oleh lentivirus yang menyerang limfosit T CD4+ sehingga memicu imunosupresi. Penularan utama melalui luka gigitan saat perkelahian antarkucing, menimbulkan gingivostomatitis kronis, rhinitis, limfadenopati, demam berulang, penurunan BB, dan infeksi sekunder."},
+  {id:7, q:"Penyebab hipotiroidisme primer pada anjing adalah…", o:{a:"Destruksi kelenjar tiroid", b:"Hypoplasia pituitary", c:"Apoptosis tiroid", d:"Traumatik", e:"Malformasi kongenital pituitari"}, ans:"a", exp:"Lebih dari 95% kasus hipotiroidisme pada anjing merupakan tipe primer yang disebabkan oleh destruksi (kerusakan) kelenjar tiroid, mengakibatkan hewan mudah lelah, berat badan meningkat, kulit kering dan kasar, serta alopesia pada batang tubuh ventral/lateral, leher ventral, paha, dan ekor."},
+  {id:8, q:"Hewan yang sakit butuh diet protein tinggi sebagai sumber asam amino untuk memperbaiki sel rusak, membuat sel baru, mengganti protein darah yang sudah rusak, mengganti nitrogen yang terbuang melalui feses, urine, keringat, dan rambut. Kebutuhan protein ini seringkali ditemukan pada pasien kanker, pasca operasi, dan trauma akibat terbakar. Hal ini disebabkan karena pasien pada fase…", o:{a:"Hypermetabolic state", b:"Hypometabolic state", c:"Maintenance state", d:"Pathological state", e:"Natural state"}, ans:"a", exp:"Hypermetabolic state adalah kondisi meningkatnya laju metabolisme tubuh akibat respons stres dan inflamasi (kanker, pasca operasi, trauma berat, luka bakar). Peningkatan katabolisme protein mengharuskan asupan protein tinggi untuk perbaikan jaringan, pembentukan sel baru, sintesis protein imun, dan penyembuhan luka."},
+  {id:9, q:"Lesi pada usus ayam dengan temuan terlihat dari permukaan serosa seperti titik-titik putih dan gelap yang biasanya memiliki tampilan seperti \"garam dan merica\". Ayam tersebut terinfestasi Eimeria sp. Apakah jenis Eimeria yang menginfeksi dan berpredileksi di mana…", o:{a:"E. necatrix pada jejunum, ileum, dan sekum", b:"E. immitis pada ileum, sekum", c:"E. tenella pada sekum, duodenum", d:"E. maxima pada jejunum, rektum", e:"E. brunetti pada sekum dan rektum"}, ans:"a", exp:"Berdasarkan tabel karakteristik diferensial koksidia unggas (Long & Reid), Eimeria necatrix berpredileksi di usus halus bagian tengah (jejunum, ileum) serta sekum, dengan lesi makroskopis khas tampak dari serosa seperti bintik putih dan gelap/perdarahan (tampilan 'garam dan merica' / salt and pepper) disertai dinding usus menebal."},
+  {id:10, q:"Penyebab rhinitis pada anjing adalah…", o:{a:"Staphylococcus sp.", b:"Toxocara sp.", c:"Rhipicephalus sp.", d:"Echinococcus sp.", e:"Aspergillus sp."}, ans:"e", exp:"Rhinitis adalah peradangan selaput lendir hidung. Pada anjing, rhinitis kronis paling umum disebabkan oleh infeksi jamur Aspergillus sp. (terutama Aspergillus fumigatus)."},
+  {id:11, q:"Penggunaan obat golongan fenotiazin bersifat kontraindikasi pada hewan yang menderita…", o:{a:"Hipertiroidisme", b:"Hipertensi", c:"Hypoadrenocorticism", d:"Diabetes", e:"Dehidrasi"}, ans:"e", exp:"Obat golongan fenotiazin (seperti acepromazine) bekerja sebagai antagonis reseptor alfa-1 adrenergik yang memicu vasodilatasi perifer dan menurunkan tekanan darah. Pada hewan dehidrasi/hipovolemia, pemberian fenotiazin memperburuk hipotensi dan meningkatkan risiko kolaps kardiovaskular."},
+  {id:12, q:"Penyebab infeksi black leg atau radang paha adalah…", o:{a:"Clostridium tetani", b:"Clostridium botulinum", c:"Clostridium chauvoei", d:"Clostridium perfringens", e:"Clostridium difficile"}, ans:"c", exp:"Blackleg (radang paha) pada sapi disebabkan bakteri Clostridium chauvoei. Spora menyebar ke otot, berkecambah dan menghasilkan toksin serta gas, ditandai pembengkakan otot paha/bahu, krepitasi saat palpasi, demam, pincang, dan kematian mendadak."},
+  {id:13, q:"Gejala klinis dan temuan pemeriksaan laboratorium berikut dapat diamati pada kasus gagal ginjal kronis, kecuali…", o:{a:"Anemia non regeneratif", b:"Poliuria", c:"Anuria-oliguria", d:"Melena", e:"Hiperkalsemia-hipofosfatemia"}, ans:"e", exp:"Chronic Kidney Disease (CKD) justru menyebabkan hiperfosfatemia (ekskresi fosfat menurun) dan hipokalsemia (penurunan kalsitriol), bukan hiperkalsemia-hipofosfatemia. Temuan lain yang sesuai CKD adalah anemia non-regeneratif (penurunan eritropoetin), poliuria berlanjut oliguria/anuria, serta melena akibat gastritis/ulserasi uremik."},
+  {id:14, q:"Penulisan resep dalam aturan peracikan obat untuk diberikan setengah jumlah sediaan obat adalah…", o:{a:"d.i.d", b:"d.t.d", c:"d.c.f", d:"q.s", e:"ad libit."}, ans:"a", exp:"d.i.d (da in dimidio) = berikan setengahnya; d.t.d (da tales doses) = berikan sekian takaran; d.c.f (da cum formula) = berikan dengan resepnya; q.s (quantum satis) = secukupnya; ad libit. (ad libitum) = secukupnya/sesukanya."},
+  {id:15, q:"Siklus transmisi pada African Swine Fever (ASF) memiliki beberapa jenis, salah satunya adalah siklus silvatik ASF. Berikut yang merupakan pernyataan yang benar tentang siklus silvatik ASF adalah…", o:{a:"Siklus yang melibatkan caplak dengan babi domestik", b:"Siklus yang melibatkan caplak dengan babi hutan/liar", c:"Siklus yang melibatkan produk babi dengan babi domestik", d:"Siklus yang melibatkan caplak dengan produk babi", e:"Siklus yang melibatkan penularan dari daging babi domestik ke babi liar"}, ans:"b", exp:"ASF memiliki 3 siklus transmisi utama: (1) Siklus silvatik (hutan) antara babi liar/hutan dengan caplak lunak genus Ornithodoros; (2) Siklus tick-pig antara Ornithodoros dan babi domestik; (3) Siklus domestik (babi-ke-babi) melalui kontak langsung atau produk daging babi terkontaminasi."},
+  {id:16, q:"Pada kuda, sindrom penyakit yang bersifat non infeksius serta sangat mematikan dengan menakur-nakur, memojok, napas terengah-engah, dan tidak mau memakan pelet, serta terjadi penurunan peristaltik usus adalah…", o:{a:"Brucellosis", b:"Equine influenza", c:"Kolik", d:"Strongylosis", e:"Urolithiasis"}, ans:"c", exp:"Kolik adalah sindrom nyeri abdomen hebat pada kuda akibat gangguan saluran pencernaan (akumulasi gas, impaksi, spasme, pergeseran, torsio/volvulus). Gejalanya meliputi gelisah, menggaruk tanah, melihat/menggigit perut, berkeringat, berguling-guling, peningkatan HR/RR, anoreksia, dan penurunan peristaltik."},
+  {id:17, q:"Obat yang digunakan pada penanganan atopic dermatitis adalah, kecuali…", o:{a:"Doxepin", b:"Doxycycline", c:"Antihistamin", d:"Tacrolimus", e:"Cyclosporin"}, ans:"b", exp:"Atopic dermatitis merupakan penyakit kulit inflamasi kronis akibat hipersensitivitas alergen lingkungan. Terapi difokuskan pada pengendalian inflamasi, pruritus, skin barrier, dan imunosupresi (antihistamin, doxepin, tacrolimus, cyclosporin). Antibiotik seperti doxycycline tidak digunakan kecuali ada infeksi sekunder bakteri."},
+  {id:18, q:"Seorang dokter hewan perlu memesan 200 spuit disposible untuk keperluan stok rumah sakit, singkatan latin apa yang perlu ditambah setelah S dan Pro…", o:{a:"s.u.c Pro: Pasien", b:"s.m.i Pro: UP", c:"p.i.m. Pro: Pasien", d:"s.d.c.f. Pro: UP", e:"s.a.n Pro: Pasien"}, ans:"b", exp:"s.m.i (signa mihi ipsi) berarti 'untuk saya sendiri', sedangkan Pro: UP (usum proprius) berarti 'untuk pemakaian sendiri' (stok dokter/klinik)."},
+  {id:19, q:"Seekor anjing ras Golden Retriever berusia 8 tahun dibawa ke klinik dengan keluhan kehilangan penglihatan secara bertahap pada satu mata, mata tampak membesar (exophthalmos), dan sering menggaruk area matanya. Pemeriksaan fisik menunjukkan adanya tekanan intraokular yang meningkat pada mata yang terpengaruh. Apakah kemungkinan diagnosa yang paling tepat untuk kondisi ini…", o:{a:"Konjungtivitis kronis", b:"Katarak", c:"Glaukoma", d:"Uveitis", e:"Retinal detachment"}, ans:"c", exp:"Glaukoma adalah gangguan mata akibat peningkatan tekanan intraokular (normal anjing sekitar 10–25 mmHg), menyebabkan penonjolan/pembesaran bola mata (exophthalmos/buphthalmos), kongesti pembuluh sklera, edema kornea, kerusakan nervus optikus, hingga kebutaan."},
+  {id:20, q:"Daur hidup virus yang ikut bereplikasi dengan inang tanpa merusak sel inang itu sendiri disebut…", o:{a:"Litik", b:"Lisogenik", c:"Langsung", d:"Tidak langsung", e:"Bimorfik"}, ans:"b", exp:"Pada siklus lisogenik, materi genetik virus (profag) berintegrasi ke dalam kromosom sel inang dan ikut tergandakan saat sel inang membelah secara normal tanpa melisiskan/merusak sel inang. Sebaliknya, siklus litik diakhiri dengan lisis (pecahnya) sel inang."},
+  {id:21, q:"Obat yang tergolong obat keras terbatas adalah…", o:{a:"Paracetamol", b:"Ketoconazole", c:"Diazepam", d:"Vitamin D", e:"Suplemen"}, ans:"c", exp:"Sesuai kunci jawaban pada modul: Paracetamol, Vitamin D, dan Suplemen merupakan obat bebas; Ketoconazole merupakan obat bebas terbatas; sedangkan Diazepam tergolong obat keras (psikotropika) yang penggunaannya diawasi ketat."},
+  {id:22, q:"Kelainan pada sistem kardiovaskular yang menimbulkan suara murmur kontinu adalah…", o:{a:"Stenosis katup mitral", b:"Stenosis katup semilunaris pulmoner", c:"Defek septum ventrikel", d:"Insufisiensi katup mitral", e:"Duktus arteriosus paten"}, ans:"e", exp:"Murmur kontinu (terdengar terus-menerus pada fase sistolik maupun diastolik) khas pada Patent Ductus Arteriosus (PDA), yaitu kegagalan penutupan duktus arteriosus pasca lahir sehingga darah mengalir kontinu dari aorta bertekanan tinggi ke arteri pulmonalis."},
+  {id:23, q:"Cacing dengan ciri siklus homogenik dan heterogenik adalah…", o:{a:"Toxocara", b:"Dipylidium", c:"Strongyloides", d:"Hymenolepis", e:"Ascaris"}, ans:"c", exp:"Strongyloides sp. (misalnya S. stercoralis) memiliki siklus hidup unik berupa siklus homogenik/langsung (parasitik di inang definitif dan autoinfeksi) serta siklus heterogenik/tidak langsung (berkembang menjadi cacing dewasa jantan dan betina hidup bebas / free-living di lingkungan)."},
+  {id:24, q:"Seorang dokter hewan mendapatkan pasien anjing German Shepherd jantan berusia 8 tahun dengan keluhan lemas, anoreksia, mukosa pucat, dan distensi abdomen. Hasil USG abdomen menunjukkan adanya massa di limpa dengan tanda hemoperitoneum. Hematologi menunjukkan anemia non-regeneratif dan trombositopenia. Dokter memutuskan untuk melakukan splenektomi. Apa indikasi paling tepat dilakukannya splenektomi pada kasus ini…", o:{a:"Trauma limpa dengan perdarahan internal", b:"Torsio limpa tanpa hemoperitoneum", c:"Neoplasia limpa disertai hemoperitoneum", d:"Splenomegali reaktif tanpa kelainan klinis", e:"Infeksi parasit darah ringan"}, ans:"c", exp:"Massa pada limpa anjing tua (sering hemangiosarkoma) sangat rentan ruptur dan menimbulkan perdarahan ke rongga abdomen (hemoperitoneum) yang berujung anemia berat hingga syok. Splenektomi diindikasikan untuk menghentikan perdarahan dan mengangkat massa neoplastik."},
+  {id:25, q:"Seekor anjing mix pug berumur 3 tahun, berat 4,1 kg dan berjenis kelamin betina diperiksa di RSHP FKH Universitas Udayana dengan keluhan adanya penonjolan pada abdomen atau lebih tepatnya pada cranial pubis. Pemeriksaan fisik menunjukkan bahwa penonjolan tersebut berbentuk kantong dan ada isinya. Hasil USG menunjukkan isi dari kantong tersebut adalah usus. Berdasarkan hasil pemeriksaan tersebut anjing didiagnosa mengalami…", o:{a:"Hernia abdominalis", b:"Hernia scrotalis", c:"Hernia inguinalis", d:"Semua jawaban salah", e:"Semua jawaban benar"}, ans:"c", exp:"Hernia inguinalis adalah keluarnya organ abdomen (seperti usus) melalui kanalis inguinalis yang terletak di daerah lipatan paha atau dekat cranial pubis."},
+  {id:26, q:"Berikut penyakit yang ditularkan melalui tikus adalah, kecuali…", o:{a:"Salmonella", b:"Hymenolepis diminuta", c:"Strongylus", d:"Hantavirus", e:"West Nile virus"}, ans:"e", exp:"West Nile virus (genus Flavivirus) ditularkan oleh vektor nyamuk Culex dengan burung sebagai hospes reservoir, bukan melalui tikus. Manusia dan kuda bertindak sebagai dead-end host."},
+  {id:27, q:"Seorang dokter hewan menangani pasien anjing ras kecil dengan keluhan sering mengangkat salah satu tungkai belakang secara tiba-tiba saat berjalan, lalu berjalan normal kembali. Pemeriksaan ortopedi menunjukkan patella mudah tergeser ke medial, dan terdapat tanda nyeri saat manipulasi sendi lutut. Diagnosa medial patellar luxation (MPL) grade III ditegakkan. Teknik bedah manakah yang paling tepat untuk mengoreksi jalur patella…", o:{a:"Tibial tuberosity transposition", b:"Femoral head ostectomy", c:"Triple pelvic osteotomy", d:"Total hip replacement", e:"Arthrodesis sendi lutut"}, ans:"a", exp:"Tibial Tuberosity Transposition (TTT) merupakan prosedur ortopedi paling efektif untuk mengoreksi kesejajaran jalur patella dengan memindahkan dan menstabilkan tuberositas tibia ke posisi lebih lateral sehingga patella tetap berada di alur troklea."},
+  {id:28, q:"Seekor anak anjing Golden Retriever berusia 3 bulan mengalami depresi dan anoreksia. Suhu 40,1°C. Bagian wajah, telinga dan moncongnya bengkak, nyeri saat disentuh, tampak vesikula serta pustula. Terdapat limfadenopati umum. Lesi nodular muncul 3 hari setelah vaksinasi. Hematologi menunjukkan leukositosis dan neutrofilia. Sitologi pustula menunjukkan neutrofil degeneratif tanpa bakteri. Kerokan kulit negatif Demodex sp. Apakah kasus penyakit tersebut…", o:{a:"Atopic dermatitis", b:"Impetigo", c:"Adverse drug reaction", d:"Juvenile cellulitis", e:"Juvenile demodicosis"}, ans:"d", exp:"Juvenile cellulitis (puppy strangles) adalah penyakit inflamasi granulomatosa dan piogranulomatosa steril pada kulit/subkutan anak anjing, ditandai pembengkakan wajah, moncong, bibir, dan telinga disertai papula, pustula steril (tanpa bakteri), vesikula, lesi nodular, dan limfadenopati."},
+  {id:29, q:"Bakteri yang tumbuh pada suhu >45°C termasuk dalam kelompok…", o:{a:"Psikrotrof", b:"Psikrofil", c:"Termofil", d:"Hipertermofil", e:"Mesofil"}, ans:"c", exp:"Berdasarkan penggolongan suhu pertumbuhan bakteri (Waluyo 2007): Psikrofil (-15°C s.d. 20°C), Psikrotrof (-1°C s.d. 35°C), Mesofil (5–40°C, opt 30–37°C), dan Termofil (min 40°C, optimum 45–55°C, maksimum 60–80°C)."},
+  {id:30, q:"Seorang dokter hewan mendapatkan pasien anjing dengan keluhan bola mata kanan tampak menonjol, terdapat discharge purulen, dan nyeri saat bola mata disentuh. Pemeriksaan menunjukkan trauma parah pada mata dengan ruptur kornea dan prolaps iris. Dokter memutuskan melakukan enukleasi bola mata. Apa indikasi paling tepat dilakukannya enukleasi bola mata pada kasus ini…", o:{a:"Glaukoma ringan yang responsif terhadap obat", b:"Prolaps glandula nictitans (cherry eye)", c:"Ulkus kornea superfisial tanpa infeksi", d:"Trauma bola mata berat dengan ruptur dan infeksi sekunder", e:"Epifora ringan tanpa kelainan struktur"}, ans:"d", exp:"Trauma bola mata berat disertai ruptur kornea, prolaps iris, dan infeksi sekunder membuat fungsi penglihatan tidak dapat dipulihkan serta berisiko menjadi sumber infeksi bagi organ sekitar sehingga enukleasi merupakan indikasi yang tepat."},
+  {id:31, q:"Seorang peternak melaporkan ikan-ikannya mengalami luka borok, lemas, dan beberapa mati mendadak. Hasil pemeriksaan menunjukkan adanya infeksi bakteri pada otot. Furunkulosis pada ikan kemungkinan besar disebabkan oleh bakteri…", o:{a:"Aeromonas salmonicida", b:"Salmonella", c:"Staphylococcus", d:"Pseudomonas", e:"Vibrio anguillarum"}, ans:"a", exp:"Furunkulosis pada ikan (khususnya salmonid) disebabkan infeksi Aeromonas salmonicida yang memicu lesi kulit, perdarahan, ulserasi, pembentukan furunkel/abses di bawah kulit/otot, serta kerusakan organ internal."},
+  {id:32, q:"Seorang dokter hewan menangani seekor anak anjing berusia 4 bulan dengan keluhan adanya benjolan berwarna merah menonjol keluar dari anus setelah mengejan berulang kali. Jaringan rektum masih berwarna merah muda, lembab, dan belum nekrosis. Reposisi manual telah dilakukan namun prolaps kembali terjadi. Teknik bedah apa yang paling tepat dilakukan pada kasus prolapsus rektum berulang ini…", o:{a:"Rektum manual reposisi dan colopexy", b:"Resection and anastomosis segmen rektum", c:"Purse-string suture di sekitar anus", d:"Perineal urethrostomy", e:"Enukleasi glandula anal"}, ans:"a", exp:"Prolapsus rektum yang masih viabel (merah muda, belum nekrosis) awalnya ditangani dengan reposisi manual dan jahitan purse-string. Apabila kambuh/berulang, tindakan bedah yang disarankan adalah reposisi manual disertai colopexy (fiksasi kolon ke dinding abdomen)."},
+  {id:33, q:"Seekor kucing betina berumur 5 tahun diperiksa dengan keluhan demam, nafsu makan menurun, perut membesar, leleran purulen dari vagina, hematologi leukositosis (29.150 sel/ml) dan neutrofilia, USG menunjukkan penebalan dinding uterus berisi cairan yang mengerucut pada pyometra. Penanganan terbaik pada kasus kucing tersebut adalah…", o:{a:"Injeksi antibiotik spektrum luas", b:"Terapi hormon PGF2-alpha", c:"Ovariohisterektomi", d:"Flushing uterus dengan antiseptik", e:"Histerektomi"}, ans:"c", exp:"Pyometra adalah akumulasi eksudat purulen di dalam lumen uterus akibat infeksi bakteri. Gold standard penanganan pyometra adalah tindakan steril berupa ovariohisterektomi (OHE) untuk mengangkat uterus terinfeksi sekaligus ovarium."},
+  {id:34, q:"Seekor anjing Dalmatian jantan berumur 5 tahun mengalami disuria, polakiuria, dan hematuria. Urinalisis menunjukkan pH urin asam dan terdapat darah. USG menunjukkan gambaran hiperechoic pada vesika urinaria, tetapi radiologi tidak tampak massa radiopaque. Diagnosis yang tepat adalah…", o:{a:"Urolith urate", b:"Urolith kalsium oksalat", c:"Urolith kalsium fosfat", d:"Urolith silikat", e:"Urolith struvite"}, ans:"a", exp:"Anjing Dalmatian memiliki predisposisi genetik gangguan metabolisme purin (asam urat gagal diubah menjadi allantoin), sehingga mudah membentuk urolith urate pada urin asam. Batu urate bersifat radiolucent pada X-ray tetapi tampak hiperechoic pada USG."},
+  {id:35, q:"Ikan yang stres dapat lebih mudah terinfeksi penyakit parasit. Gejala klinis pada ikan yang terinfeksi Anisakis sp. umumnya dapat diamati pada organ…", o:{a:"Otot", b:"Kulit", c:"Sisik", d:"Insang", e:"Ekor"}, ans:"a", exp:"Berdasarkan siklus hidup Anisakis sp. (CDC), ikan bertindak sebagai inang paratenik; larva L3 yang terlepas saat pencernaan bermigrasi menembus dinding saluran cerna menuju mesenterium dan jaringan otot ikan."},
+  {id:36, q:"Seorang dokter hewan menangani anjing ras kecil yang mengalami gingivitis berat, gigi goyah, halitosis, dan periodontitis stadium lanjut pada premolar mandibula sehingga perlu dilakukan dental extraction. Alat utama apa yang paling tepat digunakan untuk melepaskan ligamentum periodontal sebelum mencabut gigi…", o:{a:"Scaler", b:"Elevator gigi", c:"Ultrasonic cleaner", d:"Periodontal probe", e:"Mouth gag"}, ans:"b", exp:"Elevator gigi berfungsi melepaskan ligamentum periodontal yang menempel pada gigi sebelum ekstraksi. Scaler membersihkan plak/kalkulus; ultrasonic cleaner membersihkan sisa jaringan/plak; periodontal probe mengukur kedalaman sulkus; mouth gag menahan mulut tetap terbuka."},
+  {id:37, q:"Mikroskop medan gelap (dark field) dapat digunakan untuk mendeteksi bakteri spirochaeta. Dalam dunia veteriner, mikroskop ini lebih sering digunakan untuk mendeteksi spirochaeta penyebab zoonosis pada hewan, yaitu…", o:{a:"Escherichia coli", b:"Campylobacter jejuni", c:"Leptospira", d:"Yersinia enterocolitica", e:"Salmonella enterica"}, ans:"c", exp:"Leptospirosis adalah penyakit zoonosis akibat bakteri spirochaeta genus Leptospira (reservoir utama tikus). Metode pemeriksaan urin menggunakan mikroskop medan gelap (dark field urine examination) merupakan standar deteksi Leptospira spp."},
+  {id:38, q:"Pada mekanisme penggunaan sinar-X, X-ray memerlukan energi dari sinar-X untuk menghasilkan gambaran yang baik untuk diinterpretasikan. Satuan energi kinetik dari sinar-X adalah…", o:{a:"Ve", b:"V", c:"kV", d:"VJ", e:"keV"}, ans:"e", exp:"Satuan energi kinetik sinar-X adalah keV (kiloelectron volt), di mana 1 keV = 1000 eV. Sementara itu, kVp mengatur kontras/penetrasi dan densitas, sedangkan mAs mengatur densitas radiografi."},
+  {id:39, q:"Sebelum tindakan bedah ovariohisterektomi pada anjing betina dewasa, hasil EKG menunjukkan gelombang P normal, interval PR memanjang, dan setiap gelombang P tidak selalu diikuti oleh kompleks QRS. Apa interpretasi EKG yang paling mungkin dan implikasinya terhadap anestesi…", o:{a:"Fibrilasi atrium, risiko tinggi hipotensi selama anestesi", b:"Blok AV derajat kedua (Mobitz Type I), membutuhkan monitoring ketat saat anestesi", c:"Takikardia ventrikel, kontraindikasi untuk melanjutkan operasi tanpa stabilisasi", d:"Sinus bradikardi normal, tidak memerlukan tindakan khusus", e:"Blok AV total, memerlukan pemasangan pacemaker sebelum anestesi"}, ans:"b", exp:"Blok AV derajat kedua tipe Mobitz I (Wenckebach) ditandai oleh pemanjangan interval PR progresif hingga ada gelombang P yang tidak diikuti kompleks QRS (dropped beat). Kondisi ini memerlukan pemantauan ketat selama anestesi."},
+  {id:40, q:"Seorang peternak melaporkan kasus keguguran berulang pada beberapa ekor sapi perah. Pemeriksaan sampel susu menggunakan Milk Ring Test (MRT) menunjukkan hasil positif ditandai terbentuknya cincin biru di permukaan susu. Kemungkinan besar sapi-sapi tersebut menderita…", o:{a:"Q fever", b:"Toxoplasmosis", c:"Leptospirosis", d:"Brucellosis", e:"Vibriosis"}, ans:"d", exp:"Brucellosis (disebabkan bakteri Brucella abortus) menyebabkan abortus trimester akhir, retensi plasenta, metritis, serta orkitis/epididimitis pada pejantan. Uji skrining cepat dapat dilakukan dengan Rose Bengal Test (RBT) pada serum atau Milk Ring Test (MRT) pada susu."},
+  {id:41, q:"Berikut ini merupakan prinsip asepsis pada saat pembedahan adalah…", o:{a:"Semua benda steril hanya boleh bersentuhan dengan sesuatu yang steril lainnya", b:"Semua benda di ruangan operasi sudah disterilisasi menggunakan sinar UV", c:"Hewan telah disterilisasi sebelum operasi", d:"Operator, asisten operator, dan paramedik tidak boleh bersentuhan", e:"Seluruh benda yang digunakan dalam operasi sudah didesinfeksi"}, ans:"a", exp:"Prinsip utama asepsis bedah adalah menjaga sterilitas untuk mencegah infeksi nosokomial: benda steril hanya boleh bersentuhan dengan benda steril lainnya. Jika benda steril menyentuh benda tidak steril, maka langsung dianggap terkontaminasi."},
+  {id:42, q:"Penanganan fraktur dapat menggunakan bahan tambahan untuk menggantikan bagian tulang yang patah. Bahan pengganti yang paling dapat diterima oleh tubuh adalah…", o:{a:"Allograft", b:"Xenograft", c:"Autograf", d:"Demineralized bone", e:"Cortical bone"}, ans:"c", exp:"Autograft (pemindahan jaringan dari tubuh pasien itu sendiri) paling dapat diterima tubuh tanpa reaksi penolakan imun, dibanding allograft (antarindividu satu spesies) atau xenograft (antarspesies berbeda)."},
+  {id:43, q:"Seorang dokter hewan mencurigai adanya infestasi ektoparasit pada seekor anjing yang menunjukkan pruritus hebat, keropeng di telinga dan siku, serta rambut rontok. Untuk memastikan diagnosis scabies akibat Sarcoptes scabiei, metode pemeriksaan yang paling tepat dilakukan adalah…", o:{a:"Biopsi", b:"Scraping", c:"Pemeriksaan feses", d:"Serologi", e:"Pemeriksaan darah"}, ans:"b", exp:"Tungau Sarcoptes scabiei hidup dengan membuat terowongan di lapisan atas epidermis, sehingga pemeriksaan paling tepat untuk menemukannya adalah superficial skin scraping (kerokan kulit) yang diamati di bawah mikroskop."},
+  {id:44, q:"Area anestesi epidural sapi untuk melahirkan dilakukan pada…", o:{a:"Os lumbal 5 – os lumbal 6", b:"Os lumbal 6 – os sacrum 1", c:"Os sacrum 1 – os sacrum 3", d:"Os sacrum 5 – os coccygea 1", e:"Os coccygea 2 – os coccygea 3"}, ans:"d", exp:"Lokasi injeksi anestesi epidural kaudal yang umum pada sapi adalah sacrococcygeal intervertebral space (os sacrum 5 – os coccygea 1) dan intercoccygeal space pertama (os coccygea 1 – os coccygea 2)."},
+  {id:45, q:"Seorang dokter hewan akuatik menemukan ikan nila di kolam pembudidayaan mengalami bercak putih kecil di seluruh permukaan tubuh, disertai perilaku menggosokkan tubuh ke dasar kolam (flashing), penurunan nafsu makan, lemas, hingga mati. Parasit penyebab kondisi tersebut kemungkinan besar adalah…", o:{a:"Ichthyophthirius multifiliis", b:"Lernaea", c:"Ergasilus", d:"Argulus", e:"Campylobacter jejuni"}, ans:"a", exp:"Ichthyophthirius multifiliis adalah protozoa bersilia penyebab penyakit bintik putih (ich / white spot) pada ikan air tawar. Parasit menyerang kulit, sirip, dan insang sehingga menimbulkan iritasi (flashing), mukus berlebih, gangguan pernapasan, hingga kematian."},
+  {id:46, q:"Bedah harus steril, untuk mencegah terjadinya sepsis di jaringan dan cairan tubuh hewan harus dilakukan…", o:{a:"Asepsis", b:"Sterilisasi", c:"Antisepsis", d:"Dekontaminasi", e:"Semua benar"}, ans:"e", exp:"Pencegahan sepsis dalam prosedur pembedahan memerlukan rangkaian menyeluruh: asepsis (mencegah masuknya patogen), sterilisasi (mematikan seluruh mikroorganisme dan spora pada instrumen), antisepsis (aplikasi antiseptik pada jaringan hidup/kulit pasien & tangan operator), serta dekontaminasi area/alat."},
+  {id:47, q:"Seorang dokter hewan mencurigai adanya obstruksi saluran cerna pada seekor anjing dan memilih radiografi kontras. Zat kontras apa yang paling umum digunakan dalam radiografi saluran cerna anjing…", o:{a:"Barium sulfate", b:"Iodine oil-based", c:"Iodine water-soluble", d:"Air-contrast", e:"Gadolinium"}, ans:"a", exp:"Barium sulfate (BaSO4) merupakan zat kontras positif (radiopaque) yang paling umum digunakan untuk pemeriksaan radiografi saluran gastrointestinal. Iodin larut air dipilih apabila dicurigai ada perforasi saluran cerna."},
+  {id:48, q:"Seekor ikan di dalam akuarium menunjukkan gejala menggesek-gesekkan tubuhnya ke dinding, diikuti dengan sirip yang tampak rusak dan terkikis pada tepinya. Warna pada ujung sirip memudar dan terdapat kemerahan. Dari kasus tersebut, ikan mengalami…", o:{a:"Ich", b:"Velvet disease", c:"Fin rot", d:"Dropsy", e:"Skin flukes"}, ans:"c", exp:"Fin rot (busuk sirip) ditandai kerusakan tepi sirip yang terkikis, memudar, kemerahan hingga nekrosis; sering disebabkan infeksi bakteri Aeromonas sp., Pseudomonas spp., dan Flavobacterium columnare."},
+  {id:49, q:"Kucing mengalami prolaps rektum sudah 2 kali dan telah dilakukan reposisi manual serta jahitan purse-string, namun 4 hari kemudian terjadi prolaps kembali. Kondisi rektum bagus dan tidak terjadi nekrosis. Tindakan apa yang dapat dilakukan dokter hewan…", o:{a:"Colopexy", b:"Reposisi lagi", c:"Colectomy", d:"Reseksi (amputasi rektum)", e:"Anal sacculectomy"}, ans:"a", exp:"Jika prolapsus rektum tetap kambuh setelah reposisi manual dan jahitan purse-string sementara jaringan rektum masih sehat (tidak nekrosis), tindakan bedah yang dianjurkan adalah colopexy."},
+  {id:50, q:"Seorang dokter hewan menangani seekor sapi perah yang mengalami distensi abdomen parah di sisi kiri, penurunan nafsu makan, penurunan produksi susu, dan suara timpani saat perkusi abdomen. Prosedur bedah yang paling tepat untuk kasus ini adalah…", o:{a:"Laparotomi flank kiri dan omentopexy", b:"Rumenotomi", c:"Laparotomi flank kanan dan abomasopexy", d:"Caesarean section", e:"Enukleasi"}, ans:"c", exp:"Gejala tersebut khas pada Left Displaced Abomasum (LDA), yaitu bergesernya abomasum ke sisi kiri antara rumen dan dinding abdomen kiri. Penanganan bedahnya dilakukan dengan reposisi dan fiksasi abomasum (abomasopexy)."},
+  {id:51, q:"Tanda utama infeksi Mycobacterium marinum pada ikan adalah…", o:{a:"Pendarahan ekor", b:"Pembengkakan insang", c:"Lesi granulomatosa pada organ dalam", d:"Exophthalmia", e:"Nekrosis pada otot"}, ans:"c", exp:"Infeksi Mycobacterium marinum (fish tuberculosis / piscine tuberculosis) bersifat kronis dan ditandai oleh terbentuknya lesi granulomatosa pada organ dalam seperti ginjal, hati, dan limpa akibat respons imun kronis mengisolasi bakteri."},
+  {id:52, q:"One Health merupakan konsep kolaborasi untuk menanggulangi penyakit zoonosis terhadap…", o:{a:"Ancaman kesehatan manusia dan hewan", b:"Ancaman kesehatan manusia, hewan, dan tumbuhan", c:"Ancaman kesehatan manusia, hewan, dan lingkungan", d:"Ancaman kesehatan manusia", e:"Planet bumi"}, ans:"c", exp:"One Health adalah pendekatan kolaboratif multisektoral (Quadripartite: WHO, FAO, WOAH, UNEP) untuk mengintegrasikan kesehatan manusia, hewan, dan lingkungan dalam menghadapi zoonosis, resistensi antimikroba, dan keamanan pangan."},
+  {id:53, q:"Dalam prosedur bedah ovariohisterektomi pada anjing betina dewasa, dokter hewan memilih benang untuk ligasi pedikel ovarium dan uterus yang memiliki kekuatan tensile cukup lama namun tetap dapat diserap tubuh. Jenis benang apa yang paling tepat…", o:{a:"Silk, non-absorbable, multifilament", b:"Chromic catgut, absorbable, multifilament", c:"Polypropylene, non-absorbable, monofilament", d:"Polydioxanone (PDS), absorbable, monofilament", e:"Nylon, non-absorbable, monofilament"}, ans:"d", exp:"Polydioxanone (PDS) merupakan benang bedah sintetis, absorbable, dan monofilament yang mempertahankan kekuatan tarik dalam waktu lama dengan risiko infeksi/wicking rendah."},
+  {id:54, q:"Pemeriksaan fungsi ginjal anjing menunjukkan peningkatan BUN dan kreatinin tanpa adanya poliuria atau polidipsia. Kemungkinan diagnosis yang paling tepat adalah…", o:{a:"Gagal ginjal akut", b:"Gagal ginjal kronis", c:"Diabetes insipidus", d:"Nefrosis toksik", e:"Glomerulonefritis subklinis"}, ans:"a", exp:"Gagal ginjal akut (Acute Kidney Injury / AKI) ditandai penurunan fungsi ginjal mendadak (hitungan jam–hari) yang memicu peningkatan BUN dan kreatinin (azotemia), umumnya disertai oliguria atau anuria (tanpa poliuria/polidipsia khas CKD)."},
+  {id:55, q:"Pasteurellosis pada kelinci disebabkan oleh Pasteurella multocida. Berikut pernyataan yang benar tentang penyakit ini…", o:{a:"Discharge nasal dapat dilihat pada kaki depan", b:"Infeksi terlokalisir pada saluran pernapasan atas", c:"Infeksi bersifat ringan", d:"Dapat diberikan antibiotik dalam jangka waktu panjang", e:"Akumulasi cairan pada hidung dapat berkembang menjadi wry neck"}, ans:"a", exp:"Pada pasteurellosis kelinci, leleran hidung (nasal discharge) sering terlihat menempel dan mengotori kaki depan karena kebiasaan kelinci mengusap hidungnya dengan kaki depan. (Infeksi juga dapat berkembang ke sepsis/abses dan membutuhkan terapi antibiotik jangka panjang)."},
+  {id:56, q:"Seorang dokter hewan akan melakukan splenektomi pada anjing German Shepherd dengan kondisi anemia akibat ruptur limpa dan hemodinamik tidak stabil. Obat anestesi induksi apa yang paling aman untuk meminimalisir risiko hipotensi…", o:{a:"Propofol", b:"Ketamin + Diazepam", c:"Thiopental", d:"Alfaxalone", e:"Medetomidine"}, ans:"b", exp:"Ketamin menstimulasi sistem saraf simpatis sehingga mempertahankan denyut jantung, kontraktilitas, dan tekanan darah. Kombinasi ketamin + diazepam memberikan induksi anestesi dan relaksasi otot dengan depresi kardiovaskular paling minimal dibanding agen lain yang cenderung menyebabkan vasodilatasi/hipotensi."},
+  {id:57, q:"Seekor anjing Golden Retriever menunjukkan batuk kronis, intoleransi olahraga, dan hasil radiografi menunjukkan pembesaran atrium kiri. Diagnosis paling mungkin adalah…", o:{a:"Bronkitis kronis", b:"Stenosis pulmonal", c:"Degenerative Mitral Valve Disease (DMVD)", d:"Cardiomyopathy dilatasi", e:"Heartworm disease"}, ans:"c", exp:"Degenerative Mitral Valve Disease (DMVD) ditandai penebalan dan degenerasi katup mitral sehingga terjadi regurgitasi darah dari ventrikel kiri ke atrium kiri saat sistol, menyebabkan dilatasi/pembesaran atrium kiri dan batuk kronis."},
+  {id:58, q:"Seekor iguana terdapat obstruksi di vesica urinaria dengan hasil pemeriksaan terdapat bladder stone. Adapun tindakan yang dapat dilakukan dokter hewan adalah…", o:{a:"Cystotomy", b:"Cystectomy", c:"Gastrotomy", d:"Enterotomy", e:"Gastropexy"}, ans:"a", exp:"Cystotomy adalah prosedur bedah membuka lumen vesika urinaria untuk mengeluarkan urolith (bladder stone). Cystectomy = pengangkatan vesika urinaria; Gastrotomy = membuka lambung; Enterotomy = membuka usus; Gastropexy = fiksasi lambung."},
+  {id:59, q:"Sikap dasar sebagai seorang dokter hewan dalam ranah veterinary leadership yang patut dan wajib dilakukan adalah…", o:{a:"Tidak menunjukkan konsistensi dalam sikap dan perbuatan", b:"Bersikap arogan dalam setiap pengambilan keputusan", c:"Mampu dan selalu berupaya memberikan keteladanan dan selalu berusaha selaras antara perkataan dan sikap", d:"Mampu memerintah bawahan dengan selalu menjaga jarak agar tampak selalu berwibawa", e:"Mampu menyenangkan atasan dengan memberikan informasi yang selalu baik"}, ans:"c", exp:"Kepemimpinan veteriner yang efektif dan etis menuntut integritas: memberikan keteladanan serta menjaga keselarasan antara perkataan dan perbuatan."},
+  {id:60, q:"Seekor anjing dengan hematuria, disuria, dan adanya kristal oksalat pada urinalisis kemungkinan menderita…", o:{a:"Sistitis infeksius", b:"Urolitiasis", c:"Glomerulonefritis", d:"Diabetes insipidus", e:"Hiperkalsemia"}, ans:"b", exp:"Urolithiasis adalah terbentuknya batu/kalkuli mineral di saluran kemih yang menyebabkan obstruksi nyeri saat urinasi (disuria) dan gesekan pada mukosa saluran kemih sehingga urin berdarah (hematuria)."},
+  {id:61, q:"Seekor burung kakatua berumur 10 tahun menunjukkan gejala menggigit bulunya hingga menyebabkan kerontokan di beberapa bagian tubuh, terlihat cemas, dan menekan bulu di kepalanya. Diagnosa apakah yang paling tepat…", o:{a:"Kutu burung", b:"Aspergillosis", c:"Avian Polyoma", d:"Toxoplasmosis", e:"Psittacine Beak and Feather Disease"}, ans:"e", exp:"Psittacine Beak and Feather Disease (PBFD) disebabkan virus PBFDV pada burung paruh bengkok (Psittaciformes) yang menyerang sel folikel bulu, paruh, dan jaringan limfoid, menimbulkan kerontokan bulu, rasa tidak nyaman/menggigit bulu, kerusakan paruh, hingga kebotakan kepala."},
+  {id:62, q:"Seorang klien datang ke klinik dengan kucingnya yang mengalami patah tulang. Setelah diberikan estimasi biaya operasi, klien marah dan merasa biaya terlalu tinggi. Bagaimana cara terbaik dokter hewan menangani situasi ini…", o:{a:"Mendengarkan keluhan klien, menerima komplain dengan empati sebelum memberikan opsi alternatif", b:"Menegaskan bahwa biaya tidak dapat diubah dan meminta klien menerima kondisi tersebut", c:"Mengabaikan klien dan fokus pada pasien berikutnya", d:"Memberikan tawaran diskon", e:"Menghentikan konsultasi karena klien sulit diajak kerja sama"}, ans:"a", exp:"Dokter hewan harus berkomunikasi dengan empati, mendengarkan keluhan klien, lalu menjelaskan kondisi medis serta opsi terapi alternatif yang lebih terjangkau lengkap dengan kelebihan dan kekurangannya."},
+  {id:63, q:"Penyakit gajah di Indonesia bersifat endemik, dapat menyerang gajah liar maupun tidak, bisa akut ataupun kronik. Jika akut biasanya tanpa gejala klinis khas, namun umumnya menimbulkan kolik, lethargy, dan penurunan nafsu makan. Apa diagnosa dari gejala klinis tersebut…", o:{a:"Tetanus", b:"Surra", c:"Colibacillosis", d:"Salmonellosis", e:"Toxoplasmosis"}, ans:"b", exp:"Surra merupakan penyakit endemik di Indonesia akibat Trypanosoma evansi (ditularkan lalat pengisap darah seperti Tabanus dan Stomoxys). Pada gajah menimbulkan gejala tidak spesifik seperti kolik, lethargy, anoreksia, demam, anemia, hingga kematian mendadak."},
+  {id:64, q:"Ayam usia 20 minggu menderita sakit dengan gejala lemas, penurunan produksi telur, diare warna hijau. Patologi ditemukan pembesaran hati dengan nekrosis multifokal. Pada media MacConkey ditemukan bakteri Gram negatif berwarna merah dadu berbentuk batang, memfermentasi laktosa dan menghasilkan gas. Apakah penyebab kematian ayam tersebut…", o:{a:"Salmonella gallinarum", b:"Pasteurella multocida", c:"Escherichia coli", d:"Klebsiella", e:"Clostridium perfringens"}, ans:"c", exp:"Escherichia coli merupakan bakteri batang pendek Gram negatif, motil, lactose fermenter (koloni pink/merah dadu pada MacConkey agar), menghasilkan gas pada uji TSI (A/A, gas+, H2S-), Indole (+), dan Citrate (-)."},
+  {id:65, q:"Penyakit pada sapi yang ditularkan serangga, bersifat benign non contagious, ditandai demam mendadak, kaku persendian bahkan kelumpuhan, leher dan punggung membengkak, penurunan produksi susu. Hasil nekropsi ditemukan penimbunan cairan keruh-kekuningan di persendian dan nekrosis fokal otot kerangka. Diagnosa yang tepat adalah…", o:{a:"Infectious Bovine Rhinotracheitis", b:"Bovine Ephemeral Fever", c:"Arthrogryposis hydranencephaly", d:"Malignant Catarrhal Fever", e:"Jembrana Disease"}, ans:"b", exp:"Bovine Ephemeral Fever (BEF / demam tiga hari) disebabkan BEFV yang ditularkan vektor serangga penghisap darah. Gejalanya meliputi demam tinggi mendadak, kekakuan otot/sendi, paresis/paralisis, penurunan produksi susu drastis, serta cairan sinovial keruh kekuningan pada nekropsi."},
+  {id:66, q:"Otoritas veteriner nasional diangkat dan diberhentikan oleh…", o:{a:"Camat", b:"Bupati", c:"Walikota", d:"Presiden", e:"Menteri"}, ans:"e", exp:"Berdasarkan PP No. 3 Tahun 2017 tentang Otoritas Veteriner Pasal 7 ayat (1), Otoritas Veteriner nasional dipimpin oleh pejabat Otoritas Veteriner nasional yang diangkat dan diberhentikan oleh Menteri."},
+  {id:67, q:"Seekor gorila asli Afrika yang baru datang ke Ragunan dimasukkan ke dalam kelompok Apendiks 1. Apa penyebab gorila tersebut dimasukkan dalam kelompok Apendiks 1…", o:{a:"Gorila hasil sitaan", b:"Gorila masuk Apendiks 1 penangkaran yang juga masuk Apendiks 2 bersyarat, telah masuk persyaratan", c:"Sah syarat perdagangan + sertifikat", d:"Analisis risiko tidak ada risiko", e:"Diplomasi antar 2 negara (tidak masuk CITES)"}, ans:"b", exp:"Gorila tergolong CITES Appendix I (terancam punah, perdagangan komersial dilarang). Namun satwa Appendix I yang lahir dan dibesarkan di penangkaran terdaftar resmi CITES dapat memperoleh perlakuan bersyarat seperti Appendix II dengan dokumen legalitas dan sertifikat asal-usul lengkap."},
+  {id:68, q:"Pemerintah sudah mempunyai Masterplan Nasional Pemberantasan Rabies di Indonesia. Berikut ini provinsi bebas rabies yaitu…", o:{a:"Kepulauan Riau, Bangka Belitung, DKI Jakarta", b:"Jawa Tengah, DI Yogyakarta, Jawa Timur", c:"Papua Barat, Papua, Papua Selatan, Papua Tengah", d:"Papua Barat Daya dan Papua Pegunungan", e:"Semua benar"}, ans:"e", exp:"Berdasarkan Masterplan Nasional Pemberantasan Rabies di Indonesia, DKI Jakarta, Jawa Tengah, DI Yogyakarta, Jawa Timur, Kepulauan Riau, Kepulauan Bangka Belitung, serta seluruh wilayah Papua (Papua, Papua Barat, dan provinsi pemekarannya) termasuk daerah bebas rabies."},
+  {id:69, q:"Setelah ejakulasi, sebagian sperma dapat disimpan dalam lipatan-lipatan oviduk sebelum mencapai sel telur untuk fertilisasi. Tempat penyimpanan sperma ini disebut…", o:{a:"Infundibulum", b:"Spermanest", c:"Isthmus", d:"Ampula", e:"Serviks"}, ans:"b", exp:"Pada unggas, spermatozoa dapat bertahan hidup hingga 30 hari di dalam lipatan oviduk yang disebut spermanest untuk mempertahankan viabilitas, mencegah kapasitasi terlalu dini, dan mengatur pelepasan sperma secara bertahap."},
+  {id:70, q:"Berikut ini merupakan bentuk penerapan nyata dari konsep One Health, kecuali…", o:{a:"Vaksinasi rabies massal pada anjing untuk mencegah penularan ke manusia", b:"Kolaborasi antara dokter hewan, dokter manusia, dan ahli lingkungan dalam pengendalian zoonosis", c:"Penggunaan antibiotik secara bebas di peternakan tanpa pengawasan", d:"Surveilans terpadu penyakit zoonotik di daerah perbatasan", e:"Edukasi masyarakat mengenai risiko zoonosis dari hewan liar"}, ans:"c", exp:"Penggunaan antibiotik secara bebas tanpa pengawasan memicu residu obat dan resistensi antimikroba (AMR) pada hewan maupun manusia, yang bertentangan langsung dengan prinsip dan tujuan One Health."},
+  {id:71, q:"Seekor sapi betina berusia 3 tahun dengan BCS 3 yang sudah pernah melahirkan tidak menunjukkan tanda-tanda estrus. Hasil palpasi ovarium menunjukkan adanya aktivitas corpus luteum dan folikel. Kemungkinan penyebab utama gangguan reproduksi tersebut adalah…", o:{a:"Silent heat", b:"Corpus luteum persisten", c:"Malnutrisi", d:"Anestrus laktasi", e:"Gangguan hormonal"}, ans:"a", exp:"Silent heat terjadi ketika sapi mengalami siklus estrus dan ovulasi normal (dibuktikan adanya corpus luteum dan perkembangan folikel pada palpasi ovarium), tetapi tidak atau sedikit menunjukkan tanda birahi secara klinis."},
+  {id:72, q:"Bagaimana perubahan iklim dapat mempengaruhi kesehatan dalam perspektif One Health…", o:{a:"Meningkatkan jumlah makanan", b:"Mengurangi polusi udara", c:"Mengubah pola penyebaran penyakit dan mempengaruhi habitat hewan", d:"Meningkatkan populasi manusia", e:"Tidak berpengaruh"}, ans:"c", exp:"Perubahan iklim (kenaikan suhu, perubahan curah hujan, gangguan ekosistem) menggeser habitat satwa liar dan vektor penyakit sehingga mengubah pola penyebaran penyakit dan interaksi manusia–hewan–lingkungan."},
+  {id:73, q:"Sugar glider dikandangkan sendirian dan dikeluarkan sesekali oleh pemilik. Terdapat tanda klinis mondar-mandir, menyendiri di pojok kandang, dan melompat-lompat (perilaku stereotip). Hal yang harus dilakukan antara lain…", o:{a:"Melepaskan dan diberi tali pengikat", b:"Dikasih sugar glider lain biar dia bisa bersosialisasi", c:"Dikasih kandang yang lebih luas", d:"Pengayaan lingkungan kandang dengan memberi kotak persembunyian dan roda berputar", e:"Diberi pakan nutrisi yang bergizi"}, ans:"d", exp:"Pemeliharaan soliter di lingkungan monoton memicu stres, frustrasi, dan perilaku stereotip. Pengayaan lingkungan (environmental enrichment) seperti kotak persembunyian dan roda berputar merangsang perilaku alami dan menurunkan stres."},
+  {id:74, q:"Seekor sapi betina dewasa tidak menunjukkan tanda-tanda berahi dalam waktu lama. Hasil pemeriksaan menunjukkan adanya corpus luteum (CL) di ovarium serta produksi progesteron yang tetap tinggi. Kondisi ini menyebabkan anestrus karena…", o:{a:"Positif feedback progesteron", b:"Estrogen rendah", c:"Gonadotropin tinggi", d:"Negative feedback progesteron", e:"Negative feedback estrogen"}, ans:"d", exp:"Pada Korpus Luteum Persisten (CLP), CL tidak mengalami regresi sehingga progesteron tetap tinggi dan memberikan negative feedback ke hipotalamus-hipofisis anterior. Akibatnya sekresi GnRH tertekan dan perkembangan folikel/ovulasi terhambat."},
+  {id:75, q:"Seorang dokter hewan melakukan praktik mandiri selama kurang lebih tiga bulan tanpa memiliki Surat Izin Praktik (SIP). Berdasarkan pelanggaran tersebut, sanksi berat yang dapat dikenakan adalah…", o:{a:"Pencabutan SIP", b:"Penundaan perpanjangan SIP", c:"Penutupan layanan praktik", d:"Denda administratif", e:"Teguran tertulis"}, ans:"c", exp:"Berdasarkan Permentan No. 3 Tahun 2019 tentang Pelayanan Jasa Medik Veteriner Pasal 50 ayat (1) dan (2), tenaga medik veteriner yang berpraktik tanpa SIP DRH dikenai sanksi administratif berupa penutupan unit pelayanan kesehatan hewan."},
+  {id:76, q:"Selain ivermectin yang bersifat neurotoksik pada kucing, terdapat dua obat lain yang bersifat sangat toksik pada kucing sehingga penggunaannya harus dihindari. Kombinasi obat yang dimaksud adalah…", o:{a:"Chlorambucil dan Methotrexate", b:"Cisplatin dan 5-Fluorouracil", c:"Vincristine dan Bleomycin", d:"Mitotane dan 6-Thioguanine", e:"Azathioprine dan Monensin"}, ans:"b", exp:"Cisplatin sangat toksik pada kucing karena memicu edema paru berat dan efusi pleura fatal. Sementara 5-Fluorouracil (5-FU) dosis sangat kecil sekalipun menyebabkan neurotoksisitas berat (tremor, kejang, ataksia, depresi SSP, hingga kematian)."},
+  {id:77, q:"Anjing betina mengalami fase anestrus setelah siklus birahi, di mana aktivitas reproduksi menurun sebelum memasuki siklus berikutnya. Umumnya, durasi anestrus pada anjing berlangsung selama…", o:{a:"2–7 bulan", b:"2–10 bulan", c:"5 bulan", d:"1–3 bulan", e:"2 bulan"}, ans:"c", exp:"Berdasarkan diagram siklus estrus anjing pada materi sumber (proestrus ~9 hari, estrus ~9 hari, diestrus ~2 bulan), durasi rata-rata fase anestrus adalah sekitar 5 bulan."},
+  {id:78, q:"Pemerintah Indonesia resmi melarang penggunaan Antibiotic Growth Promoters (AGP) sebagai imbuhan pakan ternak sejak 1 Januari 2018. Aturan mengenai pelarangan penggunaan AGP tersebut tercantum dalam Peraturan Menteri Pertanian nomor…", o:{a:"Permentan No. 17/2017", b:"Permentan No. 17/2014", c:"Permentan No. 15/2014", d:"Permentan No. 14/2017", e:"Permentan No. 15/2018"}, ans:"d", exp:"Pelarangan penggunaan AGP tercantum dalam Permentan No. 14 Tahun 2017 tentang Klasifikasi Obat Hewan. (Permentan 17/2017 = Dokumen Karantina Hewan; 15/2014 = KRPL; 15/2018 = Tindakan Karantina Hewan di Luar Tempat Pemasukan/Pengeluaran)."},
+  {id:79, q:"Dalam evaluasi performa reproduksi ternak, salah satu parameter penting adalah Service per Conception (S/C) untuk mengukur efisiensi kebuntingan setelah IB. S/C mengacu pada…", o:{a:"Jumlah anak yang lahir", b:"Jumlah IB sampai menjadi bunting", c:"Jumlah yang berhasil bunting dari IB", d:"Interval antara estrus hingga kebuntingan", e:"Frekuensi kawin per siklus estrus"}, ans:"b", exp:"Service per Conception (S/C) merupakan rata-rata jumlah inseminasi buatan (IB) yang dibutuhkan untuk menghasilkan satu kebuntingan."},
+  {id:80, q:"Dalam menjalankan praktik pelayanan kesehatan hewan, ada batasan etika dan kerahasiaan yang harus dijaga. Tindakan yang tidak diperbolehkan atau dilarang dilakukan oleh dokter hewan adalah…", o:{a:"Menjelaskan secara transparan terhadap penyakit yang diderita pasien", b:"Menjelaskan risiko yang mungkin dialami oleh pasien", c:"Menjelaskan rencana tindakan atau terapi yang akan diberikan", d:"Menghargai klien yang tidak setuju dengan rencana tindakan medis", e:"Menjelaskan rekam medik kepada pihak yang tidak berkepentingan"}, ans:"e", exp:"Berdasarkan Pedoman Kode Etik Dokter Hewan (Etika terhadap Klien ayat 3), Dokter Hewan wajib melindungi informasi medis pasien dari pihak yang tidak berkepentingan (kecuali untuk kepentingan pemerintahan/pelaporan penyakit menular atau pengadilan)."},
+  {id:81, q:"Seekor kucing datang ke klinik dengan gejala atopic dermatitis yang ditandai pruritus berlebihan, menjilat/menggaruk tubuh intens, serta iritasi kulit. Terapi yang paling tepat untuk mengurangi rasa gatal dan peradangan akibat reaksi alergi ini adalah…", o:{a:"Antibiotik", b:"Antiinflamasi", c:"Antipiretik", d:"Antikolinergik", e:"Antispasmodik"}, ans:"b", exp:"Atopic dermatitis merupakan penyakit inflamasi kulit kronis akibat hipersensitivitas alergen; terapi utama untuk menekan peradangan dan pruritus adalah obat antiinflamasi."},
+  {id:82, q:"Seorang dokter hewan melakukan investigasi pada peternakan sapi potong dengan peningkatan kasus abortus trimester akhir, retensio plasenta, dan hasil serologis positif antibodi terhadap Brucella abortus. Tindakan paling tepat untuk mencegah penyebaran penyakit ini adalah…", o:{a:"Mengobati seluruh sapi dengan antibiotik sistemik spektrum luas", b:"Melakukan isolasi sementara terhadap sapi bunting dan memberikan terapi hormonal", c:"Menyuntikkan vitamin dan mineral untuk meningkatkan sistem imun", d:"Melakukan eliminasi (culling) sapi positif dan vaksinasi pada ternak sehat", e:"Memberikan larutan desinfektan dalam air minum selama 2 minggu berturut-turut"}, ans:"d", exp:"Sesuai Masterplan Pemberantasan Brucellosis di Indonesia, metode pemberantasan mencakup surveilans, test and slaughter (eliminasi/culling sapi positif), kompensasi, vaksinasi ternak sehat, manajemen kelompok, karantina/pengendalian lalu lintas, dan edukasi."},
+  {id:83, q:"Pada ayam betina, ovarium yang berfungsi hanya satu, yaitu ovarium kiri. Jumlah folikel besar siap berovulasi yang biasanya ditemukan pada ovarium ayam adalah…", o:{a:"1", b:"2", c:"3", d:"4", e:"5"}, ans:"e", exp:"Pada ovarium kiri ayam betina terdapat banyak folikel dalam berbagai tahap, namun folikel berukuran besar yang tersusun hierarkis dan siap berovulasi umumnya berjumlah 5 (5–6 folikel)."},
+  {id:84, q:"Dalam evaluasi performa reproduksi sapi perah, dokter hewan menggunakan ultrasonografi transrektal untuk memantau dinamika folikel dan mendeteksi kista ovarium. Keunggulan utama teknik ini dibanding palpasi rektal konvensional adalah…", o:{a:"Mampu memperkirakan kadar hormon progesteron secara langsung", b:"Memberikan hasil laboratorium lebih cepat", c:"Mengidentifikasi struktur ovarium dan uterus secara real time dan non-invasif", d:"Mendeteksi antibodi terhadap penyakit reproduksi secara spesifik", e:"Menentukan tingkat fertilitas berdasarkan pH cairan serviks"}, ans:"c", exp:"Ultrasonografi transrektal memvisualisasikan struktur ovarium (folikel, CL, kista) dan uterus secara lebih detail, real time, dan non-invasif dibandingkan palpasi rektal biasa."},
+  {id:85, q:"Seekor sapi perah 24 jam setelah melahirkan masih belum mengeluarkan seluruh jaringan plasentanya (retensio plasenta). Langkah penanganan awal yang paling tepat dilakukan adalah…", o:{a:"Melakukan penarikan manual seluruh jaringan plasenta secara paksa", b:"Memberikan suntikan oksitosin dosis tinggi setiap 2 jam", c:"Menggunakan antibiotik intrauterin dan menunggu pelepasan spontan", d:"Memberikan estrogen untuk merangsang kontraksi uterus", e:"Menyuntikkan prostaglandin F2α untuk melisis corpus luteum"}, ans:"c", exp:"Penanganan awal retensio plasenta adalah pemberian antibiotik intrauterin untuk mencegah infeksi sekunder sembari menunggu plasenta lepas spontan. Penarikan manual paksa tidak dianjurkan karena berisiko merusak endometrium, menimbulkan perdarahan, dan memperburuk infeksi."},
+  {id:86, q:"Hormon testosteron pada hewan jantan berperan penting dalam berbagai aspek sistem reproduksi. Fungsi testosteron adalah…", o:{a:"Pematangan spermatozoa pada epididimis", b:"Perkembangan organ reproduksi sekunder jantan", c:"Bersama dengan sel Sertoli merangsang pembentukan spermatozoa", d:"Regulasi libido dan perilaku kawin", e:"Semua benar"}, ans:"e", exp:"Hormon testosteron yang dihasilkan sel Leydig berperan dalam perkembangan organ reproduksi sekunder jantan, spermatogenesis bersama sel Sertoli, pematangan sperma di epididimis, serta regulasi libido dan perilaku kawin."},
+  {id:87, q:"Seorang dokter hewan menemukan gangguan reproduksi pada kambing betina berupa keguguran berulang, kelahiran anak lemah, dan penurunan angka kebuntingan tanpa demam atau infeksi sistemik. Jika diduga penyakit reproduksi menular kronik yang sulit dikenali secara klinis, langkah logis pertama adalah…", o:{a:"Mengisolasi seluruh ternak dan melakukan sterilisasi lingkungan", b:"Mengambil sampel darah untuk uji serologis terhadap patogen reproduksi seperti Toxoplasma gondii dan Chlamydia abortus", c:"Memberikan antibiotik spektrum luas sebagai tindakan awal sebelum diagnosis", d:"Melakukan euthanasia pada induk yang mengalami abortus untuk keperluan nekropsi", e:"Memberikan hormon progesteron untuk mempertahankan kebuntingan pada induk yang tersisa"}, ans:"b", exp:"Penyakit reproduksi subklinis/kronik memiliki gejala umum sehingga sulit dipastikan hanya dari klinis. Langkah diagnostik awal paling logis adalah pengambilan sampel darah untuk pemeriksaan hematologi dan uji serologis terhadap agen infeksius yang dicurigai."},
+  {id:88, q:"Seekor sapi betina menunjukkan tanda-tanda birahi namun tidak pernah bunting meskipun telah dikawinkan berulang kali. Pemeriksaan hormonal menunjukkan kadar estrogen tinggi berkepanjangan dan progesteron rendah sepanjang waktu. Kemungkinan besar gangguan reproduksi yang terjadi adalah…", o:{a:"Retensi corpus luteum", b:"Kista luteal", c:"Kista folikuler", d:"Endometritis kronis", e:"Silent heat"}, ans:"c", exp:"Kista folikuler disebabkan kegagalan lonjakan LH sehingga folikel gagal ovulasi, menetap di ovarium, dan terus memproduksi estrogen tinggi (birahi berulang/nymphomania) sementara tidak terbentuk CL sehingga progesteron tetap rendah."},
+  {id:89, q:"Mikronutrien yang berfungsi untuk perkembangan tulang dan pembuatan cangkang telur pada unggas adalah…", o:{a:"Vit C dan E", b:"Zat besi dan tembaga", c:"Ca dan fosfor", d:"Omega 3 dan 6", e:"Kalium dan folat"}, ans:"c", exp:"Kalsium (Ca) membentuk matriks tulang dan komponen utama cangkang telur (CaCO3), sedangkan fosfor (P) berperan bersama kalsium dalam mineralisasi tulang dan metabolisme energi (ATP)."},
+  {id:90, q:"Seekor sapi betina dewasa mengalami pengeluaran jaringan berwarna merah muda dari vulva, terutama saat berbaring. Kondisi berlangsung beberapa hari dan jaringan tampak membesar, namun masih dapat direduksi secara manual. Diagnosis yang paling tepat adalah…", o:{a:"Prolapsus uteri parsial", b:"Prolapsus vagina tingkat I", c:"Prolapsus vagina tingkat III", d:"Prolapsus uteri total", e:"Endometritis subklinis"}, ans:"b", exp:"Prolapsus vagina tingkat I ditandai keluarnya sebagian kecil jaringan vagina melalui vulva saat sapi berbaring atau merejan, dan masih dapat masuk kembali sendiri atau direposisi secara manual."},
+  {id:91, q:"Seorang dokter hewan melakukan IB pada sapi betina menggunakan semen beku. Setelah memasukkan pipet melalui serviks, ujung pipet diarahkan ke bagian anterior korpus uteri. Manakah pernyataan yang paling benar terkait teknik tersebut…", o:{a:"Deposit semen di vagina, berisiko rendah terhadap fertilitas", b:"Deposit semen di serviks, ideal untuk semua jenis semen", c:"Deposit semen di uterus bagian depan, sesuai dengan standar inseminasi buatan", d:"Deposit semen di tuba falopi, meningkatkan kemungkinan kehamilan ganda", e:"Deposit semen terlalu dalam, berisiko merusak endometrium"}, ans:"c", exp:"Deposisi semen di korpus uteri (bagian anterior / cincin serviks ke-4) merupakan posisi standar inseminasi buatan pada sapi di lapangan."},
+  {id:92, q:"Seekor anjing Golden Retriever berusia 7 tahun didiagnosis gagal ginjal kronis (CKD). Apa komponen utama dalam diet terapeutik untuk gagal ginjal kronis…", o:{a:"Tinggi protein dan tinggi fosfor", b:"Rendah protein dan rendah fosfor", c:"Tinggi karbohidrat dan rendah mineral", d:"Tinggi lemak dan rendah fosfor", e:"Tinggi kalsium dan tinggi natrium"}, ans:"b", exp:"Diet terapeutik CKD diformulasikan rendah fosfor (karena ekskresi fosfor menurun dan hiperfosfatemia memperburuk kerusakan ginjal) serta rendah protein terkontrol (mengurangi beban produksi urea yang diekskresikan ginjal)."},
+  {id:93, q:"Seekor kambing betina tidak menunjukkan birahi selama musim kawin meski kondisi tubuh dan manajemen optimal. Ovarium kecil tanpa aktivitas folikuler; kadar FSH rendah, LH rendah, dan estrogen sangat rendah. Kemungkinan gangguan yang paling logis adalah…", o:{a:"Kista folikuler", b:"Ovarian remnant syndrome", c:"Hipofungsi ovarium akibat tumor", d:"Gangguan hipotalamus-hipofisis (hipogonadotropik hipogonadisme)", e:"Luteal cyst akibat persistensi CL"}, ans:"d", exp:"Hipogonadotropik hipogonadisme terjadi akibat gangguan sumbu hipotalamus–hipofisis sehingga sekresi GnRH, FSH, dan LH rendah. Akibatnya ovarium tidak terstimulasi (kecil, halus, inaktif) dan kadar estrogen sangat rendah."},
+  {id:94, q:"Seekor sapi di peternakan mengalami demam, kehilangan nafsu makan, hipersalivasi, pembengkakan kelenjar getah bening, dan erosi pada mulut. Sesuai Permentan Nomor 47 Tahun 2014, penyakit apakah yang paling mungkin diderita sapi tersebut…", o:{a:"Rabies", b:"Penyakit kuku dan mulut (foot-and-mouth disease)", c:"Antraks", d:"Brucellosis", e:"Tuberkulosis Bovine"}, ans:"b", exp:"Penyakit Mulut dan Kuku (PMK / FMD) akibat FMDV pada hewan berkuku belah ditandai demam, anoreksia, hipersalivasi, serta vesikula/lepuh pada mukosa mulut, lidah, gusi, dan celah kuku yang pecah membentuk erosi nyeri."},
+  {id:95, q:"Sapi PO berat 150 kg diberi pakan konsentrat 7 kg/hari, tanpa diduga terjadi pembesaran perut sebelah kiri disertai kesulitan bernapas. Diagnosis penyakit tersebut yaitu…", o:{a:"Bloat", b:"LDA", c:"Impaksio rumen", d:"Impaksio abomasum", e:"Indigesti"}, ans:"a", exp:"Bloat adalah penumpukan gas berlebih (frothy bloat maupun timpani gas bebas) di rumen/retikulum akibat pakan konsentrat tinggi yang menyebabkan pembesaran abdomen kiri dan penekanan diafragma (sesak napas)."},
+  {id:96, q:"Seekor sapi perah menunjukkan penurunan fertilitas pasca partus dan ketidakteraturan siklus estrus. Pemeriksaan rektal menunjukkan uterus membesar agak fluktuatif dan keluar lendir putih kental dari vulva. Sitologi endometrium menunjukkan banyak neutrofil. Diagnosis paling tepat adalah…", o:{a:"Pyometra", b:"Endometritis subklinis", c:"Endometritis klinis", d:"Metritis akut", e:"Retensio plasenta"}, ans:"c", exp:"Endometritis adalah radang endometrium pasca partus; masih munculnya siklus estrus membedakannya dari pyometra (anestrus). Adanya leleran putih kental (eksudat purulen) keluar dari vulva memastikan diagnosis endometritis klinis."},
+  {id:97, q:"Pada sapi ketosis, pakan harus diberikan untuk meningkatkan energi berupa…", o:{a:"Pakan tinggi serat kasar", b:"Pakan tinggi lemak jenuh", c:"Pakan tinggi energi dan mudah dicerna (propionat/glikogenik)", d:"Pakan tinggi protein nabati", e:"Pakan tinggi lemak"}, ans:"c", exp:"Ketosis terjadi akibat negative energy balance (kekurangan glukosa sehingga terjadi mobilisasi lemak berlebih dan pembentukan badan keton). Pemberian pakan tinggi energi mudah dicerna dan bersifat glukogenik (propionat) meningkatkan pembentukan glukosa dan menekan ketogenesis."},
+  {id:98, q:"Seekor anjing ras Bulldog betina mengalami distokia pada kehamilan pertamanya. Janin berukuran normal tetapi tidak dapat melewati jalan lahir karena bentuk panggul induk yang sempit. Kesimpulan paling logis adalah…", o:{a:"Distokia disebabkan oleh infeksi uterus yang menyebabkan kontraksi lemah", b:"Distokia disebabkan oleh gangguan hormonal selama fase partus", c:"Distokia disebabkan oleh kelainan genetik yang berhubungan dengan bentuk tubuh ras", d:"Distokia disebabkan oleh posisi janin yang salah akibat stres", e:"Distokia terjadi karena induk tidak menunjukkan tanda-tanda birahi sebelumnya"}, ans:"c", exp:"Distokia maternalis akibat pelvis sempit pada ras Bulldog merupakan predisposisi anatomis/genetik yang erat kaitannya dengan bentuk tubuh ras tersebut."},
+  {id:99, q:"Seorang dokter hewan menangani anjing Labrador Retriever dengan keluhan batuk kronis, kesulitan bernapas, intoleransi olahraga, dan suara napas kasar pada auskultasi. Proyeksi radiografi apa yang paling tepat untuk mengevaluasi kondisi paru-paru pada kasus ini…", o:{a:"Radiografi abdomen ventrodorsal", b:"Radiografi toraks lateral kanan dan kiri", c:"Radiografi ekstremitas craniocaudal", d:"Radiografi dorsal-dorsal pelvis", e:"Radiografi skyline view"}, ans:"b", exp:"Proyeksi radiografi toraks lateral kanan dan kiri memberikan visualisasi optimal terhadap distribusi pola paru-paru, saluran pernapasan, serta ukuran dan posisi jantung."},
+  {id:100, q:"Seorang dokter hewan yang sudah memiliki izin praktik memiliki hak dan kewajiban. Di bawah ini yang bukan merupakan kewajiban dokter hewan praktik mandiri adalah…", o:{a:"Memberikan layanan kedokteran hewan sesuai dengan kebutuhan kesehatan pasien, standar profesi, standar pelayanan profesi, SOP, dan etika profesi.", b:"Menghormati pemilik hewan sebagai klien.", c:"Memberikan informasi yang benar dan jelas mengenai kondisi dan kesehatan pasien.", d:"Memberikan penjelasan yang memadai mengenai layanan kedokteran hewan yang akan diberikan kepada pasien.", e:"Tidak melakukan kerja sama dengan klien atau pihak yang berkepentingan dalam upaya menjaga kesehatan hewan."}, ans:"e", exp:"Berdasarkan RUU Kedokteran Hewan Pasal 87 huruf k, dokter hewan justru berkewajiban melakukan kerja sama dengan Klien atau pihak yang berkepentingan dalam upaya menjaga kesehatan hewan."}
+];
+
+let mode = 'exam';
+let activeList = [];
+let currentIdx = 0;
+let answers = {};
+let flags = {};
+let timerInt = null;
+let secondsLeft = 100 * 60;
+let totalSeconds = 100 * 60;
+let startTimestamp = null;
+
+function selectMode(m) {
+  mode = m;
+  document.getElementById('cardExam').classList.toggle('selected', m === 'exam');
+  document.getElementById('cardPractice').classList.toggle('selected', m === 'practice');
+}
+
+function startQuiz() {
+  const shuffle = document.getElementById('shuffleCheck').checked;
+  activeList = QUESTIONS.map(q => ({...q}));
+  if (shuffle) {
+    for (let i = activeList.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [activeList[i], activeList[j]] = [activeList[j], activeList[i]];
+    }
+  }
+  currentIdx = 0;
+  answers = {};
+  flags = {};
+  secondsLeft = totalSeconds;
+  startTimestamp = Date.now();
+
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('examScreen').classList.remove('hidden');
+  document.getElementById('appHeader').classList.remove('hidden');
+  document.getElementById('modeBadge').textContent = mode === 'exam' ? 'Mode Ujian (100 Menit)' : 'Mode Latihan';
+
+  buildGrid();
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInt);
+  updateTimerUI();
+  timerInt = setInterval(() => {
+    secondsLeft--;
+    updateTimerUI();
+    if (secondsLeft <= 0) {
+      clearInterval(timerInt);
+      alert('Waktu habis! Simulasi akan langsung dinilai.');
+      finishQuiz();
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  const m = Math.floor(Math.max(0, secondsLeft) / 60);
+  const s = Math.max(0, secondsLeft) % 60;
+  const el = document.getElementById('timerDisplay');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  el.classList.toggle('warning', secondsLeft <= 300);
+}
+
+function buildGrid() {
+  const grid = document.getElementById('numGrid');
+  grid.innerHTML = '';
+  activeList.forEach((_, idx) => {
+    const b = document.createElement('button');
+    b.className = 'num-btn';
+    b.id = 'nav_' + idx;
+    b.textContent = idx + 1;
+    b.onclick = () => { currentIdx = idx; renderQuestion(); };
+    grid.appendChild(b);
+  });
+}
+
+function updateGrid() {
+  let answeredCount = 0;
+  activeList.forEach((item, idx) => {
+    const b = document.getElementById('nav_' + idx);
+    if (!b) return;
+    b.className = 'num-btn';
+    const picked = answers[item.id];
+    if (picked) answeredCount++;
+    if (flags[item.id]) {
+      b.classList.add('flagged');
+    } else if (picked) {
+      if (mode === 'practice') {
+        b.classList.add(picked === item.ans ? 'rev-correct' : 'rev-wrong');
+      } else {
+        b.classList.add('answered');
+      }
+    }
+    if (idx === currentIdx) b.classList.add('current');
+  });
+  document.getElementById('progressText').textContent = `${answeredCount} / ${activeList.length}`;
+  document.getElementById('progressFill').style.width = `${(answeredCount / activeList.length) * 100}%`;
+}
+
+function renderQuestion() {
+  const item = activeList[currentIdx];
+  const picked = answers[item.id];
+  document.getElementById('qLabel').textContent = `Soal ${currentIdx + 1} dari ${activeList.length}`;
+  document.getElementById('qOrigNum').textContent = `Nomor Asli PDF: #${item.id}`;
+  document.getElementById('qText').textContent = item.q;
+
+  const btnFlag = document.getElementById('btnFlag');
+  btnFlag.classList.toggle('active', !!flags[item.id]);
+  btnFlag.textContent = flags[item.id] ? '🚩 Ditandai Ragu' : '🚩 Ragu-ragu';
+
+  document.getElementById('btnPrev').disabled = currentIdx === 0;
+  document.getElementById('btnNext').textContent = currentIdx === activeList.length - 1 ? 'Selesai & Nilai ✓' : 'Selanjutnya →';
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  ['a','b','c','d','e'].forEach(key => {
+    const div = document.createElement('div');
+    div.className = 'option-item';
+    if (picked) {
+      if (mode === 'practice') {
+        if (key === item.ans) div.classList.add('correct');
+        else if (key === picked) div.classList.add('wrong');
+      } else if (key === picked) {
+        div.classList.add('selected');
+      }
+    }
+    div.innerHTML = `<div class="opt-key">${key.toUpperCase()}</div><div>${item.o[key]}</div>`;
+    div.onclick = () => chooseOption(key);
+    container.appendChild(div);
+  });
+
+  const expEl = document.getElementById('instantExp');
+  if (mode === 'practice' && picked) {
+    const isOk = picked === item.ans;
+    expEl.classList.remove('hidden');
+    expEl.style.borderLeftColor = isOk ? 'var(--success)' : 'var(--danger)';
+    expEl.innerHTML = `<h4>${isOk ? '✅ Jawaban Benar!' : '❌ Kurang Tepat'} — Kunci: ${item.ans.toUpperCase()} (${item.o[item.ans]})</h4><p>${item.exp}</p>`;
+  } else {
+    expEl.classList.add('hidden');
+  }
+  updateGrid();
+}
+
+function chooseOption(key) {
+  const item = activeList[currentIdx];
+  answers[item.id] = key;
+  renderQuestion();
+}
+
+function clearAnswer() {
+  const item = activeList[currentIdx];
+  delete answers[item.id];
+  renderQuestion();
+}
+
+function toggleFlag() {
+  const item = activeList[currentIdx];
+  flags[item.id] = !flags[item.id];
+  renderQuestion();
+}
+
+function goStep(delta) {
+  if (delta === 1 && currentIdx === activeList.length - 1) {
+    confirmFinish();
+    return;
+  }
+  currentIdx = Math.max(0, Math.min(activeList.length - 1, currentIdx + delta));
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function confirmFinish() {
+  const unanswered = activeList.filter(q => !answers[q.id]).length;
+  const msg = unanswered > 0
+    ? `Masih ada ${unanswered} soal yang belum dijawab. Yakin ingin mengakhiri simulasi dan melihat skor?`
+    : 'Semua soal sudah terjawab. Akhiri simulasi dan lihat skor sekarang?';
+  if (confirm(msg)) finishQuiz();
+}
+
+function finishQuiz() {
+  clearInterval(timerInt);
+  const elapsedSec = Math.round((Date.now() - startTimestamp) / 1000);
+  const em = Math.floor(elapsedSec / 60);
+  const es = elapsedSec % 60;
+
+  let correct = 0, wrong = 0, empty = 0;
+  activeList.forEach(item => {
+    const p = answers[item.id];
+    if (!p) empty++;
+    else if (p === item.ans) correct++;
+    else wrong++;
+  });
+
+  const score = ((correct / activeList.length) * 100).toFixed(1).replace(/\.0$/, '');
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('scoreNote').textContent = correct >= 66
+    ? `🎉 Mantap! Anda menjawab benar ${correct} dari ${activeList.length} soal (Di atas ambang latihan 66%).`
+    : `💪 Terus berlatih! Anda menjawab benar ${correct} dari ${activeList.length} soal. Pelajari pembahasan soal yang salah di bawah.`;
+
+  document.getElementById('statCorrect').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statEmpty').textContent = empty;
+  document.getElementById('statTime').textContent = `${String(em).padStart(2,'0')}:${String(es).padStart(2,'0')}`;
+
+  document.getElementById('examScreen').classList.add('hidden');
+  document.getElementById('appHeader').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
+
+  const firstFilter = document.querySelector('.filter-btn');
+  renderReview('all', firstFilter);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderReview(filterType, btnEl) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const box = document.getElementById('reviewContainer');
+  box.innerHTML = '';
+  let shown = 0;
+
+  activeList.forEach((item, idx) => {
+    const p = answers[item.id];
+    const status = !p ? 'empty' : (p === item.ans ? 'correct' : 'wrong');
+    if (filterType !== 'all' && filterType !== status) return;
+    shown++;
+
+    const pillClass = status === 'correct' ? 'pill-ok' : (status === 'wrong' ? 'pill-bad' : 'pill-empty');
+    const pillText = status === 'correct' ? 'Benar' : (status === 'wrong' ? 'Salah' : 'Tidak Dijawab');
+
+    let optsHtml = '';
+    ['a','b','c','d','e'].forEach(k => {
+      let cls = '';
+      if (k === item.ans) cls = 'correct';
+      else if (k === p) cls = 'wrong';
+      optsHtml += `<div class="option-item ${cls}" style="cursor:default; padding:10px 14px;">
+        <div class="opt-key">${k.toUpperCase()}</div>
+        <div>${item.o[k]} ${k === item.ans ? '<strong>(Kunci)</strong>' : ''} ${k === p && k !== item.ans ? '<strong>(Pilihan Anda)</strong>' : ''}</div>
+      </div>`;
+    });
+
+    const card = document.createElement('div');
+    card.className = 'review-item';
+    card.innerHTML = `
+      <div class="review-head">
+        <strong>Soal ${idx + 1} (PDF #${item.id})</strong>
+        <span class="pill ${pillClass}">${pillText}</span>
+      </div>
+      <div class="q-text" style="margin-bottom:14px;">${item.q}</div>
+      <div class="options" style="margin-bottom:14px;">${optsHtml}</div>
+      <div class="exp-box" style="margin-top:0;">
+        <h4>Pembahasan</h4>
+        <p>${item.exp}</p>
+      </div>`;
+    box.appendChild(card);
+  });
+
+  if (shown === 0) {
+    box.innerHTML = '<div class="card" style="text-align:center; color:var(--muted);">Tidak ada soal pada kategori filter ini.</div>';
+  }
+}
+
+function restartQuiz() {
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('startScreen').classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
