@@ -1,6 +1,18 @@
 {
-  "updatedAt": "2026-11-27T19:59:07.191Z",
+  "updatedAt": "2026-11-27T20:00:13.152Z",
   "packages": [
+    {
+      "id": "gh_mwzeoazr",
+      "code": "BARU",
+      "name": "Try Out Nasional",
+      "title": "Simulasi CBT UKMPPDH SUKSES Batch 8",
+      "fileName": "gh_mwzeoazr_gemini_code_1795808353959.html",
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
+      "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
+      "uploadedAt": "2026-11-27T20:00:13.152Z"
+    },
     {
       "id": "gh_mwzemv7z",
       "code": "BARU",
