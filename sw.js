@@ -1,10 +1,10 @@
-/* Service Worker v7:
+/* Service Worker v8:
  * - App Shell: Stale-While-Revalidate (instan dari cache, diperbarui di latar belakang)
  * - Paket Soal (/data/builtin, /data/extra, /data/packages): Cache-First on-demand + revalidasi
  * - Manifest (/data/manifest.json): Network-First timeout 2 detik agar paket baru cepat tampil
  */
-const SHELL_CACHE = 'portal-ukmppdh-shell-v7';
-const DATA_CACHE = 'portal-ukmppdh-data-v7';
+const SHELL_CACHE = 'portal-ukmppdh-shell-v8';
+const DATA_CACHE = 'portal-ukmppdh-data-v8';
 const CORE = [
   './',
   './index.html',

@@ -14,6 +14,15 @@
     'goToMenu', 'goToHome', 'resetToHome', 'resetToSetup', 'backToHome'
   ];
 
+  /**
+   * Paket yang sudah punya tema gelap bawaan (aturan CSS [data-theme="dark"] atau tombol #btn-theme)
+   * dikendalikan lewat atribut data-theme, bukan lewat CSS adaptif portal, supaya tidak saling
+   * menimpa. Paket Tailwind lama tetap memakai mesin adaptif di exam-theme.js.
+   */
+  function hasNativeTheme(html) {
+    return /\[data-theme\s*=\s*["']?dark["']?\s*\]/i.test(html) || /\bid\s*=\s*["']btn-theme["']/i.test(html);
+  }
+
   const FRAME_CSS = `
     html {
       scroll-behavior: smooth;
@@ -254,8 +263,22 @@
     },
 
     /** Font eksternal tidak menahan tampilnya soal & tema dasar diterapkan sejak awal (anti-flash). */
+    /** Font eksternal tidak menahan tampilnya soal & tema dasar diterapkan sejak awal (anti-flash). */
+    /**
+     * Paket yang sudah punya tema gelap bawaan (aturan CSS [data-theme="dark"] atau tombol #btn-theme)
+     * dikendalikan lewat atribut data-theme, bukan lewat CSS adaptif portal, supaya tidak saling
+     * menimpa. Paket Tailwind lama tetap memakai mesin adaptif di exam-theme.js.
+     */
+    hasNativeTheme(html) {
+      return /\[data-theme\s*=\s*["']?dark["']?\s*\]/i.test(html) || /\bid\s*=\s*["']btn-theme["']/i.test(html);
+    },
+
+    /** Font eksternal tidak menahan tampilnya soal & tema dasar diterapkan sejak awal (anti-flash). */
+    hasNativeTheme,
+
     prepareHtml(html) {
       const isDark = document.documentElement.classList.contains('dark');
+      const native = hasNativeTheme(html);
       const themeClass = isDark ? 'portal-dark dark' : 'portal-light';
       const baseBg = isDark ? '#0b1120' : '#f3f6fb';
       const baseText = isDark ? '#e2e8f0' : '#1e293b';
@@ -266,11 +289,24 @@
       );
 
       out = out.replace(/<html(\b[^>]*)>/i, (m, attrs) => {
+        if (native) {
+          // Buang data-theme bawaan paket, gabungkan class, lalu paksa mengikuti tema portal sejak awal.
+          let extra = '';
+          const clean = attrs
+            .replace(/\sdata-theme\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/ig, '')
+            .replace(/\sclass\s*=\s*"([^"]*)"/i, (mm, c) => { extra = ' ' + c; return ''; });
+          return `<html${clean} class="${themeClass}${extra}" data-portal-native-theme="1" data-theme="${isDark ? 'dark' : 'light'}">`;
+        }
         if (/\bclass="/i.test(attrs)) {
           return `<html${attrs.replace(/\bclass="/i, `class="${themeClass} `)}>`;
         }
         return `<html class="${themeClass}"${attrs}>`;
       });
+
+      if (native) {
+        // Satu-satunya tombol tema adalah milik portal; tombol tema internal paket disembunyikan.
+        return out.replace(/<\/head>/i, `<style id="portal-native-theme-fix">#btn-theme,[data-theme-toggle]{display:none !important;}</style></head>`);
+      }
 
       const themeStyle = window.PORTAL_EXAM_THEME_CSS
         ? `<style id="portal-adaptive-exam-theme">${window.PORTAL_EXAM_THEME_CSS}</style>`
