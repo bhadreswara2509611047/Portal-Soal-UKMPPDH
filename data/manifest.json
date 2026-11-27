@@ -1,6 +1,18 @@
 {
-  "updatedAt": "2026-11-27T20:00:13.152Z",
+  "updatedAt": "2026-11-27T20:01:35.790Z",
   "packages": [
+    {
+      "id": "gh_mwzeq2a5",
+      "code": "BARU",
+      "name": "Try Out Nasional",
+      "title": "Simulasi CBT UKMPPDH Gelombang 1 — EDUKAVET",
+      "fileName": "gh_mwzeq2a5_gemini_code_1795808809938.html",
+      "questions": 100,
+      "duration": "100 Menit",
+      "hasOsce": true,
+      "highlights": "Paket simulasi CBT lengkap dengan pembahasan.",
+      "uploadedAt": "2026-11-27T20:01:35.790Z"
+    },
     {
       "id": "gh_mwzeoazr",
       "code": "BARU",
